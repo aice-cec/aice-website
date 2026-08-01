@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AICE — Under Construction",
-  description: "Something extraordinary is in the works. Stay tuned for the official launch of AICE.",
+  title: "AICE",
+  description:
+    "Something extraordinary is in the works. Stay tuned for the official launch of AICE.",
 };
 
 export default function RootLayout({
