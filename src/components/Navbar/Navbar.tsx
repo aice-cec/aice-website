@@ -23,9 +23,9 @@ const Navbar = () => {
       setScrolled(currentY > 20)
 
       // Dynamically highlight HOME vs ABOUT based on scroll depth
-      if (currentY < vh * 0.7) {
+      if (currentY < vh * 1.5) {
         setActiveLink('HOME')
-      } else if (currentY >= vh * 0.7) {
+      } else if (currentY >= vh * 1.5) {
         setActiveLink('ABOUT')
       }
     }

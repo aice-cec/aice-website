@@ -223,7 +223,29 @@
 }
 
 @media (max-width: 480px) {
+  .container {
+    padding: 0 16px;
+  }
+
   .logoText {
-    font-size: 1.3rem;
+    font-size: 1.15rem;
+    letter-spacing: 0.1em;
+  }
+
+  .logo {
+    gap: 7px;
+  }
+
+  .logoMark {
+    width: 31px;
+    height: 31px;
+  }
+
+  .navPill {
+    padding: 12px 16px;
+  }
+
+  .navLink {
+    padding: 13px 16px;
   }
 }
