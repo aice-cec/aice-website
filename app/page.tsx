@@ -1,9 +1,11 @@
 import Image from "next/image";
+import Navbar from "@/app/components/Navbar";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 select-none">
-      <div className="flex flex-col items-center text-center max-w-md">
+    <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 select-none relative">
+      <Navbar />
+      <div className="flex flex-col items-center text-center max-w-md pt-20">
         <div className="mb-8 p-4">
           <Image
             src="/logos/aice_logo.png"

@@ -3,6 +3,11 @@
 :root {
   --background: #09090b;
   --foreground: #f4f4f5;
+  --nav-height: 80px;
+  --transition-base: 0.25s ease;
+  --color-white: #ffffff;
+  --color-bg: #09090b;
+  --font-primary: var(--font-sans), system-ui, sans-serif;
 }
 
 @theme inline {
