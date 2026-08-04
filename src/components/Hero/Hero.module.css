@@ -49,10 +49,11 @@
   position: absolute;
   top: 35%;
   left: 50%;
-  transform: translate(calc(-50% + 0.03em), -50%);
+  transform: translate(-50%, -50%);
   width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  justify-content:center;
+  align-items:center;
   font-family: 'Bebas Neue', 'Arial Black', 'Impact', sans-serif;
   font-size: clamp(140px, 23vw, 310px);
   font-weight: 900;
@@ -64,25 +65,25 @@
   z-index: 1;
   line-height: 1;
   /* Entry animation for the text itself */
-  animation: titleReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+  animation: titleReveal 1.2s cubic-bezier(0.16, 1, 1, 1) 0.2s both;
 }
 
-.titleLeft {
-  justify-self: end;
-}
-
-.titleRight {
-  justify-self: start;
+.letterA,
+.letterI,
+.letterC,
+.letterE {
+  display: inline-block;
+  will-change: transform;
 }
 
 @keyframes titleReveal {
   from {
     opacity: 0;
-    transform: translate(calc(-50% + 0.03em), -50%) scale(1.06);
+    transform: translate(-50%, -50%) scale(1.06);
   }
   to {
     opacity: 1;
-    transform: translate(calc(-50% + 0.03em), -50%) scale(1);
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
