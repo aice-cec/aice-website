@@ -1,0 +1,389 @@
+/* ══════════════════════════════════════════════════
+   HERO — Scroll-driven robot rise animation
+   ══════════════════════════════════════════════════
+
+   Structure:
+     .heroOuter   → 200vh tall (creates scroll distance)
+       .heroSticky → position: sticky, 100vh (pins in viewport)
+         .bgTitle  → giant AICE text (z-index 1)
+         .robotWrap → scroll-animated container (z-index 2)
+           .robotContainer + .robotImg
+           .eyeGlow
+         .bottomFade → z-index 3
+         .scrollCue  → z-index 4
+*/
+
+/* ─── Outer scroll container ─── */
+.heroOuter {
+  position: relative;
+  width: 100%;
+  /* 300vh = 100vh Hero pin + 100vh About pin + 100vh scroll travel */
+  height: 300vh;
+  background: #000;
+}
+
+.aboutAnchor {
+  position: absolute;
+  top: 100vh;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  pointer-events: none;
+}
+
+/* ─── Sticky inner — stays in viewport ─── */
+.heroSticky {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Giant AICE background text ─── */
+.bgTitle {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(calc(-50% + 0.03em), -50%);
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-family: 'Bebas Neue', 'Arial Black', 'Impact', sans-serif;
+  font-size: clamp(140px, 23vw, 310px);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+  line-height: 1;
+  /* Entry animation for the text itself */
+  animation: titleReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.titleLeft {
+  justify-self: end;
+}
+
+.titleRight {
+  justify-self: start;
+}
+
+@keyframes titleReveal {
+  from {
+    opacity: 0;
+    transform: translate(calc(-50% + 0.03em), -50%) scale(1.06);
+  }
+  to {
+    opacity: 1;
+    transform: translate(calc(-50% + 0.03em), -50%) scale(1);
+  }
+}
+
+/* ─── Robot outer wrapper — scroll-animated ─── */
+.robotWrap {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(130%); /* starts off-screen below */
+  opacity: 0;
+  z-index: 3;
+  width: clamp(260px, 42vw, 580px);
+  will-change: transform, opacity;
+}
+
+/* ─── Robot inner container ─── */
+.robotContainer {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+/* ─── Robot image ─── */
+.robotImg {
+  width: 100%;
+  height: auto;
+  max-height: 88vh;
+  object-fit: contain;
+  object-position: top center;
+  display: block;
+  /* Subtle drop shadow to ground the robot */
+  filter: drop-shadow(0 -20px 60px rgba(255, 30, 30, 0.08));
+}
+
+/* ─── Red eye / chest glow ─── */
+.eyeGlow {
+  position: absolute;
+  top: 24%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 50px;
+  background: radial-gradient(ellipse, #ff2020 0%, transparent 70%);
+  filter: blur(24px);
+  opacity: 0.3;
+  pointer-events: none;
+  animation: glowPulse 2.8s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.35; transform: translateX(-50%) scale(1); }
+  50%       { opacity: 0.65; transform: translateX(-50%) scale(1.15); }
+}
+
+/* ─── Bottom gradient fade ─── */
+.bottomFade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 180px;
+  background: linear-gradient(
+    to top,
+    #000 0%,
+    rgba(0, 0, 0, 0.4) 60%,
+    transparent 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ─── Scroll cue ─── */
+.scrollCue {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  animation: scrollCueFadeIn 0.8s ease 1.5s both;
+}
+
+@keyframes scrollCueFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.scrollCueText {
+  font-family: var(--font-primary);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.scrollCueBar {
+  width: 1px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.scrollCueFill {
+  width: 100%;
+  height: 40%;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 1px;
+  animation: scrollCueDrop 1.8s ease-in-out 2s infinite;
+}
+
+@keyframes scrollCueDrop {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(300%); opacity: 0; }
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 900px) {
+  .robotWrap {
+    width: clamp(240px, 58vw, 440px);
+  }
+  .bgTitle {
+    font-size: clamp(120px, 26vw, 220px);
+  }
+}
+
+@media (max-width: 600px) {
+  .heroOuter {
+    height: 350vh; /* more travel room on mobile */
+  }
+  .robotWrap {
+    width: clamp(220px, 78vw, 380px);
+  }
+  .bgTitle {
+    font-size: clamp(90px, 30vw, 160px);
+    letter-spacing: 0.03em;
+  }
+}
+
+/* ─── About Content Panel ─── */
+.contentPanel {
+  position: absolute;
+  right: 8%;
+  width: clamp(320px, 45vw, 680px);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #fff;
+  will-change: transform, opacity;
+  opacity: 0;
+  transform: translateX(80px);
+  visibility: hidden;
+}
+
+.sectionLabel {
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #fff;
+  margin: 0 0 8px 0;
+  display: inline-block;
+  position: relative;
+}
+
+.sectionLabel::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 2px;
+  background-color: var(--color-accent);
+  margin-top: 4px;
+}
+
+.heading {
+  font-family: var(--font-primary);
+  font-size: clamp(2rem, 3.5vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.accent {
+  color: var(--color-accent);
+  text-shadow: 0 0 15px rgba(255, 32, 32, 0.25);
+}
+
+.description {
+  font-family: var(--font-secondary);
+  font-size: clamp(0.95rem, 1.1vw, 1.1rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 36px 0;
+}
+
+/* ─── Info Cards (Mission & Vision) ─── */
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 24px;
+  backdrop-filter: blur(12px);
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.card:hover {
+  border-color: rgba(255, 32, 32, 0.2);
+  background: rgba(255, 32, 32, 0.01);
+}
+
+.cardIcon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(255, 32, 32, 0.05);
+  border: 1px solid rgba(255, 32, 32, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent);
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cardTitle {
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #fff;
+  margin: 0;
+}
+
+.cardText {
+  font-family: var(--font-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+/* ─── Responsive for About Section ─── */
+@media (max-width: 1024px) {
+  .heroOuter {
+    height: auto !important;
+  }
+  .heroSticky {
+    position: relative !important;
+    height: auto !important;
+    min-height: 100vh;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 120px 20px 60px 20px;
+    overflow: visible !important;
+  }
+  .robotWrap {
+    position: relative !important;
+    left: auto !important;
+    transform: none !important;
+    opacity: 1 !important;
+    width: clamp(200px, 45vw, 320px) !important;
+    margin-bottom: 40px;
+  }
+  .bgTitle {
+    position: absolute !important;
+    top: 15vh !important;
+    opacity: 0.3 !important;
+  }
+  .contentPanel {
+    position: relative !important;
+    right: auto !important;
+    width: 100% !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+}
+
