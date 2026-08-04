@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import Beams from '@/components/Beams'
 import styles from './Hero.module.css'
 
 const Hero = () => {
@@ -160,6 +161,18 @@ const Hero = () => {
       <div id="about" className={styles.aboutAnchor} />
 
       <div className={styles.heroSticky}>
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, opacity: 0.8 }}>
+          <Beams
+            beamWidth={2}
+            beamHeight={15}
+            beamNumber={12}
+            lightColor="#ff0202"
+            speed={2}
+            noiseIntensity={1.75}
+            scale={0.2}
+            rotation={-45}
+          />
+        </div>
         <div className={styles.bgTitle} ref={titleRef} aria-hidden="true">
           <div className={styles.titleLetters}>
             <div className={styles.titleHalfLeft}>

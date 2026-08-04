@@ -35,9 +35,15 @@
     "app/**/*.tsx",
     "components/**/*.ts",
     "components/**/*.tsx",
+    "components/**/*.jsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "src/main.tsx",
+    "src/components/LoadingScreen/**",
+    "vite.config.ts"
   ]
 }

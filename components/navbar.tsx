@@ -6,9 +6,8 @@ import { AiceLogo } from './aice-logo'
 const links = [
   { label: 'HOME', href: '#home' },
   { label: 'ABOUT', href: '#about' },
-  { label: 'EVENTS', href: '#events' },
   { label: 'EXECOM', href: '#execom' },
-  
+  { label: 'EVENTS', href: '#events' },
 ]
 
 export function Navbar() {
