@@ -54,14 +54,23 @@ const Hero = () => {
           const minSpacing = 0.06
           const maxSpacing = 0.45
           const spacing = minSpacing + eased1 * (maxSpacing - minSpacing)
-          const nudgeX = spacing / 2
+          const spread = spacing * 2
+
+          const a = title.querySelector(`.${styles.letterA}`) as HTMLElement
+          const i = title.querySelector(`.${styles.letterI}`) as HTMLElement
+          const c = title.querySelector(`.${styles.letterC}`) as HTMLElement
+          const e = title.querySelector(`.${styles.letterE}`) as HTMLElement
+
+          a.style.transform = `translateX(${-1.5 * spread}em)`
+          i.style.transform = `translateX(${-0.5 * spread}em)`
+          c.style.transform = `translateX(${0.5 * spread}em)`
+          e.style.transform = `translateX(${1.5 * spread}em)`
 
           const titleY = eased1 * -30 + eased2 * -450
-          const titleOpacity = Math.max(1 - eased2 * 1.5, 0)
+          const titleOpacity = Math.max(1 - eased2 * 3.5, 0)
 
-          title.style.letterSpacing = `${spacing.toFixed(4)}em`
           title.style.opacity = String(titleOpacity.toFixed(3))
-          title.style.transform = `translate(calc(-50% + ${nudgeX.toFixed(4)}em), calc(-50% + ${titleY.toFixed(1)}px))`
+          title.style.transform =`translate(-50%, calc(-50% + ${titleY.toFixed(1)}px))`
           title.style.visibility = titleOpacity <= 0 ? 'hidden' : 'visible'
         }
 
@@ -69,7 +78,7 @@ const Hero = () => {
         // - Phase 2: Comes from BELOW (slides up from +200px to 0px) and fades in
         if (aboutPanel) {
           const aboutY = (1 - eased2) * 200
-          const aboutOpacity = eased2
+          const aboutOpacity =  Math.max((eased2 - 0.6) / 0.7, 0)
 
           aboutPanel.style.opacity = String(aboutOpacity.toFixed(3))
           aboutPanel.style.transform = `translateY(${aboutY.toFixed(1)}px)`
@@ -119,8 +128,10 @@ const Hero = () => {
       <div className={styles.heroSticky}>
         {/* Giant AICE background text — split to perfectly center the middle gap */}
         <div className={styles.bgTitle} ref={titleRef} aria-hidden="true">
-          <span className={styles.titleLeft}>AI</span>
-          <span className={styles.titleRight}>CE</span>
+          <span className={styles.letterA}>A</span>
+          <span className={styles.letterI}>I</span>
+          <span className={styles.letterC}>C</span>
+          <span className={styles.letterE}>E</span>
         </div>
 
         {/* Unified Robot mascot */}
@@ -152,9 +163,9 @@ const Hero = () => {
             <div className={styles.card}>
               <div className={styles.cardIcon} aria-hidden="true">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M12 8v4l3 3"/>
-                  <circle cx="12" cy="12" r="3" fill="var(--color-accent)" stroke="none"/>
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 8v4l3 3" />
+                  <circle cx="12" cy="12" r="3" fill="var(--color-accent)" stroke="none" />
                 </svg>
               </div>
               <div className={styles.cardBody}>
@@ -169,9 +180,9 @@ const Hero = () => {
             <div className={styles.card}>
               <div className={styles.cardIcon} aria-hidden="true">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <ellipse cx="12" cy="12" rx="10" ry="6"/>
-                  <circle cx="12" cy="12" r="3" fill="var(--color-accent)" stroke="none"/>
-                  <line x1="2" y1="12" x2="22" y2="12"/>
+                  <ellipse cx="12" cy="12" rx="10" ry="6" />
+                  <circle cx="12" cy="12" r="3" fill="var(--color-accent)" stroke="none" />
+                  <line x1="2" y1="12" x2="22" y2="12" />
                 </svg>
               </div>
               <div className={styles.cardBody}>

@@ -5,8 +5,9 @@ import styles from './Navbar.module.css'
 const navLinks = [
   { label: 'HOME', href: '#home', id: 'nav-home' },
   { label: 'ABOUT', href: '#about', id: 'nav-about' },
-  { label: 'EXECOM', href: '#execom', id: 'nav-execom' },
   { label: 'EVENTS', href: '#events', id: 'nav-events' },
+  { label: 'EXECOM', href: '#execom', id: 'nav-execom' },
+ 
 ]
 
 const Navbar = () => {
