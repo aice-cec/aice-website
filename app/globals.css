@@ -7,7 +7,9 @@
   --transition-base: 0.25s ease;
   --color-white: #ffffff;
   --color-bg: #09090b;
+  --color-accent: #ff2020;
   --font-primary: var(--font-sans), system-ui, sans-serif;
+  --font-secondary: var(--font-sans), system-ui, sans-serif;
 }
 
 @theme inline {
