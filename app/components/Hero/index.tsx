@@ -11,7 +11,6 @@ const Hero = () => {
   const titleRef = useRef<HTMLDivElement>(null);
   const eyeGlowRef = useRef<HTMLDivElement>(null);
   const aboutPanelRef = useRef<HTMLDivElement>(null);
-  const scrollCueRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -19,7 +18,6 @@ const Hero = () => {
     const eyeGlow = eyeGlowRef.current;
     const title = titleRef.current;
     const aboutPanel = aboutPanelRef.current;
-    const scrollCue = scrollCueRef.current;
 
     if (!section || !robotWrap) return;
 
@@ -107,10 +105,6 @@ const Hero = () => {
 
         if (eyeGlow) {
           eyeGlow.style.opacity = String((0.3 + eased1 * 0.5).toFixed(2));
-        }
-
-        if (scrollCue) {
-          scrollCue.style.opacity = String(Math.max(1 - progress1 * 3, 0));
         }
       });
     };
