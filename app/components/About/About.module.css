@@ -177,25 +177,41 @@
 
 /* ─── Responsive ─── */
 @media (max-width: 1024px) {
-  .aboutSticky {
-    flex-direction: column;
-    justify-content: flex-start;
-    padding-top: 10vh;
+  .contentPanel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    right: auto;
+    width: min(90vw, 520px);
+    transform: translate(-50%, -50%);
+    padding: 0;
   }
-  .robotPanel {
-    position: relative;
-    left: auto;
-    transform: none !important;
-    opacity: 1 !important;
-    width: clamp(200px, 35vw, 320px);
+
+  .heading {
+    font-size: clamp(1.75rem, 6vw, 2.8rem);
+    margin-bottom: 12px;
+  }
+
+  .description {
+    font-size: 0.925rem;
+    line-height: 1.5;
     margin-bottom: 20px;
   }
-  .contentPanel {
-    position: relative;
-    right: auto;
-    width: 90%;
-    transform: none !important;
-    opacity: 1 !important;
-    padding-bottom: 50px;
+
+  .cards {
+    gap: 12px;
+  }
+
+  .card {
+    padding: 14px 16px;
+    gap: 14px;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .cardIcon {
+    width: 40px;
+    height: 40px;
   }
 }

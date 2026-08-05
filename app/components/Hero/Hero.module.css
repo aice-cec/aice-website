@@ -207,179 +207,22 @@
 /* ─── Responsive ─── */
 @media (max-width: 900px) {
   .robotWrap {
-    width: clamp(240px, 58vw, 440px);
+    width: clamp(240px, 68vw, 440px);
   }
   .bgTitle {
-    font-size: clamp(120px, 26vw, 220px);
+    font-size: clamp(100px, 24vw, 220px);
   }
 }
 
 @media (max-width: 600px) {
   .heroOuter {
-    height: 350vh;
+    height: 300vh;
   }
   .robotWrap {
-    width: clamp(220px, 78vw, 380px);
+    width: clamp(220px, 82vw, 380px);
   }
   .bgTitle {
-    font-size: clamp(90px, 30vw, 160px);
+    font-size: clamp(80px, 25vw, 150px);
     letter-spacing: 0.03em;
-  }
-}
-
-.contentPanel {
-  position: absolute;
-  right: 8%;
-  width: clamp(320px, 45vw, 680px);
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: #fff;
-  will-change: transform, opacity;
-  opacity: 0;
-  transform: translateX(80px);
-  visibility: hidden;
-}
-
-.sectionLabel {
-  font-family: var(--font-primary);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  color: #fff;
-  margin: 0 0 8px 0;
-  display: inline-block;
-  position: relative;
-}
-
-.sectionLabel::after {
-  content: "";
-  display: block;
-  width: 48px;
-  height: 2px;
-  background-color: var(--color-accent);
-  margin-top: 4px;
-}
-
-.heading {
-  font-family: var(--font-primary);
-  font-size: clamp(2rem, 3.5vw, 3.5rem);
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  margin: 0 0 20px 0;
-  text-transform: uppercase;
-  line-height: 1.1;
-}
-
-.accent {
-  color: var(--color-accent);
-  text-shadow: 0 0 15px rgba(255, 32, 32, 0.25);
-}
-
-.description {
-  font-family: var(--font-secondary);
-  font-size: clamp(0.95rem, 1.1vw, 1.1rem);
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.85);
-  margin: 0 0 36px 0;
-}
-
-.cards {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-}
-
-.card {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 24px;
-  backdrop-filter: blur(12px);
-  transition:
-    border-color 0.3s ease,
-    background 0.3s ease;
-}
-
-.card:hover {
-  border-color: rgba(255, 32, 32, 0.3);
-  background: rgba(255, 32, 32, 0.03);
-}
-
-.cardIcon {
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: rgba(255, 32, 32, 0.1);
-  border: 1px solid rgba(255, 32, 32, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-accent);
-}
-
-.cardBody {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.cardTitle {
-  font-family: var(--font-primary);
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: #fff;
-  margin: 0;
-}
-
-.cardText {
-  font-family: var(--font-secondary);
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.75);
-  margin: 0;
-}
-
-/* ─── Responsive for About Section ─── */
-@media (max-width: 1024px) {
-  .heroOuter {
-    height: auto !important;
-  }
-  .heroSticky {
-    position: relative !important;
-    height: auto !important;
-    min-height: 100vh;
-    flex-direction: column;
-    justify-content: flex-start;
-    padding: 120px 20px 60px 20px;
-    overflow: visible !important;
-  }
-  .robotWrap {
-    position: relative !important;
-    left: auto !important;
-    transform: none !important;
-    opacity: 1 !important;
-    width: clamp(200px, 45vw, 320px) !important;
-    margin-bottom: 40px;
-  }
-  .bgTitle {
-    position: absolute !important;
-    top: 15vh !important;
-    opacity: 0.3 !important;
-  }
-  .contentPanel {
-    position: relative !important;
-    right: auto !important;
-    width: 100% !important;
-    transform: none !important;
-    opacity: 1 !important;
-    visibility: visible !important;
   }
 }
