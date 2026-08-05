@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import styles from "./Execom.module.css";
-import teamData from "@/data/team-26.json";
+import teamData from "@/data/team-26/members.json";
 
 export interface FacultyMember {
   id: string;
@@ -89,38 +89,36 @@ function GithubIcon() {
   );
 }
 
-function MailIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      aria-hidden="true"
-      style={{ width: 14, height: 14 }}
-    >
-      <rect x="2" y="4" width="20" height="16" rx="2" />
-      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-    </svg>
-  );
-}
-
 export function Execom() {
   const execomCarouselRef = useRef<HTMLDivElement>(null);
   const subExecomCarouselRef = useRef<HTMLDivElement>(null);
   const isExecomHovered = useRef(false);
   const isSubExecomHovered = useRef(false);
+  const lastExecomInteraction = useRef(0);
+  const lastSubExecomInteraction = useRef(0);
 
   const faculty: FacultyMember[] = teamData.faculty || [];
   const execom: TeamMember[] = teamData.execom || [];
   const subExecom: TeamMember[] = teamData.subExecom || [];
 
+  const handleExecomUserTouch = () => {
+    lastExecomInteraction.current = Date.now();
+  };
+
+  const handleSubExecomUserTouch = () => {
+    lastSubExecomInteraction.current = Date.now();
+  };
+
   useEffect(() => {
     const autoScroll = (
       ref: React.RefObject<HTMLDivElement | null>,
       isHovered: boolean,
+      lastInteractionTime: number,
     ) => {
-      if (ref.current && !isHovered) {
+      const now = Date.now();
+      const isInteractionActive = now - lastInteractionTime < 8000;
+
+      if (ref.current && !isHovered && !isInteractionActive) {
         const container = ref.current;
         const maxScroll = container.scrollWidth - container.clientWidth;
         if (container.scrollLeft >= maxScroll - 10) {
@@ -132,9 +130,17 @@ export function Execom() {
     };
 
     const interval = setInterval(() => {
-      autoScroll(execomCarouselRef, isExecomHovered.current);
-      autoScroll(subExecomCarouselRef, isSubExecomHovered.current);
-    }, 500);
+      autoScroll(
+        execomCarouselRef,
+        isExecomHovered.current,
+        lastExecomInteraction.current,
+      );
+      autoScroll(
+        subExecomCarouselRef,
+        isSubExecomHovered.current,
+        lastSubExecomInteraction.current,
+      );
+    }, 1750);
 
     return () => clearInterval(interval);
   }, []);
@@ -142,7 +148,13 @@ export function Execom() {
   const scrollContainer = (
     ref: React.RefObject<HTMLDivElement | null>,
     direction: "left" | "right",
+    isExecom: boolean,
   ) => {
+    if (isExecom) {
+      lastExecomInteraction.current = Date.now();
+    } else {
+      lastSubExecomInteraction.current = Date.now();
+    }
     if (ref.current) {
       const scrollAmount = direction === "left" ? -340 : 340;
       ref.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
@@ -157,9 +169,6 @@ export function Execom() {
       <div className={styles.container}>
         <div className={styles.header}>
           <div>
-            <p className={styles.headerTag}>
-              <span className={styles.headerLine} /> AICE / TEAM 2026
-            </p>
             <h2 className={styles.heading}>
               MEET THE <span className={styles.headingAccent}>TEAM.</span>
             </h2>
@@ -170,16 +179,8 @@ export function Execom() {
           </p>
         </div>
 
-        {/* ─── 1. Faculty Advisor Section ─── */}
         {faculty.length > 0 && (
           <div className={styles.categoryGroup}>
-            <div className={styles.categoryHeader}>
-              <h3 className={styles.categoryTitle}>
-                <span className={styles.categoryTitleDot} /> FACULTY ADVISOR
-              </h3>
-              <span className={styles.categoryCount}>1 MEMBER</span>
-            </div>
-
             <div className={styles.facultyCard}>
               <div className={styles.facultyImageWrap}>
                 <Image
@@ -192,40 +193,14 @@ export function Execom() {
                 />
               </div>
               <div className={styles.facultyContent}>
-                <span className={styles.facultyBadge}>
-                  {faculty[0].role.toUpperCase()}
-                </span>
                 <h4 className={styles.facultyName}>{faculty[0].name}</h4>
-                <p className={styles.facultyDept}>{faculty[0].dept}</p>
+                <p className={styles.facultyDept}>{faculty[0].role}</p>
                 <p className={styles.facultyBio}>{faculty[0].bio}</p>
-                <div className={styles.facultyLinks}>
-                  {faculty[0].linkedin && (
-                    <a
-                      href={faculty[0].linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.socialBtn}
-                      aria-label="LinkedIn profile"
-                    >
-                      <LinkedInIcon />
-                    </a>
-                  )}
-                  {faculty[0].email && (
-                    <a
-                      href={`mailto:${faculty[0].email}`}
-                      className={styles.socialBtn}
-                      aria-label="Send email"
-                    >
-                      <MailIcon />
-                    </a>
-                  )}
-                </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* ─── 2. Execom Carousel Section ─── */}
         {execom.length > 0 && (
           <div className={styles.categoryGroup}>
             <div className={styles.categoryHeader}>
@@ -235,14 +210,11 @@ export function Execom() {
               <div
                 style={{ display: "flex", alignItems: "center", gap: "1rem" }}
               >
-                <span className={styles.categoryCount}>
-                  {execom.length} MEMBERS
-                </span>
                 <div className={styles.carouselNav}>
                   <button
                     type="button"
                     className={styles.navArrowBtn}
-                    onClick={() => scrollContainer(execomCarouselRef, "left")}
+                    onClick={() => scrollContainer(execomCarouselRef, "left", true)}
                     aria-label="Previous Execom members"
                   >
                     <ArrowLeftIcon />
@@ -250,7 +222,7 @@ export function Execom() {
                   <button
                     type="button"
                     className={styles.navArrowBtn}
-                    onClick={() => scrollContainer(execomCarouselRef, "right")}
+                    onClick={() => scrollContainer(execomCarouselRef, "right", true)}
                     aria-label="Next Execom members"
                   >
                     <ArrowRightIcon />
@@ -264,8 +236,14 @@ export function Execom() {
               ref={execomCarouselRef}
               onMouseEnter={() => (isExecomHovered.current = true)}
               onMouseLeave={() => (isExecomHovered.current = false)}
-              onTouchStart={() => (isExecomHovered.current = true)}
+              onTouchStart={() => {
+                isExecomHovered.current = true;
+                handleExecomUserTouch();
+              }}
               onTouchEnd={() => (isExecomHovered.current = false)}
+              onPointerDown={handleExecomUserTouch}
+              onClickCapture={handleExecomUserTouch}
+              onScroll={handleExecomUserTouch}
             >
               <div className={styles.carouselTrack}>
                 {execom.map((member) => (
@@ -318,7 +296,6 @@ export function Execom() {
           </div>
         )}
 
-        {/* ─── 3. Sub-Execom Carousel Section ─── */}
         {subExecom.length > 0 && (
           <div className={styles.categoryGroup}>
             <div className={styles.categoryHeader}>
@@ -328,15 +305,12 @@ export function Execom() {
               <div
                 style={{ display: "flex", alignItems: "center", gap: "1rem" }}
               >
-                <span className={styles.categoryCount}>
-                  {subExecom.length} MEMBERS
-                </span>
                 <div className={styles.carouselNav}>
                   <button
                     type="button"
                     className={styles.navArrowBtn}
                     onClick={() =>
-                      scrollContainer(subExecomCarouselRef, "left")
+                      scrollContainer(subExecomCarouselRef, "left", false)
                     }
                     aria-label="Previous Sub-Execom members"
                   >
@@ -346,7 +320,7 @@ export function Execom() {
                     type="button"
                     className={styles.navArrowBtn}
                     onClick={() =>
-                      scrollContainer(subExecomCarouselRef, "right")
+                      scrollContainer(subExecomCarouselRef, "right", false)
                     }
                     aria-label="Next Sub-Execom members"
                   >
@@ -361,8 +335,14 @@ export function Execom() {
               ref={subExecomCarouselRef}
               onMouseEnter={() => (isSubExecomHovered.current = true)}
               onMouseLeave={() => (isSubExecomHovered.current = false)}
-              onTouchStart={() => (isSubExecomHovered.current = true)}
+              onTouchStart={() => {
+                isSubExecomHovered.current = true;
+                handleSubExecomUserTouch();
+              }}
               onTouchEnd={() => (isSubExecomHovered.current = false)}
+              onPointerDown={handleSubExecomUserTouch}
+              onClickCapture={handleSubExecomUserTouch}
+              onScroll={handleSubExecomUserTouch}
             >
               <div className={styles.carouselTrack}>
                 {subExecom.map((member) => (
