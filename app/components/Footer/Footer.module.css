@@ -1,0 +1,248 @@
+.footer {
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: #050505;
+  color: #ffffff;
+  padding-top: 1.25rem;
+  padding-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  .footer {
+    padding-top: 2.25rem;
+    padding-bottom: 1.25rem;
+  }
+}
+
+.glowAmbient {
+  pointer-events: none;
+  position: absolute;
+  bottom: -6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 18rem;
+  width: 32rem;
+  border-radius: 9999px;
+  background-color: rgba(239, 68, 68, 0.08);
+  filter: blur(100px);
+}
+
+.container {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 80rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  z-index: 5;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.875rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2rem;
+    padding-bottom: 1.5rem;
+    text-align: left;
+    justify-items: stretch;
+  }
+}
+
+/* ─── Column 1: Brand ─── */
+.brandCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+@media (min-width: 640px) {
+  .brandCol {
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+}
+
+.logoText {
+  font-family: var(--font-primary, var(--font-geist-sans), sans-serif);
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+}
+
+.tagline {
+  font-size: 0.725rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #ef4444;
+  text-transform: uppercase;
+}
+
+.collegeText {
+  font-size: 0.775rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ─── Column 2: Center Spacer ─── */
+.centerCol {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .centerCol {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 4rem;
+  }
+}
+
+/* ─── Static Robot Mascot touching the bottom edge ─── */
+.robotContainer {
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(9rem, 22vw, 14rem);
+  pointer-events: none;
+  z-index: 10;
+}
+
+@media (max-width: 640px) {
+  .robotContainer {
+    display: none;
+  }
+}
+
+.robotImg {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 -8px 25px rgba(239, 68, 68, 0.55));
+}
+
+/* ─── Column 3: Social Connect ─── */
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .rightCol {
+    align-items: flex-end;
+  }
+}
+
+.socialLabel {
+  font-size: 0.725rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.85);
+  text-transform: uppercase;
+}
+
+.socialRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.socialBtn {
+  display: inline-flex;
+  height: 2.25rem;
+  width: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background-color: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.socialBtn:hover {
+  border-color: #ef4444;
+  background-color: #ef4444;
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+}
+
+/* ─── Bottom Bar ─── */
+.bottomBar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding-top: 0.6rem;
+  text-align: center;
+  font-size: 0.725rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+@media (min-width: 640px) {
+  .bottomBar {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.scrollTopBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.725rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.scrollTopBtn:hover {
+  color: #ef4444;
+}
+
+.icon {
+  width: 0.9rem;
+  height: 0.9rem;
+}
