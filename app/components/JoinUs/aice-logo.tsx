@@ -7,6 +7,7 @@ export function AiceLogo({ className }: { className?: string }) {
       alt="AICE Logo"
       width={36}
       height={36}
+      style={{ height: 'auto' }}
       className={className}
     />
   )

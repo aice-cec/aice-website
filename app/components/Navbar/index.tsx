@@ -52,6 +52,7 @@ const Navbar = () => {
             alt="AICE Logo"
             width={36}
             height={36}
+            style={{ height: 'auto' }}
             className={styles.logoMark}
           />
           <span className={styles.logoText}>AICE</span>

@@ -34,22 +34,21 @@ const Hero = () => {
 
         const scrolled = -rect.top;
 
-        const progress1 = Math.min(Math.max(scrolled / viewportH, 0), 1);
+        const progress1 = Math.min(Math.max(scrolled / (viewportH * 0.5), 0), 1);
         const eased1 = 1 - Math.pow(1 - progress1, 3);
 
         const progress2 = Math.min(
-          Math.max((scrolled - viewportH * 0.75) / (viewportH * 0.75), 0),
+          Math.max((scrolled - viewportH * 0.5) / (viewportH * 0.5), 0),
           1,
         );
         const eased2 = 1 - Math.pow(1 - progress2, 3);
 
         if (isMobile) {
-          const robotY = 130 - eased1 * 130 - eased2 * 40;
-          const robotScale = 1 - eased2 * 0.35;
+          const robotY = 130 - eased1 * 130;
           const robotOpacity =
-            Math.min(progress1 * 2.5, 1) * (1 - eased2 * 0.75);
+            Math.min(progress1 * 2.5, 1) * Math.max(1 - eased2 * 2.5, 0);
 
-          robotWrap.style.transform = `translate(-50%, ${robotY.toFixed(1)}%) scale(${robotScale.toFixed(2)})`;
+          robotWrap.style.transform = `translate(-50%, ${robotY.toFixed(1)}%)`;
           robotWrap.style.opacity = String(robotOpacity.toFixed(3));
         } else {
           const robotY = 130 - eased1 * 130;
@@ -88,11 +87,8 @@ const Hero = () => {
 
         if (aboutPanel) {
           if (isMobile) {
-            const aboutY = (1 - eased2) * 50;
-            const aboutOpacity = Math.min(
-              Math.max((eased2 - 0.15) / 0.7, 0),
-              1,
-            );
+            const aboutY = (1 - eased2) * 40;
+            const aboutOpacity = Math.min(Math.max(progress2 * 1.5, 0), 1);
 
             aboutPanel.style.opacity = String(aboutOpacity.toFixed(3));
             aboutPanel.style.transform = `translate(-50%, calc(-50% + ${aboutY.toFixed(1)}px))`;
@@ -100,10 +96,7 @@ const Hero = () => {
               aboutOpacity <= 0 ? "hidden" : "visible";
           } else {
             const aboutY = (1 - eased2) * 200;
-            const aboutOpacity = Math.min(
-              Math.max((eased2 - 0.2) / 0.6, 0),
-              1,
-            );
+            const aboutOpacity = Math.min(Math.max((eased2 - 0.2) / 0.6, 0), 1);
 
             aboutPanel.style.opacity = String(aboutOpacity.toFixed(3));
             aboutPanel.style.transform = `translateY(${aboutY.toFixed(1)}px)`;
@@ -149,7 +142,7 @@ const Hero = () => {
       id="home"
       className={styles.heroOuter}
       ref={sectionRef}
-      aria-label="AICE Hero and About Section"
+      aria-label="AICE Hero"
     >
       <div id="about" className={styles.aboutAnchor} />
 
@@ -180,22 +173,9 @@ const Hero = () => {
         <About ref={aboutPanelRef} />
 
         <div className={styles.bottomFade} aria-hidden="true" />
-
-        <div
-          className={styles.scrollCue}
-          ref={scrollCueRef}
-          aria-label="Scroll to reveal content"
-        >
-          <div className={styles.scrollCueText}>SCROLL</div>
-          <div className={styles.scrollCueBar}>
-            <div className={styles.scrollCueFill} />
-          </div>
-        </div>
       </div>
 
-      <h1 className="visually-hidden">
-        AICE — Artificial Intelligence Club of Engineers
-      </h1>
+      <h1 className="visually-hidden">AICE</h1>
     </div>
   );
 };
