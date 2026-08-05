@@ -2,6 +2,7 @@ import Navbar from "@/app/components/Navbar";
 import Hero from "@/app/components/Hero";
 import Events from "@/app/components/Events";
 import { Join } from "@/app/components/JoinUs";
+import Execom from "@/app/components/Execom";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       <Hero />
       <Events />
       <Join />
+      <Execom />
     </main>
   );
 }
