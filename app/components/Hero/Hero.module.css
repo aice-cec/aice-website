@@ -1,7 +1,7 @@
 .heroOuter {
   position: relative;
   width: 100%;
-  height: 300vh;
+  height: 220vh;
   background: #000;
 }
 
@@ -216,7 +216,7 @@
 
 @media (max-width: 600px) {
   .heroOuter {
-    height: 300vh;
+    height: 180vh;
   }
   .robotWrap {
     width: clamp(220px, 82vw, 380px);

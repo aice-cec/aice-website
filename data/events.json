@@ -1,0 +1,80 @@
+[
+  {
+    "id": "aice-build-night-2026",
+    "dateISO": "2026-09-06",
+    "date": "06",
+    "month": "SEP",
+    "title": "AICE BUILD NIGHT",
+    "type": "Hands-on workshop",
+    "label": "Hands-on workshop",
+    "time": "5:30 PM — 8:30 PM",
+    "place": "Innovation Lab, CEC",
+    "description": "An open build session for turning ambitious AI ideas into working prototypes.",
+    "featured": true,
+    "isPast": false
+  },
+  {
+    "id": "promptcraft-2026",
+    "dateISO": "2026-09-13",
+    "date": "13",
+    "month": "SEP",
+    "title": "PROMPTCRAFT",
+    "type": "Masterclass",
+    "label": "Masterclass",
+    "time": "10:00 AM — 1:00 PM",
+    "place": "Seminar Hall",
+    "description": "Learn practical prompting patterns for research, design, and development.",
+    "featured": false,
+    "isPast": false
+  },
+  {
+    "id": "ai-research-circle-2026",
+    "dateISO": "2026-09-27",
+    "date": "27",
+    "month": "SEP",
+    "title": "AI RESEARCH CIRCLE",
+    "type": "Community session",
+    "label": "Community session",
+    "time": "2:00 PM — 4:00 PM",
+    "place": "Library Discussion Room",
+    "description": "A guided discussion on new papers, experiments, and emerging AI ideas.",
+    "featured": false,
+    "isPast": false
+  },
+  {
+    "id": "neural-networks-101-2026",
+    "dateISO": "2026-08-18",
+    "date": "18 AUG",
+    "month": "AUG",
+    "title": "NEURAL NETWORKS 101",
+    "type": "Workshop",
+    "label": "Workshop",
+    "stat": "120+ builders",
+    "featured": false,
+    "isPast": true
+  },
+  {
+    "id": "aice-orientation-2026",
+    "dateISO": "2026-08-02",
+    "date": "02 AUG",
+    "month": "AUG",
+    "title": "AICE ORIENTATION",
+    "type": "Community",
+    "label": "Community",
+    "stat": "240+ attendees",
+    "featured": false,
+    "isPast": true
+  },
+  {
+    "id": "hack-the-future-2026",
+    "dateISO": "2026-07-19",
+    "date": "19 JUL",
+    "month": "JUL",
+    "title": "HACK THE FUTURE",
+    "type": "Hackathon",
+    "label": "Hackathon",
+    "stat": "18 projects",
+    "featured": false,
+    "isPast": true
+  }
+]
