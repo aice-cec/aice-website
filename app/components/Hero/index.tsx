@@ -94,7 +94,7 @@ const Hero = () => {
               aboutOpacity <= 0 ? "hidden" : "visible";
           } else {
             const aboutY = (1 - eased2) * 200;
-            const aboutOpacity = Math.min(Math.max((eased2 - 0.2) / 0.6, 0), 1);
+            const aboutOpacity = Math.min(Math.max((eased2 - 0.7) / 0.6, 0), 1);
 
             aboutPanel.style.opacity = String(aboutOpacity.toFixed(3));
             aboutPanel.style.transform = `translateY(${aboutY.toFixed(1)}px)`;
