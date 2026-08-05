@@ -47,7 +47,7 @@ export default function MembershipStatusPage() {
               color: "rgba(255, 255, 255, 0.75)",
             }}
           >
-            Thank you for registering with AICE! If your payment was successful, your membership has been activated and logged to our Discord system.
+            Thank you for registering with AICE! If your payment was successful, your membership has been activated and your official AICE membership card will be sent to your registered email address.
           </div>
 
           <Link href="/" className={styles.submitBtn} style={{ textDecoration: "none" }}>

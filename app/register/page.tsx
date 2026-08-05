@@ -15,6 +15,7 @@ export default function RegisterPage() {
     year: "1st Year",
     membershipTier: "Standard",
     duration: "1 Year",
+    skipPayment: false,
   });
 
   const [loading, setLoading] = useState(false);
@@ -23,7 +24,11 @@ export default function RegisterPage() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const value =
+      e.target.type === "checkbox"
+        ? (e.target as HTMLInputElement).checked
+        : e.target.value;
+    setFormData({ ...formData, [e.target.name]: value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -96,70 +101,70 @@ export default function RegisterPage() {
           {error && <div className={styles.errorMsg}>{error}</div>}
 
           <form className={styles.form} onSubmit={handleSubmit}>
-            <div className={styles.fieldGroup}>
-              <label htmlFor="fullName" className={styles.label}>
-                Full Name *
-              </label>
-              <input
-                type="text"
-                id="fullName"
-                name="fullName"
-                required
-                placeholder="e.g. Jeevan George"
-                value={formData.fullName}
-                onChange={handleChange}
-                className={styles.input}
-              />
-            </div>
+            <div className={styles.formGrid}>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="fullName" className={styles.label}>
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  required
+                  placeholder="e.g. Jeevan George"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  className={styles.input}
+                />
+              </div>
 
-            <div className={styles.fieldGroup}>
-              <label htmlFor="email" className={styles.label}>
-                Email Address *
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                required
-                placeholder="e.g. chn77bt777@ceconline.edu"
-                value={formData.email}
-                onChange={handleChange}
-                className={styles.input}
-              />
-            </div>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="email" className={styles.label}>
+                  Email Address *
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                  placeholder="e.g. chn77bt777@ceconline.edu"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={styles.input}
+                />
+              </div>
 
-            <div className={styles.fieldGroup}>
-              <label htmlFor="phone" className={styles.label}>
-                Phone Number *
-              </label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                required
-                placeholder="10-digit mobile number"
-                value={formData.phone}
-                onChange={handleChange}
-                className={styles.input}
-              />
-            </div>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="phone" className={styles.label}>
+                  Phone Number *
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  required
+                  placeholder="10-digit mobile number"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className={styles.input}
+                />
+              </div>
 
-            <div className={styles.fieldGroup}>
-              <label htmlFor="college" className={styles.label}>
-                College
-              </label>
-              <input
-                type="text"
-                id="college"
-                name="college"
-                required
-                value={formData.college}
-                onChange={handleChange}
-                className={styles.input}
-              />
-            </div>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="college" className={styles.label}>
+                  College
+                </label>
+                <input
+                  type="text"
+                  id="college"
+                  name="college"
+                  required
+                  value={formData.college}
+                  onChange={handleChange}
+                  className={styles.input}
+                />
+              </div>
 
-            <div className={styles.rowTwo}>
               <div className={styles.fieldGroup}>
                 <label htmlFor="branch" className={styles.label}>
                   Branch / Dept *
@@ -171,8 +176,8 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   className={styles.select}
                 >
-                  <option value="CS">CS</option>
                   <option value="CL">CL</option>
+                  <option value="CS">CS</option>
                   <option value="EC">EC</option>
                   <option value="EEE">EEE</option>
                 </select>
@@ -197,12 +202,39 @@ export default function RegisterPage() {
               </div>
             </div>
 
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                fontSize: "0.775rem",
+                color: "rgba(255, 255, 255, 0.6)",
+                marginTop: "0.5rem",
+              }}
+            >
+              <input
+                type="checkbox"
+                id="skipPayment"
+                name="skipPayment"
+                checked={formData.skipPayment}
+                onChange={handleChange}
+                style={{ accentColor: "#ef4444", cursor: "pointer" }}
+              />
+              <label htmlFor="skipPayment" style={{ cursor: "pointer" }}>
+                Test Mode: Skip Payment (Bypass PG for dev testing)
+              </label>
+            </div>
+
             <button
               type="submit"
               disabled={loading}
               className={styles.submitBtn}
             >
-              {loading ? "PROCESSING..." : "PAY ₹100 & JOIN NOW →"}
+              {loading
+                ? "PROCESSING..."
+                : formData.skipPayment
+                  ? "JOIN NOW (TEST BYPASS) →"
+                  : "PAY ₹100 & JOIN NOW →"}
             </button>
           </form>
         </div>
