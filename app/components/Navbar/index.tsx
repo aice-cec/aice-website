@@ -18,22 +18,53 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const vh = window.innerHeight;
       const currentY = window.scrollY;
-
       setScrolled(currentY > 20);
 
-      if (currentY < vh * 0.7) {
-        setActiveLink("HOME");
-      } else if (currentY >= vh * 0.7) {
-        setActiveLink("ABOUT");
+      const sections = [
+        { id: "join", label: "EXECOM" },
+        { id: "events", label: "EVENTS" },
+        { id: "about", label: "ABOUT" },
+        { id: "home", label: "HOME" },
+      ];
+
+      const offset = 150;
+      let currentActive = "HOME";
+
+      for (const s of sections) {
+        const el = document.getElementById(s.id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= offset) {
+            currentActive = s.label;
+            break;
+          }
+        }
       }
+
+      setActiveLink(currentActive);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+    label?: string,
+  ) => {
+    e.preventDefault();
+    if (label) setActiveLink(label);
+    setMobileOpen(false);
+
+    const targetId = href.replace("#", "");
+    const targetElement = document.getElementById(targetId);
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <header
@@ -46,13 +77,14 @@ const Navbar = () => {
           className={styles.logo}
           id="logo"
           aria-label="AICE Home"
+          onClick={(e) => handleNavClick(e, "#home", "HOME")}
         >
           <Image
             src="/logos/aice_logo.png"
             alt="AICE Logo"
             width={36}
             height={36}
-            style={{ height: 'auto' }}
+            style={{ height: "auto" }}
             className={styles.logoMark}
           />
           <span className={styles.logoText}>AICE</span>
@@ -69,10 +101,7 @@ const Navbar = () => {
               id={link.id}
               href={link.href}
               className={`${styles.navLink} ${activeLink === link.label ? styles.active : ""}`}
-              onClick={() => {
-                setActiveLink(link.label);
-                setMobileOpen(false);
-              }}
+              onClick={(e) => handleNavClick(e, link.href, link.label)}
             >
               {link.label}
             </a>
@@ -84,6 +113,7 @@ const Navbar = () => {
           id="cta-join-now"
           className={styles.ctaBtn}
           aria-label="Join AICE now"
+          onClick={(e) => handleNavClick(e, "#join")}
         >
           JOIN NOW
           <svg
