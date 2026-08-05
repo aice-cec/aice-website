@@ -11,8 +11,8 @@ export default function RegisterPage() {
     email: "",
     phone: "",
     college: "College of Engineering Chengannur",
-    branch: "Computer Science & Engineering",
-    semester: "S4",
+    branch: "CS",
+    year: "1st Year",
     membershipTier: "Standard",
     duration: "1 Year",
   });
@@ -21,7 +21,7 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -88,7 +88,8 @@ export default function RegisterPage() {
               Complete your membership signup to unlock AICE access.
             </p>
             <div className={styles.feeBadge}>
-              REGISTRATION FEE: ₹100 INR
+              <span className={styles.feeLabel}>REGISTRATION FEE</span>
+              <span className={styles.feeAmount}>₹100 INR</span>
             </div>
           </div>
 
@@ -104,7 +105,7 @@ export default function RegisterPage() {
                 id="fullName"
                 name="fullName"
                 required
-                placeholder="e.g. Alex Mercer"
+                placeholder="e.g. Jeevan George"
                 value={formData.fullName}
                 onChange={handleChange}
                 className={styles.input}
@@ -120,7 +121,7 @@ export default function RegisterPage() {
                 id="email"
                 name="email"
                 required
-                placeholder="e.g. alex@ceconline.edu"
+                placeholder="e.g. chn77bt777@ceconline.edu"
                 value={formData.email}
                 onChange={handleChange}
                 className={styles.input}
@@ -170,33 +171,28 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   className={styles.select}
                 >
-                  <option value="Computer Science & Engineering">CSE</option>
-                  <option value="Electronics & Communication">ECE</option>
-                  <option value="Electrical & Electronics">EEE</option>
-                  <option value="Mechanical Engineering">ME</option>
-                  <option value="Other">Other</option>
+                  <option value="CS">CS</option>
+                  <option value="CL">CL</option>
+                  <option value="EC">EC</option>
+                  <option value="EEE">EEE</option>
                 </select>
               </div>
 
               <div className={styles.fieldGroup}>
-                <label htmlFor="semester" className={styles.label}>
-                  Semester *
+                <label htmlFor="year" className={styles.label}>
+                  Year *
                 </label>
                 <select
-                  id="semester"
-                  name="semester"
-                  value={formData.semester}
+                  id="year"
+                  name="year"
+                  value={formData.year}
                   onChange={handleChange}
                   className={styles.select}
                 >
-                  <option value="S1">S1</option>
-                  <option value="S2">S2</option>
-                  <option value="S3">S3</option>
-                  <option value="S4">S4</option>
-                  <option value="S5">S5</option>
-                  <option value="S6">S6</option>
-                  <option value="S7">S7</option>
-                  <option value="S8">S8</option>
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
                 </select>
               </div>
             </div>
