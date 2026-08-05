@@ -21,7 +21,24 @@ const bebasNeue = Bebas_Neue({
 export const metadata: Metadata = {
   title: "AICE",
   description:
-    "Something extraordinary is in the works. Stay tuned for the official launch of AICE.",
+    "Official AI community of College of Engineering Chengannur (CEC). A platform where curious minds meet, ideas evolve, and innovation becomes impact.",
+  keywords: [
+    "AICE",
+    "AICE CEC",
+    "AI Community",
+    "College of Engineering Chengannur",
+    "CEC Chengannur",
+    "Artificial Intelligence",
+    "Machine Learning",
+  ],
+  authors: [{ name: "AICE CEC Team" }],
+  openGraph: {
+    title: "AICE | AI Innovation Community for Excellence",
+    description:
+      "Official AI community of College of Engineering Chengannur. Join us to learn, build, and innovate.",
+    siteName: "AICE CEC",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
