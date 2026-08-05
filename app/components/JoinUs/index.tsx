@@ -1,5 +1,4 @@
 import styles from "./JoinUs.module.css";
-import { AiceLogo } from "./aice-logo";
 
 const reasons = [
   [

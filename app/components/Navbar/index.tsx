@@ -22,8 +22,9 @@ const Navbar = () => {
       setScrolled(currentY > 20);
 
       const sections = [
-        { id: "join", label: "EXECOM" },
+        { id: "execom", label: "EXECOM" },
         { id: "events", label: "EVENTS" },
+        { id: "join", label: "" },
         { id: "about", label: "ABOUT" },
         { id: "home", label: "HOME" },
       ];

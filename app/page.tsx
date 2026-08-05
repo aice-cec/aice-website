@@ -10,8 +10,8 @@ export default function Home() {
     <main className="min-h-screen bg-black text-white relative">
       <Navbar />
       <Hero />
-      <Events />
       <Join />
+      <Events />
       <Execom />
       <Footer />
     </main>
