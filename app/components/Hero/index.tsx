@@ -32,11 +32,11 @@ const Hero = () => {
 
         const scrolled = -rect.top;
 
-        const progress1 = Math.min(Math.max(scrolled / (viewportH * 0.5), 0), 1);
+        const progress1 = Math.min(Math.max(scrolled / (viewportH * 0.7), 0), 1);
         const eased1 = 1 - Math.pow(1 - progress1, 3);
 
         const progress2 = Math.min(
-          Math.max((scrolled - viewportH * 0.5) / (viewportH * 0.5), 0),
+          Math.max((scrolled - viewportH * 0.7) / (viewportH * 0.7), 0),
           1,
         );
         const eased2 = 1 - Math.pow(1 - progress2, 3);
@@ -61,7 +61,7 @@ const Hero = () => {
           const minSpacing = 0.06;
           const maxSpacing = isMobile ? 0.22 : 0.45;
           const spacing = minSpacing + eased1 * (maxSpacing - minSpacing);
-          const spread = spacing * 2;
+          const spread = spacing * 1.7;
 
           const a = title.querySelector(`.${styles.letterA}`) as HTMLElement;
           const i = title.querySelector(`.${styles.letterI}`) as HTMLElement;
@@ -76,9 +76,10 @@ const Hero = () => {
           }
 
           const titleY = eased1 * -30 + eased2 * -450;
-          const titleOpacity = Math.max(1 - eased2 * 3.5, 0);
+          const titleOpacity = Math.max(1 - eased2 * 1.5, 0);
 
           title.style.opacity = String(titleOpacity.toFixed(3));
+          title.style.filter = `blur(${(eased2 * 12).toFixed(1)}px)`;
           title.style.transform = `translate(-50%, calc(-50% + ${titleY.toFixed(1)}px))`;
           title.style.visibility = titleOpacity <= 0 ? "hidden" : "visible";
         }
@@ -94,7 +95,7 @@ const Hero = () => {
               aboutOpacity <= 0 ? "hidden" : "visible";
           } else {
             const aboutY = (1 - eased2) * 200;
-            const aboutOpacity = Math.min(Math.max((eased2 - 0.2) / 0.6, 0), 1);
+            const aboutOpacity = Math.min(Math.max((eased2 - 0.6) / 0.6, 0), 1);
 
             aboutPanel.style.opacity = String(aboutOpacity.toFixed(3));
             aboutPanel.style.transform = `translateY(${aboutY.toFixed(1)}px)`;
