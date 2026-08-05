@@ -61,7 +61,7 @@ const Hero = () => {
           const minSpacing = 0.06;
           const maxSpacing = isMobile ? 0.22 : 0.45;
           const spacing = minSpacing + eased1 * (maxSpacing - minSpacing);
-          const spread = spacing * 2;
+          const spread = spacing * 1.7;
 
           const a = title.querySelector(`.${styles.letterA}`) as HTMLElement;
           const i = title.querySelector(`.${styles.letterI}`) as HTMLElement;
@@ -76,9 +76,10 @@ const Hero = () => {
           }
 
           const titleY = eased1 * -30 + eased2 * -450;
-          const titleOpacity = Math.max(1 - eased2 * 8.5, 0);
+          const titleOpacity = Math.max(1 - eased2 * 1.5, 0);
 
           title.style.opacity = String(titleOpacity.toFixed(3));
+          title.style.filter = `blur(${(eased2 * 12).toFixed(1)}px)`;
           title.style.transform = `translate(-50%, calc(-50% + ${titleY.toFixed(1)}px))`;
           title.style.visibility = titleOpacity <= 0 ? "hidden" : "visible";
         }
