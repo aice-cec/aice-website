@@ -61,7 +61,7 @@ export function Join() {
                 Bring your questions, your half-finished projects, and the
                 appetite to make something meaningful.
               </p>
-              <a href="#contact" className={styles.ctaButton}>
+              <a href="/register" className={styles.ctaButton}>
                 START YOUR AICE JOURNEY <ArrowIcon />
               </a>
             </div>

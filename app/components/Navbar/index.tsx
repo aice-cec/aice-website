@@ -56,6 +56,10 @@ const Navbar = () => {
     href: string,
     label?: string,
   ) => {
+    if (!href.startsWith("#")) {
+      setMobileOpen(false);
+      return;
+    }
     e.preventDefault();
     if (label) setActiveLink(label);
     setMobileOpen(false);
@@ -80,21 +84,22 @@ const Navbar = () => {
           aria-label="AICE Home"
           onClick={(e) => handleNavClick(e, "#home", "HOME")}
         >
-          <Image
-            src="/logos/aice_logo.png"
-            alt="AICE Logo"
-            width={36}
-            height={36}
-            style={{ height: "auto" }}
-            className={styles.logoMark}
-          />
+          <span className={styles.logoMark}>
+            <Image
+              src="/logos/aice_logo.png"
+              alt="AICE Logo"
+              width={36}
+              height={36}
+              priority
+            />
+          </span>
           <span className={styles.logoText}>AICE</span>
         </a>
 
         <nav
           className={`${styles.navPill} ${mobileOpen ? styles.navPillOpen : ""}`}
           role="navigation"
-          aria-label="Main navigation"
+          aria-label="Main Navigation"
         >
           {navLinks.map((link) => (
             <a
@@ -110,11 +115,11 @@ const Navbar = () => {
         </nav>
 
         <a
-          href="#join"
+          href="/register"
           id="cta-join-now"
           className={styles.ctaBtn}
           aria-label="Join AICE now"
-          onClick={(e) => handleNavClick(e, "#join")}
+          onClick={(e) => handleNavClick(e, "/register")}
         >
           JOIN NOW
           <svg
