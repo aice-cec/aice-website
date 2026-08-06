@@ -214,7 +214,9 @@ export function Execom() {
                   <button
                     type="button"
                     className={styles.navArrowBtn}
-                    onClick={() => scrollContainer(execomCarouselRef, "left", true)}
+                    onClick={() =>
+                      scrollContainer(execomCarouselRef, "left", true)
+                    }
                     aria-label="Previous Execom members"
                   >
                     <ArrowLeftIcon />
@@ -222,7 +224,9 @@ export function Execom() {
                   <button
                     type="button"
                     className={styles.navArrowBtn}
-                    onClick={() => scrollContainer(execomCarouselRef, "right", true)}
+                    onClick={() =>
+                      scrollContainer(execomCarouselRef, "right", true)
+                    }
                     aria-label="Next Execom members"
                   >
                     <ArrowRightIcon />

@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import styles from "./Event.module.css";
 import eventsData from "@/data/events.json";
 
@@ -15,6 +18,9 @@ export interface EventItem {
   stat?: string;
   featured?: boolean;
   isPast?: boolean;
+  bgImage?: string;
+  registrationLink?: string;
+  registrationDeadline?: string;
 }
 
 function ArrowIcon() {
@@ -53,13 +59,28 @@ function CalendarIcon() {
 }
 
 export function Events() {
-  const events = eventsData as EventItem[];
+  const [eventsList, setEventsList] = useState<EventItem[]>(
+    eventsData as EventItem[],
+  );
 
-  const upcomingEvents = events
+  useEffect(() => {
+    fetch("/api/events")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setEventsList(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const upcomingEvents = eventsList
     .filter((e) => !e.isPast)
     .sort(
       (a, b) => new Date(a.dateISO).getTime() - new Date(b.dateISO).getTime(),
     );
+
+  const now = new Date();
 
   return (
     <section id="events" className={styles.section}>
@@ -85,63 +106,92 @@ export function Events() {
         </div>
 
         <div className={styles.upcomingGrid}>
-          {upcomingEvents.map((event) => (
-            <article
-              key={event.id || event.title}
-              className={`${styles.upcomingCard} ${
-                event.featured ? styles.featuredCard : styles.standardCard
-              }`}
-            >
-              {event.featured && (
-                <>
-                  <div className={styles.featuredCircle} />
-                  <div className={styles.featuredNumber}>01</div>
-                </>
-              )}
-              <div className={styles.cardMain}>
-                <div className={styles.cardHeader}>
-                  <div className={styles.dateBadge}>
-                    <span className={styles.dateNum}>{event.date}</span>
-                    <span className={styles.dateMonth}>{event.month}</span>
+          {upcomingEvents.map((event) => {
+            const hasDeadline = Boolean(event.registrationDeadline);
+            const isExpired =
+              hasDeadline &&
+              new Date(event.registrationDeadline!).getTime() < now.getTime();
+            const hasRegLink = Boolean(event.registrationLink);
+
+            return (
+              <article
+                key={event.id || event.title}
+                className={`${styles.upcomingCard} ${
+                  event.featured ? styles.featuredCard : styles.standardCard
+                }`}
+              >
+                {event.bgImage && (
+                  <div
+                    className={styles.cardBgOverlay}
+                    style={{ backgroundImage: `url(${event.bgImage})` }}
+                  />
+                )}
+                {event.featured && (
+                  <>
+                    <div className={styles.featuredCircle} />
+                    <div className={styles.featuredNumber}>01</div>
+                  </>
+                )}
+                <div className={styles.cardMain}>
+                  <div className={styles.cardHeader}>
+                    <div className={styles.dateBadge}>
+                      <span className={styles.dateNum}>{event.date}</span>
+                      <span className={styles.dateMonth}>{event.month}</span>
+                    </div>
+                    {event.featured && (
+                      <span className={styles.featuredBadge}>FEATURED</span>
+                    )}
                   </div>
-                  {event.featured && (
-                    <span className={styles.featuredBadge}>FEATURED</span>
+                  <div className={styles.cardBody}>
+                    <p className={styles.cardType}>
+                      {(event.type || event.label || "").toUpperCase()}
+                    </p>
+                    <h4
+                      className={
+                        event.featured
+                          ? styles.cardTitleFeatured
+                          : styles.cardTitleStandard
+                      }
+                    >
+                      {event.title}
+                    </h4>
+                    <p className={styles.cardDesc}>{event.description}</p>
+                  </div>
+                </div>
+
+                <div className={styles.cardMeta}>
+                  <span className={styles.timeSpan}>
+                    <CalendarIcon /> {event.time}
+                  </span>
+                  {event.place && (
+                    <span className={styles.placeSpan}>{event.place}</span>
+                  )}
+                  {hasRegLink ? (
+                    isExpired ? (
+                      <span className={styles.regClosedBtn}>CLOSED</span>
+                    ) : (
+                      <a
+                        href={event.registrationLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.regBtn}
+                      >
+                        REGISTER <ArrowIcon />
+                      </a>
+                    )
+                  ) : (
+                    <button
+                      type="button"
+                      className={styles.iconBtn}
+                      aria-label={`Learn more about ${event.title}`}
+                    >
+                      <ArrowIcon />
+                    </button>
                   )}
                 </div>
-                <div className={styles.cardBody}>
-                  <p className={styles.cardType}>
-                    {(event.type || event.label || "").toUpperCase()}
-                  </p>
-                  <h4
-                    className={
-                      event.featured
-                        ? styles.cardTitleFeatured
-                        : styles.cardTitleStandard
-                    }
-                  >
-                    {event.title}
-                  </h4>
-                  <p className={styles.cardDesc}>{event.description}</p>
-                </div>
-              </div>
-
-              <div className={styles.cardMeta}>
-                <span className={styles.timeSpan}>
-                  <CalendarIcon /> {event.time}
-                </span>
-                {event.place && (
-                  <span className={styles.placeSpan}>{event.place}</span>
-                )}
-                <button
-                  type="button"
-                  className={styles.iconBtn}
-                  aria-label={`Learn more about ${event.title}`}
-                >
-                  <ArrowIcon />
-                </button>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>

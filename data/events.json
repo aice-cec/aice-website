@@ -11,7 +11,10 @@
     "place": "Innovation Lab, CEC",
     "description": "An open build session for turning ambitious AI ideas into working prototypes.",
     "featured": true,
-    "isPast": false
+    "isPast": false,
+    "bgImage": "",
+    "registrationLink": "https://forms.gle/example",
+    "registrationDeadline": "2026-09-06T17:00"
   },
   {
     "id": "promptcraft-2026",
@@ -25,7 +28,10 @@
     "place": "Seminar Hall",
     "description": "Learn practical prompting patterns for research, design, and development.",
     "featured": false,
-    "isPast": false
+    "isPast": false,
+    "bgImage": "",
+    "registrationLink": "",
+    "registrationDeadline": ""
   },
   {
     "id": "ai-research-circle-2026",
@@ -39,7 +45,10 @@
     "place": "Library Discussion Room",
     "description": "A guided discussion on new papers, experiments, and emerging AI ideas.",
     "featured": false,
-    "isPast": false
+    "isPast": false,
+    "bgImage": "",
+    "registrationLink": "",
+    "registrationDeadline": ""
   },
   {
     "id": "neural-networks-101-2026",
