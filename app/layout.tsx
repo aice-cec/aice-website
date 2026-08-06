@@ -26,9 +26,7 @@ export const metadata: Metadata = {
     capable: true,
     title: "AICE",
     statusBarStyle: "black-translucent",
-};
-export const metadata: Metadata = {
-icons: {
+  icons: {
     icon: [
       { url: "/favicon.ico", type: "image/x-icon" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
@@ -39,6 +37,7 @@ icons: {
       { url: "/apple-touch-icon-180x180.png", sizes: "180x180", type: "image/png" },
     ],
   }
+ }
 },
 
 export default function RootLayout({
