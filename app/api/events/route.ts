@@ -68,6 +68,29 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
     }
 
+    const validIds = new Set(rawEvents.map((e: any) => e.id).filter(Boolean));
+    const { data: existingDbEvents } = await supabase
+      .from("events")
+      .select("id");
+    if (existingDbEvents && existingDbEvents.length > 0) {
+      const idsToDelete = existingDbEvents
+        .map((e: any) => e.id)
+        .filter((id: string) => !validIds.has(id));
+
+      if (idsToDelete.length > 0) {
+        const { error: delErr } = await supabase
+          .from("events")
+          .delete()
+          .in("id", idsToDelete);
+        if (delErr) {
+          console.warn(
+            "Failed to delete removed events from Supabase:",
+            delErr,
+          );
+        }
+      }
+    }
+
     const formattedEvents = rawEvents.map((e: any) => ({
       id: e.id,
       dateISO: e.dateISO || e.dateiso || "",
