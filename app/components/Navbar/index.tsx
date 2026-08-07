@@ -5,10 +5,10 @@ import Image from "next/image";
 import styles from "./Navbar.module.css";
 
 const navLinks = [
-  { label: "HOME", href: "#home", id: "nav-home" },
-  { label: "ABOUT", href: "#about", id: "nav-about" },
-  { label: "EVENTS", href: "#events", id: "nav-events" },
-  { label: "EXECOM", href: "#execom", id: "nav-execom" },
+  { label: "HOME", href: "/#home", id: "nav-home" },
+  { label: "ABOUT", href: "/#about", id: "nav-about" },
+  { label: "EVENTS", href: "/#events", id: "nav-events" },
+  { label: "EXECOM", href: "/#execom", id: "nav-execom" },
 ];
 
 const Navbar = () => {
@@ -56,18 +56,16 @@ const Navbar = () => {
     href: string,
     label?: string,
   ) => {
-    if (!href.startsWith("#")) {
-      setMobileOpen(false);
-      return;
-    }
-    e.preventDefault();
-    if (label) setActiveLink(label);
     setMobileOpen(false);
 
-    const targetId = href.replace("#", "");
-    const targetElement = document.getElementById(targetId);
-    if (targetElement) {
-      targetElement.scrollIntoView({ behavior: "smooth" });
+    if (href.startsWith("#") || href.startsWith("/#")) {
+      const targetId = href.replace(/^\/#?/, "").replace("#", "");
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        e.preventDefault();
+        if (label) setActiveLink(label);
+        targetElement.scrollIntoView({ behavior: "smooth" });
+      }
     }
   };
 
