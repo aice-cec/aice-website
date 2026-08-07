@@ -5,7 +5,6 @@ import formsFallback from "@/data/forms.json";
 import fs from "fs";
 import path from "path";
 
-// Local file fallback helper
 const formsFilePath = path.join(process.cwd(), "data", "forms.json");
 
 function getLocalForms(): any[] {
@@ -70,7 +69,6 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Form not found" }, { status: 404 });
     }
 
-    // List all forms
     const { data, error } = await supabase
       .from("forms")
       .select("*")
@@ -101,7 +99,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
     }
 
-    // Format & validate form objects
     const formattedForms = rawForms.map((f: any) => ({
       id:
         f.id || `form-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
@@ -117,11 +114,11 @@ export async function POST(req: Request) {
       is_active: f.is_active !== undefined ? Boolean(f.is_active) : true,
     }));
 
-    // Always update local data/forms.json fallback file
     saveLocalForms(formattedForms);
 
-    // Delete removed forms from Supabase
-    const validIds = new Set(formattedForms.map((f: any) => f.id).filter(Boolean));
+    const validIds = new Set(
+      formattedForms.map((f: any) => f.id).filter(Boolean),
+    );
     const { data: existingDbForms } = await supabase.from("forms").select("id");
     if (existingDbForms && existingDbForms.length > 0) {
       const idsToDelete = existingDbForms
@@ -129,6 +126,17 @@ export async function POST(req: Request) {
         .filter((id: string) => !validIds.has(id));
 
       if (idsToDelete.length > 0) {
+        const { error: subDelErr } = await supabase
+          .from("form_submissions")
+          .delete()
+          .in("form_id", idsToDelete);
+        if (subDelErr) {
+          console.warn(
+            "Failed to delete associated form submissions from Supabase:",
+            subDelErr,
+          );
+        }
+
         const { error: delErr } = await supabase
           .from("forms")
           .delete()
@@ -139,11 +147,20 @@ export async function POST(req: Request) {
       }
     }
 
-    // Save to Supabase with smart fallback for optional/missing columns
-    const preparePayload = (useLowercase = false, omitEventId = false, omitWhatsapp = false) => {
+    if (formattedForms.length === 0) {
+      return NextResponse.json({ success: true, forms: [] });
+    }
+
+    const preparePayload = (
+      useLowercase = false,
+      omitEventId = false,
+      omitWhatsapp = false,
+    ) => {
       return rawForms.map((f: any) => {
         const item: any = {
-          id: f.id || `form-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+          id:
+            f.id ||
+            `form-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
           slug: (f.slug || f.title || "form")
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, "-")
@@ -154,13 +171,19 @@ export async function POST(req: Request) {
         };
 
         if (useLowercase) {
-          item.isactive = f.is_active !== undefined ? Boolean(f.is_active) : true;
-          if (!omitEventId && (f.event_id || f.eventId)) item.eventid = f.event_id || f.eventId;
-          if (!omitWhatsapp && (f.whatsapp_link || f.whatsappLink)) item.whatsapplink = f.whatsapp_link || f.whatsappLink;
+          item.isactive =
+            f.is_active !== undefined ? Boolean(f.is_active) : true;
+          if (!omitEventId && (f.event_id || f.eventId))
+            item.eventid = f.event_id || f.eventId;
+          if (!omitWhatsapp && (f.whatsapp_link || f.whatsappLink))
+            item.whatsapplink = f.whatsapp_link || f.whatsappLink;
         } else {
-          item.is_active = f.is_active !== undefined ? Boolean(f.is_active) : true;
-          if (!omitEventId && (f.event_id || f.eventId)) item.event_id = f.event_id || f.eventId;
-          if (!omitWhatsapp && (f.whatsapp_link || f.whatsappLink)) item.whatsapp_link = f.whatsapp_link || f.whatsappLink;
+          item.is_active =
+            f.is_active !== undefined ? Boolean(f.is_active) : true;
+          if (!omitEventId && (f.event_id || f.eventId))
+            item.event_id = f.event_id || f.eventId;
+          if (!omitWhatsapp && (f.whatsapp_link || f.whatsappLink))
+            item.whatsapp_link = f.whatsapp_link || f.whatsappLink;
         }
 
         return item;
@@ -173,38 +196,72 @@ export async function POST(req: Request) {
       .upsert(payload, { onConflict: "id" })
       .select();
 
-    // Fallback 1: Try stripping event_id if event_id column is missing in Supabase
-    if (error && (error.code === "PGRST204" || error.message.includes("column")) && error.message.includes("event")) {
-      console.warn("Retrying Supabase forms upsert without event_id column...", error.message);
+    if (
+      error &&
+      (error.code === "PGRST204" || error.message.includes("column")) &&
+      error.message.includes("event")
+    ) {
+      console.warn(
+        "Retrying Supabase forms upsert without event_id column...",
+        error.message,
+      );
       payload = preparePayload(false, true, false);
-      const retry = await supabase.from("forms").upsert(payload, { onConflict: "id" }).select();
+      const retry = await supabase
+        .from("forms")
+        .upsert(payload, { onConflict: "id" })
+        .select();
       data = retry.data;
       error = retry.error;
     }
 
-    // Fallback 2: Try stripping whatsapp_link if whatsapp_link column is missing
-    if (error && (error.code === "PGRST204" || error.message.includes("column")) && error.message.includes("whatsapp")) {
-      console.warn("Retrying Supabase forms upsert without whatsapp_link column...", error.message);
+    if (
+      error &&
+      (error.code === "PGRST204" || error.message.includes("column")) &&
+      error.message.includes("whatsapp")
+    ) {
+      console.warn(
+        "Retrying Supabase forms upsert without whatsapp_link column...",
+        error.message,
+      );
       payload = preparePayload(false, true, true);
-      const retry = await supabase.from("forms").upsert(payload, { onConflict: "id" }).select();
+      const retry = await supabase
+        .from("forms")
+        .upsert(payload, { onConflict: "id" })
+        .select();
       data = retry.data;
       error = retry.error;
     }
 
-    // Fallback 3: Try lowercased column names
-    if (error && (error.code === "PGRST204" || error.message.includes("column") || error.code === "42703")) {
-      console.warn("Retrying Supabase forms upsert with lowercased column names...", error.message);
+    if (
+      error &&
+      (error.code === "PGRST204" ||
+        error.message.includes("column") ||
+        error.code === "42703")
+    ) {
+      console.warn(
+        "Retrying Supabase forms upsert with lowercased column names...",
+        error.message,
+      );
       payload = preparePayload(true, false, false);
-      let retry = await supabase.from("forms").upsert(payload, { onConflict: "id" }).select();
+      let retry = await supabase
+        .from("forms")
+        .upsert(payload, { onConflict: "id" })
+        .select();
 
       if (retry.error && retry.error.message.includes("event")) {
         payload = preparePayload(true, true, false);
-        retry = await supabase.from("forms").upsert(payload, { onConflict: "id" }).select();
+        retry = await supabase
+          .from("forms")
+          .upsert(payload, { onConflict: "id" })
+          .select();
       }
 
       if (retry.error && retry.error.message.includes("whatsapp")) {
         payload = preparePayload(true, true, true);
-        retry = await supabase.from("forms").upsert(payload, { onConflict: "id" }).select();
+        retry = await supabase
+          .from("forms")
+          .upsert(payload, { onConflict: "id" })
+          .select();
       }
 
       data = retry.data;
