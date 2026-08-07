@@ -1,0 +1,316 @@
+.container {
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #070709;
+  color: #f4f4f5;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.gridBackground {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(circle at center, black 40%, transparent 85%);
+  pointer-events: none;
+}
+
+.glowAmbientRed {
+  position: absolute;
+  top: 25%;
+  left: 15%;
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 32, 32, 0.18) 0%,
+    transparent 70%
+  );
+  filter: blur(120px);
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.glowAmbientCyan {
+  position: absolute;
+  bottom: 15%;
+  right: 10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(
+    circle,
+    rgba(0, 210, 255, 0.12) 0%,
+    transparent 70%
+  );
+  filter: blur(120px);
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.headerBar {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0.75rem 1.5rem;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (min-width: 868px) {
+  .headerBar {
+    justify-content: space-between;
+  }
+}
+
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.logoRow:hover {
+  opacity: 0.85;
+}
+
+.logoText {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.08em;
+  font-family: var(--font-bebas-neue), sans-serif;
+}
+
+.headerBadge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #a1a1aa;
+  padding: 0.4rem 0.9rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  backdrop-filter: blur(8px);
+}
+
+.contentWrapper {
+  position: relative;
+  z-index: 10;
+  max-width: 1200px;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  margin: 0 auto;
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  overflow: hidden;
+}
+
+@media (min-width: 868px) {
+  .contentWrapper {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.5rem 2rem;
+    gap: 3rem;
+  }
+}
+
+.textContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  max-width: 540px;
+}
+
+@media (min-width: 868px) {
+  .textContent {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+.errorCode {
+  font-size: 5.5rem;
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 40%, #ff2020 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  font-family: var(--font-bebas-neue), var(--font-sans), sans-serif;
+  filter: drop-shadow(0 4px 20px rgba(255, 32, 32, 0.15));
+}
+
+@media (min-width: 868px) {
+  .errorCode {
+    font-size: 7.5rem;
+  }
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+@media (min-width: 868px) {
+  .title {
+    font-size: 2.25rem;
+  }
+}
+
+.description {
+  font-size: 0.9rem;
+  color: #a1a1aa;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 868px) {
+  .actionRow {
+    justify-content: flex-start;
+  }
+}
+
+.primaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.75rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: linear-gradient(135deg, #ff2020 0%, #cc0000 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 24px rgba(255, 32, 32, 0.4);
+}
+
+.primaryBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(255, 32, 32, 0.6);
+  background: linear-gradient(135deg, #ff3333 0%, #dd0000 100%);
+}
+
+.robotWrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+}
+
+.robotCard {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 680px;
+  max-height: 72vh;
+  aspect-ratio: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.robotAura {
+  position: absolute;
+  inset: 5%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 32, 32, 0.3) 0%,
+    rgba(255, 0, 0, 0.08) 55%,
+    transparent 75%
+  );
+  filter: blur(50px);
+  border-radius: 50%;
+  animation: auraPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes auraPulse {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.65;
+  }
+  100% {
+    transform: scale(1.12);
+    opacity: 0.95;
+  }
+}
+
+.robotImgContainer {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+.robotImg {
+  object-fit: contain;
+  filter: drop-shadow(0 25px 35px rgba(0, 0, 0, 0.8))
+    drop-shadow(0 0 30px rgba(255, 32, 32, 0.25));
+}
+
+.footerBar {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0.75rem 1.5rem;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.footerText {
+  font-size: 0.8rem;
+  color: #71717a;
+  margin: 0;
+}
