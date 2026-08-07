@@ -105,8 +105,6 @@ export async function POST(req: Request) {
       stat: e.stat || "",
       featured: Boolean(e.featured),
       isPast: Boolean(e.isPast),
-      bgImage: e.bgImage || e.bgimage || "",
-      bgimage: e.bgImage || e.bgimage || "",
       registrationLink: e.registrationLink || e.registrationlink || "",
       registrationlink: e.registrationLink || e.registrationlink || "",
       registrationDeadline:
@@ -139,7 +137,6 @@ export async function POST(req: Request) {
         stat: e.stat || "",
         featured: Boolean(e.featured),
         ispast: Boolean(e.isPast || e.ispast),
-        bgimage: e.bgImage || e.bgimage || "",
         registrationlink: e.registrationLink || e.registrationlink || "",
         registrationdeadline:
           e.registrationDeadline || e.registrationdeadline || "",
