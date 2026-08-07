@@ -14,7 +14,7 @@ function StatusContent() {
     <div className={styles.card} style={{ textAlign: "center" }}>
       <div className={styles.logoRow}>
         <Image
-          src="/logos/aice_logo.png"
+          src="/logos/aice_logo.webp"
           alt="AICE Logo"
           width={36}
           height={36}

@@ -78,7 +78,7 @@ export default function RegisterPage() {
           <div className={styles.header}>
             <div className={styles.logoRow}>
               <Image
-                src="/logos/aice_logo.png"
+                src="/logos/aice_logo.webp"
                 alt="AICE Logo"
                 width={32}
                 height={32}

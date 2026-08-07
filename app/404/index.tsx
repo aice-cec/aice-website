@@ -14,7 +14,7 @@ export default function NotFound() {
       <header className={styles.headerBar}>
         <Link href="/" className={styles.logoRow} aria-label="AICE Home">
           <Image
-            src="/logos/aice_logo.png"
+            src="/logos/aice_logo.webp"
             alt="AICE Logo"
             width={32}
             height={32}
@@ -58,13 +58,13 @@ export default function NotFound() {
           </div>
         </div>
 
-        {/* Robot Mascot section using public/robot/robot-404.png */}
+        {/* Robot Mascot section using public/robot/robot-404.webp */}
         <div className={styles.robotWrapper}>
           <div className={styles.robotCard}>
             <div className={styles.robotAura} aria-hidden="true" />
             <div className={styles.robotImgContainer}>
               <Image
-                src="/robot/robot-404.png"
+                src="/robot/robot-404.webp"
                 alt="AICE Robot 404 Mascot"
                 fill
                 sizes="(max-width: 868px) 100vw, 680px"

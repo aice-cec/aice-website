@@ -745,7 +745,7 @@ export default function AdminPortalPage() {
             <div className="flex items-center gap-3 mb-6">
               <div className="relative w-10 h-10">
                 <Image
-                  src="/logos/aice_logo.png"
+                  src="/logos/aice_logo.webp"
                   alt="AICE logo"
                   fill
                   className="object-contain"
@@ -824,7 +824,7 @@ export default function AdminPortalPage() {
           <div className="flex items-center gap-3">
             <div className="relative w-8 h-8 md:w-9 md:h-9 flex-shrink-0">
               <Image
-                src="/logos/aice_logo.png"
+                src="/logos/aice_logo.webp"
                 alt="AICE logo"
                 fill
                 className="object-contain"

@@ -59,19 +59,19 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/logos/favicon.ico", type: "image/x-icon" },
-      { url: "/logos/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/logos/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/logos/favicon-48x48.png", sizes: "48x48", type: "image/png" },
+      { url: "/logos/favicon-16x16.webp", sizes: "16x16", type: "image/png" },
+      { url: "/logos/favicon-32x32.webp", sizes: "32x32", type: "image/png" },
+      { url: "/logos/favicon-48x48.webp", sizes: "48x48", type: "image/png" },
     ],
     shortcut: "/logos/favicon.ico",
     apple: [
       {
-        url: "/logos/apple-touch-icon-180x180.png",
+        url: "/logos/apple-touch-icon-180x180.webp",
         sizes: "180x180",
         type: "image/png",
       },
       {
-        url: "/logos/apple-touch-icon.png",
+        url: "/logos/apple-touch-icon.webp",
         sizes: "180x180",
         type: "image/png",
       },

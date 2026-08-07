@@ -75,7 +75,7 @@ export function Footer() {
 
       <div className={styles.robotContainer} aria-hidden="true">
         <img
-          src="/robot/robot.png"
+          src="/robot/robot.webp"
           alt="AICE Robot Mascot"
           className={styles.robotImg}
         />
@@ -87,7 +87,7 @@ export function Footer() {
           <div className={styles.brandCol}>
             <a href="#home" className={styles.logoRow} aria-label="AICE Home">
               <Image
-                src="/logos/aice_logo.png"
+                src="/logos/aice_logo.webp"
                 alt="AICE Logo"
                 width={28}
                 height={28}

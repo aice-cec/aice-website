@@ -86,7 +86,7 @@ const Navbar = () => {
         >
           <span className={styles.logoMark}>
             <Image
-              src="/logos/aice_logo.png"
+              src="/logos/aice_logo.webp"
               alt="AICE Logo"
               width={36}
               height={36}
