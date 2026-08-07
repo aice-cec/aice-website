@@ -1577,7 +1577,7 @@ export default function AdminPortalPage() {
                   <div
                     key={item.id}
                     onClick={() => selectCustomForm(item)}
-                    className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                    className={`p-3 rounded-lg border cursor-pointer transition-all min-w-0 overflow-hidden ${
                       item.id === selectedFormId
                         ? "border-red-500 bg-red-500/10"
                         : "border-white/10 bg-white/[0.02] hover:bg-white/5"
@@ -1586,10 +1586,10 @@ export default function AdminPortalPage() {
                     <div className="text-sm font-bold text-white truncate mb-1">
                       {item.title || "Untitled Form"}
                     </div>
-                    <div className="flex items-center justify-between text-xs text-gray-400">
-                      <span className="font-mono text-[11px]">/{item.slug}</span>
+                    <div className="flex items-center justify-between text-xs text-gray-400 min-w-0 gap-2">
+                      <span className="font-mono text-[11px] truncate max-w-[70%]">/{item.slug}</span>
                       <span
-                        className={`px-1.5 py-0.5 text-[9px] font-extrabold uppercase rounded ${
+                        className={`px-1.5 py-0.5 text-[9px] font-extrabold uppercase rounded shrink-0 ${
                           item.is_active
                             ? "bg-emerald-500/20 text-emerald-400"
                             : "bg-red-500/20 text-red-400"
@@ -1608,14 +1608,14 @@ export default function AdminPortalPage() {
           <section className="flex flex-col gap-6">
             {/* Form Builder Configuration Card */}
             <div className="p-5 md:p-6 bg-[#121217] border border-white/10 rounded-xl space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-white/10 gap-3">
-                <div>
-                  <h3 className="text-base font-bold text-white truncate">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-white/10 gap-3 min-w-0">
+                <div className="min-w-0 max-w-full">
+                  <h3 className="text-base font-bold text-white truncate break-words max-w-full">
                     Form Builder: {customFormBuilder.title}
                   </h3>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-gray-400 truncate max-w-full">
                     Registration Link:{" "}
-                    <code className="text-red-400 font-mono">
+                    <code className="text-red-400 font-mono break-all">
                       aice.ceconline.edu/{customFormBuilder.slug || "slug"}
                     </code>
                   </p>
@@ -1662,8 +1662,8 @@ export default function AdminPortalPage() {
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-gray-400">Form URL Slug *</label>
-                  <div className="flex items-center">
-                    <span className="px-3 py-2.5 bg-black/60 border border-r-0 border-white/10 rounded-l-lg text-xs text-gray-400 font-mono select-none">
+                  <div className="flex items-center min-w-0">
+                    <span className="px-3 py-2.5 bg-black/60 border border-r-0 border-white/10 rounded-l-lg text-xs text-gray-400 font-mono select-none flex-shrink-0">
                       /
                     </span>
                     <input
@@ -1671,7 +1671,8 @@ export default function AdminPortalPage() {
                       value={customFormBuilder.slug}
                       onChange={(e) => handleCustomFormInputChange("slug", e.target.value)}
                       placeholder="e.g. aice-build-night"
-                      className="w-full px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-r-lg text-sm text-white font-mono focus:outline-none focus:border-red-500"
+                      maxLength={120}
+                      className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-r-lg text-sm text-white font-mono focus:outline-none focus:border-red-500"
                     />
                   </div>
                 </div>

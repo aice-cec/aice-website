@@ -381,14 +381,14 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
       </header>
 
       {/* Main Neo-Brutalist Dark Paper Form Container */}
-      <main className="w-full max-w-3xl mx-auto bg-[#121217] border-2 border-white/15 shadow-[8px_8px_0px_#000000] p-6 sm:p-10 z-10">
+      <main className="w-full max-w-3xl mx-auto bg-[#121217] border-2 border-white/15 shadow-[8px_8px_0px_#000000] p-6 sm:p-10 z-10 min-w-0 overflow-hidden">
         {/* Form Title & Subtitle */}
-        <div className="border-b-2 border-white/15 pb-6 mb-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-white leading-none mb-3">
+        <div className="border-b-2 border-white/15 pb-6 mb-8 min-w-0">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-white leading-tight mb-3 break-words overflow-wrap-anywhere">
             {form.title}
           </h1>
           {form.description && (
-            <p className="text-xs sm:text-sm text-gray-300 font-medium leading-relaxed">
+            <p className="text-xs sm:text-sm text-gray-300 font-medium leading-relaxed break-words">
               {form.description}
             </p>
           )}
