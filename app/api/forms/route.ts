@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
-import { verifyToken } from "../admin/login/route";
+import { verifyToken } from "@/lib/admin-auth";
 import formsFallback from "@/data/forms.json";
 import fs from "fs";
 import path from "path";
@@ -46,7 +46,7 @@ export async function GET(req: Request) {
       }
 
       const fallbackForm = localForms.find(
-        (f) => f.slug === slug || f.id === slug
+        (f) => f.slug === slug || f.id === slug,
       );
       if (fallbackForm) return NextResponse.json(fallbackForm);
 
@@ -92,7 +92,7 @@ export async function POST(req: Request) {
     if (!verifyToken(token)) {
       return NextResponse.json(
         { error: "Unauthorized or Session Expired" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -103,7 +103,8 @@ export async function POST(req: Request) {
 
     // Format & validate form objects
     const formattedForms = rawForms.map((f: any) => ({
-      id: f.id || `form-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      id:
+        f.id || `form-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       slug: (f.slug || f.title || "form")
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
@@ -119,21 +120,114 @@ export async function POST(req: Request) {
     // Always update local data/forms.json fallback file
     saveLocalForms(formattedForms);
 
-    // Save to Supabase
-    const { data, error } = await supabase
-      .from("forms")
-      .upsert(formattedForms, { onConflict: "id" })
-      .select();
+    // Delete removed forms from Supabase
+    const validIds = new Set(formattedForms.map((f: any) => f.id).filter(Boolean));
+    const { data: existingDbForms } = await supabase.from("forms").select("id");
+    if (existingDbForms && existingDbForms.length > 0) {
+      const idsToDelete = existingDbForms
+        .map((f: any) => f.id)
+        .filter((id: string) => !validIds.has(id));
 
-    if (error) {
-      console.warn("Supabase forms upsert warning (saved to local data/forms.json):", error);
+      if (idsToDelete.length > 0) {
+        const { error: delErr } = await supabase
+          .from("forms")
+          .delete()
+          .in("id", idsToDelete);
+        if (delErr) {
+          console.warn("Failed to delete removed forms from Supabase:", delErr);
+        }
+      }
     }
 
-    return NextResponse.json({ success: true, forms: formattedForms });
+    // Save to Supabase with smart fallback for optional/missing columns
+    const preparePayload = (useLowercase = false, omitEventId = false, omitWhatsapp = false) => {
+      return rawForms.map((f: any) => {
+        const item: any = {
+          id: f.id || `form-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+          slug: (f.slug || f.title || "form")
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)+/g, ""),
+          title: f.title || "Untitled Form",
+          description: f.description || "",
+          fields: Array.isArray(f.fields) ? f.fields : [],
+        };
+
+        if (useLowercase) {
+          item.isactive = f.is_active !== undefined ? Boolean(f.is_active) : true;
+          if (!omitEventId && (f.event_id || f.eventId)) item.eventid = f.event_id || f.eventId;
+          if (!omitWhatsapp && (f.whatsapp_link || f.whatsappLink)) item.whatsapplink = f.whatsapp_link || f.whatsappLink;
+        } else {
+          item.is_active = f.is_active !== undefined ? Boolean(f.is_active) : true;
+          if (!omitEventId && (f.event_id || f.eventId)) item.event_id = f.event_id || f.eventId;
+          if (!omitWhatsapp && (f.whatsapp_link || f.whatsappLink)) item.whatsapp_link = f.whatsapp_link || f.whatsappLink;
+        }
+
+        return item;
+      });
+    };
+
+    let payload = preparePayload(false, false, false);
+    let { data, error } = await supabase
+      .from("forms")
+      .upsert(payload, { onConflict: "id" })
+      .select();
+
+    // Fallback 1: Try stripping event_id if event_id column is missing in Supabase
+    if (error && (error.code === "PGRST204" || error.message.includes("column")) && error.message.includes("event")) {
+      console.warn("Retrying Supabase forms upsert without event_id column...", error.message);
+      payload = preparePayload(false, true, false);
+      const retry = await supabase.from("forms").upsert(payload, { onConflict: "id" }).select();
+      data = retry.data;
+      error = retry.error;
+    }
+
+    // Fallback 2: Try stripping whatsapp_link if whatsapp_link column is missing
+    if (error && (error.code === "PGRST204" || error.message.includes("column")) && error.message.includes("whatsapp")) {
+      console.warn("Retrying Supabase forms upsert without whatsapp_link column...", error.message);
+      payload = preparePayload(false, true, true);
+      const retry = await supabase.from("forms").upsert(payload, { onConflict: "id" }).select();
+      data = retry.data;
+      error = retry.error;
+    }
+
+    // Fallback 3: Try lowercased column names
+    if (error && (error.code === "PGRST204" || error.message.includes("column") || error.code === "42703")) {
+      console.warn("Retrying Supabase forms upsert with lowercased column names...", error.message);
+      payload = preparePayload(true, false, false);
+      let retry = await supabase.from("forms").upsert(payload, { onConflict: "id" }).select();
+
+      if (retry.error && retry.error.message.includes("event")) {
+        payload = preparePayload(true, true, false);
+        retry = await supabase.from("forms").upsert(payload, { onConflict: "id" }).select();
+      }
+
+      if (retry.error && retry.error.message.includes("whatsapp")) {
+        payload = preparePayload(true, true, true);
+        retry = await supabase.from("forms").upsert(payload, { onConflict: "id" }).select();
+      }
+
+      data = retry.data;
+      error = retry.error;
+    }
+
+    if (error) {
+      console.error("Supabase forms upsert error:", error);
+      return NextResponse.json(
+        {
+          error: `Supabase Sync Error: ${error.message} (${error.code || "unknown"})`,
+          details: error,
+          forms: payload,
+        },
+        { status: 500 },
+      );
+    }
+
+    return NextResponse.json({ success: true, forms: data || payload });
   } catch (err: any) {
     return NextResponse.json(
       { error: err.message || "Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import redirectsFallback from "@/data/redirects.json";
-import { verifyToken } from "../admin/login/route";
+import { verifyToken } from "@/lib/admin-auth";
 
 export interface RedirectItem {
   id: string;

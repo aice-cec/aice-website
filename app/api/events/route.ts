@@ -51,7 +51,7 @@ export async function GET() {
   }
 }
 
-import { verifyToken } from "../admin/login/route";
+import { verifyToken } from "@/lib/admin-auth";
 
 export async function POST(req: Request) {
   try {
