@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
 
@@ -111,6 +111,15 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
   const [submitted, setSubmitted] = useState(false);
   const [ticketCode, setTicketCode] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const submittingRef = useRef(false);
+  const errorRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to error message when it appears
+  useEffect(() => {
+    if (errorMsg && errorRef.current) {
+      errorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [errorMsg]);
 
   const handleInputChange = (fieldId: string, value: any, fieldType?: string) => {
     let finalVal = value;
@@ -160,9 +169,16 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
       img.onload = () => {
         const canvas = document.createElement("canvas");
         const MAX_WIDTH = 800;
-        const scaleSize = MAX_WIDTH / img.width;
-        canvas.width = Math.min(img.width, MAX_WIDTH);
-        canvas.height = img.height * scaleSize;
+
+        // Only scale down, never up — preserve aspect ratio
+        if (img.width > MAX_WIDTH) {
+          const scale = MAX_WIDTH / img.width;
+          canvas.width = MAX_WIDTH;
+          canvas.height = Math.round(img.height * scale);
+        } else {
+          canvas.width = img.width;
+          canvas.height = img.height;
+        }
 
         const ctx = canvas.getContext("2d");
         ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -177,6 +193,10 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Ref-based guard prevents double-submit from fast double-clicks
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setErrorMsg("");
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -243,6 +263,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
       setErrorMsg(err.message || "Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
+      submittingRef.current = false;
     }
   };
 
@@ -315,7 +336,8 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                   value={JSON.stringify({
                     tkt: ticketCode,
                     event: form.title,
-                    responses: formData,
+                    name: formData[form.fields.find(f => f.label.toLowerCase().includes("name"))?.id || ""] || "Participant",
+                    email: formData[form.fields.find(f => f.type === "email" || f.label.toLowerCase().includes("email"))?.id || ""] || "",
                   })}
                   size={160}
                   level="H"
@@ -450,7 +472,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                     }
                     maxLength={
                       field.type === "phone"
-                        ? 10
+                        ? 15
                         : field.type === "email"
                         ? 100
                         : field.type === "number"
@@ -586,7 +608,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
           })}
 
           {errorMsg && (
-            <div className="p-3 text-xs font-bold text-center text-red-400 bg-red-500/10 border-2 border-red-500/30 shadow-[3px_3px_0px_#000000]">
+            <div ref={errorRef} className="p-3 text-xs font-bold text-center text-red-400 bg-red-500/10 border-2 border-red-500/30 shadow-[3px_3px_0px_#000000]">
               ⚠️ {errorMsg}
             </div>
           )}

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { getLocalForms } from "@/lib/forms";
 import redirectsFallback from "@/data/redirects.json";
 import CustomFormRender, { CustomFormItem } from "@/app/components/CustomFormRender";
 import NotFound from "../404";
@@ -18,60 +19,51 @@ export default async function RedirectOrFormPage({ params }: RedirectPageProps) 
   let matchedForm: CustomFormItem | null = null;
   let targetUrl: string | null = null;
 
-  // 1. Check if target matches a Custom Form slug in Supabase
+  // 1. Check if target matches a Custom Form slug in Supabase or local fallback
   try {
     const { data: formData } = await supabase
       .from("forms")
-      .select("*")
+      .select("id,slug,event_id,title,description,whatsapp_link,fields,is_active,created_at")
       .eq("slug", targetSlug)
       .single();
 
     if (formData) {
       matchedForm = formData as CustomFormItem;
     }
-  } catch (err) {
-    // Form not found in Supabase, fallback to checking API/fallback
-  }
+  } catch {}
 
   if (!matchedForm) {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/forms?slug=${encodeURIComponent(targetSlug)}`,
-        { cache: "no-store" }
-      );
-      if (res.ok) {
-        const data = await res.json();
-        if (data && !data.error && data.id) {
-          matchedForm = data as CustomFormItem;
-        }
-      }
-    } catch (err) {
-      // Ignore API fetch errors
+    const localForms = getLocalForms();
+    const fallbackForm = localForms.find(
+      (f) => f.slug === targetSlug || f.id === targetSlug
+    );
+    if (fallbackForm) {
+      matchedForm = fallbackForm as CustomFormItem;
     }
   }
 
-  // If matched custom form, render registration form page directly!
+  // If matched custom form, render registration form page directly
   if (matchedForm) {
     return <CustomFormRender form={matchedForm} />;
   }
 
   // 2. Check if target matches a Redirect URL in Supabase
   try {
-    const { data } = await supabase.from("redirects").select("*");
+    const { data } = await supabase
+      .from("redirects")
+      .select("id,url_name,target_url");
 
-    if (data && data.length > 0) {
+    if (data?.length) {
       const match = data.find((item: any) => {
         const name = item.url_name || item.urlname || "";
         return name.trim().toLowerCase() === targetSlug;
       });
 
       if (match) {
-        targetUrl = match.target_url || match.targeturl || null;
+        targetUrl = match.target_url || null;
       }
     }
-  } catch (err) {
-    console.error("Error fetching redirect from Supabase:", err);
-  }
+  } catch {}
 
   if (!targetUrl && Array.isArray(redirectsFallback)) {
     const fallbackMatch = redirectsFallback.find(

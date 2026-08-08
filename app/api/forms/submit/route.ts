@@ -40,7 +40,13 @@ export async function POST(req: Request) {
     if (formObj && Array.isArray(formObj.fields)) {
       for (const field of formObj.fields) {
         const val = responses[field.id];
-        if (field.required && (val === undefined || val === null || val === "")) {
+        if (
+          field.required &&
+          (val === undefined ||
+            val === null ||
+            val === "" ||
+            (Array.isArray(val) && val.length === 0))
+        ) {
           return NextResponse.json(
             { error: `Missing required field: ${field.label}` },
             { status: 400 },
