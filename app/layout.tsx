@@ -80,6 +80,7 @@ export const metadata: Metadata = {
 };
 
 import ToastContainer from "@/app/components/Toast";
+import { Analytics } from "@vercel/analytics/react";
 
 export default function RootLayout({
   children,
@@ -94,6 +95,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100 selection:bg-white selection:text-black">
         {children}
         <ToastContainer />
+        <Analytics />
       </body>
     </html>
   );
