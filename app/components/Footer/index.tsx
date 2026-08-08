@@ -104,7 +104,7 @@ export function Footer() {
             <p className={styles.columnLabel}>CONNECT WITH US</p>
             <div className={styles.socialRow}>
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/aice.cec"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.socialBtn}
@@ -113,7 +113,7 @@ export function Footer() {
                 <InstagramIcon />
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/company/aice-cec"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.socialBtn}
