@@ -15,8 +15,9 @@ export async function sendTicketEmail({
   submittedAt,
   whatsappLink,
 }: SendTicketEmailParams) {
-  const brevoApiKey =
-    process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY;
+  const brevoApiKey = (
+    process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY || ""
+  ).trim();
   const senderEmail =
     process.env.BREVO_SENDER_EMAIL || "aice@ceconline.edu";
   const senderName = process.env.BREVO_SENDER_NAME || "AICE";
@@ -108,31 +109,54 @@ export async function sendTicketEmail({
     </html>
   `;
 
-  // Direct Brevo HTTP REST API Request
-  try {
-    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
-      method: "POST",
-      headers: {
-        accept: "application/json",
-        "api-key": brevoApiKey,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        sender: { name: senderName, email: senderEmail },
-        to: [{ email: toEmail, name: attendeeName || "Participant" }],
-        subject: `🎟️ ENTRY PASS: ${eventTitle} (${ticketId})`,
-        htmlContent: htmlContent,
-      }),
-    });
+  // Direct Brevo HTTP REST API Request with retry mechanism
+  const maxRetries = 2;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-    if (res.ok) {
-      return true;
+      const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "api-key": brevoApiKey,
+          "content-type": "application/json",
+          "user-agent": "AICE-App/1.0",
+          connection: "close",
+        },
+        body: JSON.stringify({
+          sender: { name: senderName, email: senderEmail },
+          to: [{ email: toEmail, name: attendeeName || "Participant" }],
+          subject: `🎟️ ENTRY PASS: ${eventTitle} (${ticketId})`,
+          htmlContent: htmlContent,
+        }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        return true;
+      }
+      const errData = await res.json();
+      console.warn(`Brevo API error response (attempt ${attempt}/${maxRetries}):`, errData);
+      if (res.status === 401 || res.status === 403) {
+        // Invalid API Key - no point retrying
+        break;
+      }
+    } catch (err: any) {
+      const isTimeout = err.name === "AbortError" || err.code === "UND_ERR_CONNECT_TIMEOUT";
+      console.warn(
+        `Brevo API request failed (attempt ${attempt}/${maxRetries}): ${
+          isTimeout ? "Connection Timeout (api.brevo.com reachable check needed)" : err.message || err
+        }`
+      );
+      if (attempt < maxRetries) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
     }
-    const errData = await res.json();
-    console.warn("Brevo API error response:", errData);
-    return false;
-  } catch (err) {
-    console.warn("Brevo API request failed:", err);
-    return false;
   }
+
+  return false;
 }

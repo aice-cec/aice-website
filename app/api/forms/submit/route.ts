@@ -56,6 +56,44 @@ export async function POST(req: Request) {
       );
     }
 
+    // Server-side validation for email and phone numbers
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const phoneRegex = /^\d{10}$/;
+
+    if (formObj && Array.isArray(formObj.fields)) {
+      for (const field of formObj.fields) {
+        const val = responses[field.id];
+        if (field.required && (val === undefined || val === null || val === "")) {
+          return NextResponse.json(
+            { error: `Missing required field: ${field.label}` },
+            { status: 400 }
+          );
+        }
+
+        if (val && typeof val === "string") {
+          const isEmailField = field.type === "email" || field.label.toLowerCase().includes("email");
+          const isPhoneField = field.type === "phone" || field.label.toLowerCase().includes("phone") || field.label.toLowerCase().includes("whatsapp") || field.label.toLowerCase().includes("mobile");
+
+          if (isEmailField && !emailRegex.test(val.trim())) {
+            return NextResponse.json(
+              { error: `Invalid email address with domain extension (e.g. name@gmail.com) for ${field.label}` },
+              { status: 400 }
+            );
+          }
+
+          if (isPhoneField) {
+            const cleanPhone = val.replace(/\D/g, "");
+            if (!phoneRegex.test(cleanPhone)) {
+              return NextResponse.json(
+                { error: `Phone number must be exactly 10 digits for ${field.label}` },
+                { status: 400 }
+              );
+            }
+          }
+        }
+      }
+    }
+
     const ticketCode = `AICE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
     const newSubmission = {

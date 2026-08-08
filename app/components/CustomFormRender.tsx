@@ -112,8 +112,12 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
   const [ticketCode, setTicketCode] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  const handleInputChange = (fieldId: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [fieldId]: value }));
+  const handleInputChange = (fieldId: string, value: any, fieldType?: string) => {
+    let finalVal = value;
+    if (fieldType === "phone" && typeof value === "string") {
+      finalVal = value.replace(/\D/g, "").slice(0, 10);
+    }
+    setFormData((prev) => ({ ...prev, [fieldId]: finalVal }));
   };
 
   const handleCheckboxChange = (
@@ -175,10 +179,14 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
     e.preventDefault();
     setErrorMsg("");
 
-    // Validate required fields
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const phoneRegex = /^\d{10}$/;
+
+    // Validate required fields & format
     for (const field of form.fields) {
+      const val = formData[field.id];
+
       if (field.required) {
-        const val = formData[field.id];
         if (
           val === undefined ||
           val === null ||
@@ -187,6 +195,24 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
         ) {
           setErrorMsg(`Please fill out the required field: "${field.label}"`);
           return;
+        }
+      }
+
+      if (val && typeof val === "string") {
+        const isEmailField = field.type === "email" || field.label.toLowerCase().includes("email");
+        const isPhoneField = field.type === "phone" || field.label.toLowerCase().includes("phone") || field.label.toLowerCase().includes("whatsapp") || field.label.toLowerCase().includes("mobile");
+
+        if (isEmailField && !emailRegex.test(val.trim())) {
+          setErrorMsg(`Please enter a valid email address with domain extension (e.g. name@gmail.com) for "${field.label}"`);
+          return;
+        }
+
+        if (isPhoneField) {
+          const cleanPhone = val.replace(/\D/g, "");
+          if (!phoneRegex.test(cleanPhone)) {
+            setErrorMsg(`"${field.label}" must be exactly 10 digits.`);
+            return;
+          }
         }
       }
     }
@@ -420,11 +446,24 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                     type={field.type === "phone" ? "tel" : field.type}
                     value={formData[field.id] || ""}
                     onChange={(e) =>
-                      handleInputChange(field.id, e.target.value)
+                      handleInputChange(field.id, e.target.value, field.type)
                     }
+                    maxLength={
+                      field.type === "phone"
+                        ? 10
+                        : field.type === "email"
+                        ? 100
+                        : field.type === "number"
+                        ? 20
+                        : 250
+                    }
+                    inputMode={field.type === "phone" || field.type === "number" ? "numeric" : undefined}
+                    pattern={field.type === "phone" ? "[0-9]{10}" : undefined}
                     placeholder={
                       field.placeholder ||
-                      `e.g. Enter ${field.label.toLowerCase()}`
+                      (field.type === "phone"
+                        ? "e.g. 9876543210 (10 digits)"
+                        : `e.g. Enter ${field.label.toLowerCase()}`)
                     }
                     required={field.required}
                     className="w-full px-4 py-3 bg-[#070709] border-2 border-white/15 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-0 focus:border-red-500 transition-colors rounded-none"
