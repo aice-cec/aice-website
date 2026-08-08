@@ -49,7 +49,7 @@ export async function sendTicketEmail({
   const safeAttendeeName = escapeHtml(attendeeName || "Participant");
   const safeTicketId = escapeHtml(ticketId);
   const safeWhatsappLink = getSafeExternalUrl(whatsappLink);
-  const safeTicketImageUrl = escapeHtml(ticketImageUrl);
+  const safeTicketImageUrl = getSafeExternalUrl(ticketImageUrl) || ticketImageUrl;
   const issuedAt = escapeHtml(new Date(submittedAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }));
 
   const htmlContent = `
@@ -94,7 +94,7 @@ export async function sendTicketEmail({
 
         <div class="ticket-box">
           <div style="font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; font-family: monospace; font-weight: 700;">SCAN QR CODE AT DESK FOR ENTRY</div>
-          <img src="${safeTicketImageUrl}" alt="Event Ticket QR Code" class="qr-img" width="180" height="180" />
+          <img src="${safeTicketImageUrl}" alt="Event Ticket QR Code" class="qr-img" width="180" height="180" style="width: 180px; height: 180px; margin: 0 auto 16px auto; display: block; background-color: #ffffff; padding: 10px; border: 2px solid #000000; box-shadow: 4px 4px 0px #000000;" />
           <div style="font-size: 11px; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px; font-family: monospace; font-weight: 700;">PASS IDENTIFIER</div>
           <div class="ticket-id">${safeTicketId}</div>
           <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-family: monospace;">Issued: ${issuedAt}</div>

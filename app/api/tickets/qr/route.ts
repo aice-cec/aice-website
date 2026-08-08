@@ -19,8 +19,9 @@ export async function GET(req: Request) {
   return new NextResponse(new Uint8Array(png), {
     headers: {
       "Content-Type": "image/png",
-      "Cache-Control": "private, max-age=86400",
+      "Cache-Control": "public, max-age=86400, s-maxage=86400, immutable",
       "X-Content-Type-Options": "nosniff",
+      "Access-Control-Allow-Origin": "*",
     },
   });
 }

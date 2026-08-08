@@ -5,31 +5,10 @@ import { sendTicketEmail } from "@/lib/email";
 import { getLocalForms } from "@/lib/forms";
 import { validateResponses } from "@/lib/form-validation";
 
-const FORM_COLUMNS = "id,slug,title,fields,is_active,issue_ticket,whatsapp_link,event_id";
+const FORM_COLUMNS =
+  "id,slug,title,fields,is_active,issue_ticket,whatsapp_link,event_id";
 
 function getPublicTicketImageUrl(req: Request, ticketCode: string): string {
-  const envUrl =
-    process.env.NEXT_PUBLIC_APP_URL ||
-    (process.env.VERCEL_PROJECT_PRODUCTION_URL
-      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : "");
-
-  if (envUrl && !envUrl.includes("localhost") && !envUrl.includes("127.0.0.1")) {
-    const baseUrl = envUrl.startsWith("http") ? envUrl : `https://${envUrl}`;
-    return `${baseUrl}/api/tickets/qr?ticket=${encodeURIComponent(ticketCode)}`;
-  }
-
-  const origin = new URL(req.url).origin;
-  if (
-    origin &&
-    !origin.includes("localhost") &&
-    !origin.includes("127.0.0.1") &&
-    !origin.includes("192.168.")
-  ) {
-    return `${origin}/api/tickets/qr?ticket=${encodeURIComponent(ticketCode)}`;
-  }
-
-  // Fallback to public HTTPS QR service during local testing so email clients (Gmail) can render the image
   return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(ticketCode)}`;
 }
 
@@ -51,7 +30,9 @@ export async function POST(req: Request) {
       .or(`id.eq.${formId},slug.eq.${formId}`)
       .single();
 
-    formObj = dbForm || getLocalForms().find((f) => f.id === formId || f.slug === formId);
+    formObj =
+      dbForm ||
+      getLocalForms().find((f) => f.id === formId || f.slug === formId);
 
     if (!formObj) {
       return NextResponse.json({ error: "Form not found" }, { status: 404 });
@@ -74,18 +55,30 @@ export async function POST(req: Request) {
       ? `AICE-${crypto.randomBytes(6).toString("hex").toUpperCase()}`
       : null;
     const createdAt = new Date().toISOString();
-    const ticketImageUrl = ticketCode ? getPublicTicketImageUrl(req, ticketCode) : null;
+    const ticketImageUrl = ticketCode
+      ? getPublicTicketImageUrl(req, ticketCode)
+      : null;
 
-    const { error: insertError } = await supabase.from("form_submissions").insert([{
-      form_id: formId,
-      event_id: formObj.event_id || null,
-      responses: ticketCode
-        ? { ...validation.responses, __ticket: { code: ticketCode, issuedAt: createdAt } }
-        : validation.responses,
-    }]);
+    const { error: insertError } = await supabase
+      .from("form_submissions")
+      .insert([
+        {
+          form_id: formId,
+          event_id: formObj.event_id || null,
+          responses: ticketCode
+            ? {
+                ...validation.responses,
+                __ticket: { code: ticketCode, issuedAt: createdAt },
+              }
+            : validation.responses,
+        },
+      ]);
     if (insertError) {
       console.error("Unable to save form submission", insertError);
-      return NextResponse.json({ error: "Unable to save your registration. Please try again." }, { status: 503 });
+      return NextResponse.json(
+        { error: "Unable to save your registration. Please try again." },
+        { status: 503 },
+      );
     }
 
     // Extract email and attendee name from responses
@@ -101,7 +94,10 @@ export async function POST(req: Request) {
         if (!toEmail && (f.type === "email" || label.includes("email"))) {
           toEmail = val;
         }
-        if (!attendeeName && (label.includes("name") || label.includes("participant"))) {
+        if (
+          !attendeeName &&
+          (label.includes("name") || label.includes("participant"))
+        ) {
           attendeeName = val;
         }
       }
@@ -149,6 +145,9 @@ export async function POST(req: Request) {
     });
   } catch (error) {
     console.error("Form submission failed", error);
-    return NextResponse.json({ error: "Failed to submit form" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to submit form" },
+      { status: 500 },
+    );
   }
 }
