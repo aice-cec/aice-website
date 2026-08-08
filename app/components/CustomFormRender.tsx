@@ -30,6 +30,7 @@ export interface CustomFormItem {
   whatsapp_link?: string;
   fields: FormField[];
   is_active: boolean;
+  issue_ticket?: boolean;
   created_at?: string;
 }
 
@@ -325,8 +326,9 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
             Registration Confirmed!
           </h1>
           <p className="text-xs font-medium text-gray-300 mb-6">
-            Your QR code pass and confirmation ticket have been sent to your
-            email address.
+            {form.issue_ticket !== false
+              ? "Your QR code pass and confirmation ticket have been sent to your email address."
+              : "Your registration has been submitted successfully."}
           </p>
 
           {ticketCode && (
@@ -336,12 +338,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
               </div>
               <div className="inline-block p-3 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] mx-auto">
                 <QRCodeSVG
-                  value={JSON.stringify({
-                    tkt: ticketCode,
-                    event: form.title,
-                    name: formData[form.fields.find(f => f.label.toLowerCase().includes("name"))?.id || ""] || "Participant",
-                    email: formData[form.fields.find(f => f.type === "email" || f.label.toLowerCase().includes("email"))?.id || ""] || "",
-                  })}
+                  value={ticketCode}
                   size={160}
                   level="H"
                 />
@@ -349,7 +346,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
               <div className="text-[10px] font-black uppercase tracking-widest text-red-500 font-mono pt-1">
                 PASS IDENTIFIER
               </div>
-              <div className="text-2xl font-black font-mono text-white tracking-widest">
+              <div className="max-w-full break-all text-lg font-black font-mono text-white tracking-[0.12em] sm:text-2xl sm:tracking-widest">
                 {ticketCode}
               </div>
             </div>

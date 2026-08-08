@@ -78,6 +78,7 @@ export async function POST(req: Request) {
       whatsapp_link: f.whatsapp_link || f.whatsappLink || "",
       fields: Array.isArray(f.fields) ? f.fields : [],
       is_active: f.is_active !== undefined ? Boolean(f.is_active) : true,
+      issue_ticket: f.issue_ticket !== false,
     }));
 
     // Upsert first: a failed write must never erase existing data.

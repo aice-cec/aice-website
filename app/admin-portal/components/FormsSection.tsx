@@ -278,6 +278,21 @@ export function FormsSection({
                 </span>
               </label>
             </div>
+
+            <div className="md:col-span-2">
+              <label className="flex items-center gap-3 text-xs font-semibold text-gray-200 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={customFormBuilder.issue_ticket !== false}
+                  onChange={(e) => handleCustomFormInputChange("issue_ticket", e.target.checked)}
+                  className="w-4 h-4 accent-red-500 rounded cursor-pointer"
+                />
+                Issue QR Ticket &amp; Confirmation Email
+              </label>
+              <p className="ml-7 mt-1 text-[11px] text-gray-500">
+                Disable for forms that should save submissions without generating a ticket or email.
+              </p>
+            </div>
           </div>
 
           {/* Questions Field List Manager */}

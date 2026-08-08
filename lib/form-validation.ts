@@ -27,6 +27,7 @@ export interface FormDefinition {
   title: string;
   fields: FormFieldDefinition[];
   is_active: boolean;
+  issue_ticket?: boolean;
   event_id?: string | null;
   whatsapp_link?: string | null;
 }

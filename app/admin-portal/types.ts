@@ -42,6 +42,7 @@ export interface CustomFormItem {
   whatsapp_link?: string;
   fields: FormField[];
   is_active: boolean;
+  issue_ticket?: boolean;
   created_at?: string;
 }
 

@@ -1,9 +1,12 @@
+import "server-only";
+
 interface SendTicketEmailParams {
   toEmail: string;
   attendeeName: string;
   eventTitle: string;
   ticketId: string;
   submittedAt: string;
+  ticketImageUrl: string;
   whatsappLink?: string;
 }
 
@@ -33,6 +36,7 @@ export async function sendTicketEmail({
   eventTitle,
   ticketId,
   submittedAt,
+  ticketImageUrl,
   whatsappLink,
 }: SendTicketEmailParams) {
   const brevoApiKey = (process.env.BREVO_API_KEY || "").trim();
@@ -41,22 +45,11 @@ export async function sendTicketEmail({
 
   if (!brevoApiKey) return false;
 
-  const qrPayload = JSON.stringify({
-    tkt: ticketId,
-    event: eventTitle,
-    name: attendeeName,
-    email: toEmail,
-  });
-
-  const qrCodeUrl = await QRCode.toDataURL(qrPayload, {
-    width: 250,
-    margin: 1,
-    errorCorrectionLevel: "M",
-  });
   const safeEventTitle = escapeHtml(eventTitle);
   const safeAttendeeName = escapeHtml(attendeeName || "Participant");
   const safeTicketId = escapeHtml(ticketId);
   const safeWhatsappLink = getSafeExternalUrl(whatsappLink);
+  const safeTicketImageUrl = escapeHtml(ticketImageUrl);
   const issuedAt = escapeHtml(new Date(submittedAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }));
 
   const htmlContent = `
@@ -73,7 +66,7 @@ export async function sendTicketEmail({
         .brand-sub { font-size: 11px; font-weight: 800; color: #ef4444; text-transform: uppercase; letter-spacing: 1.5px; font-family: monospace; }
         .pass-badge { display: inline-block; padding: 5px 14px; background-color: #dc2626; border: 2px solid #000000; color: #ffffff; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; font-family: monospace; }
         .event-title { font-size: 26px; font-weight: 900; color: #ffffff; margin: 0 0 6px 0; line-height: 1.2; text-transform: uppercase; letter-spacing: -0.5px; }
-        .attendee-name { font-size: 14px; color: #d1d5db; margin: 0 0 24px 0; font-weight: 600; }
+        .attendee-name { font-size: 14px; color: #d1d5db; margin: 0 0 24px 0; font-weight: 600; overflow-wrap: anywhere; word-break: break-word; }
         .ticket-box { background-color: #000000; border: 2px dashed rgba(255,255,255,0.25); padding: 24px; text-align: center; margin-bottom: 24px; box-shadow: 4px 4px 0px #000000; }
         .qr-img { width: 180px; height: 180px; margin: 0 auto 16px auto; display: block; background-color: #ffffff; padding: 10px; border: 2px solid #000000; box-shadow: 4px 4px 0px #000000; }
         .ticket-id { font-family: 'Courier New', Courier, monospace; font-size: 22px; font-weight: 900; color: #ef4444; letter-spacing: 2.5px; margin-top: 4px; }
@@ -101,7 +94,7 @@ export async function sendTicketEmail({
 
         <div class="ticket-box">
           <div style="font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; font-family: monospace; font-weight: 700;">SCAN QR CODE AT DESK FOR ENTRY</div>
-          <img src="${qrCodeUrl}" alt="Event Ticket QR Code" class="qr-img" width="180" height="180" />
+          <img src="${safeTicketImageUrl}" alt="Event Ticket QR Code" class="qr-img" width="180" height="180" />
           <div style="font-size: 11px; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px; font-family: monospace; font-weight: 700;">PASS IDENTIFIER</div>
           <div class="ticket-id">${safeTicketId}</div>
           <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-family: monospace;">Issued: ${issuedAt}</div>
@@ -131,7 +124,7 @@ export async function sendTicketEmail({
   const payload = JSON.stringify({
     sender: { name: senderName, email: senderEmail },
     to: [{ email: toEmail, name: attendeeName || "Participant" }],
-    subject: `🎟️ ENTRY PASS: ${eventTitle} (${ticketId})`,
+    subject: `🎟️ ENTRY PASS: ${eventTitle}`,
     htmlContent,
   });
 
@@ -167,5 +160,3 @@ export async function sendTicketEmail({
 
   return false;
 }
-import "server-only";
-import QRCode from "qrcode";

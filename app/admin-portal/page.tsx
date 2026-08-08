@@ -84,6 +84,7 @@ export default function AdminPortalPage() {
     description: "",
     fields: [],
     is_active: true,
+    issue_ticket: true,
   });
 
   // Modal / Toast state
@@ -361,6 +362,7 @@ export default function AdminPortalPage() {
       description: "Fill out the registration details below.",
       fields: defaultFields,
       is_active: true,
+      issue_ticket: true,
     };
 
     const updated = [newForm, ...customForms];

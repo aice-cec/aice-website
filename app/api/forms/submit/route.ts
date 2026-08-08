@@ -1,42 +1,57 @@
 import { NextResponse, after } from "next/server";
+import crypto from "crypto";
 import { supabase } from "@/lib/supabase";
 import { sendTicketEmail } from "@/lib/email";
 import { getLocalForms } from "@/lib/forms";
-import {
-  FormDefinition,
-  isRecord,
-  validateResponses,
-} from "@/lib/form-validation";
-import crypto from "crypto";
+import { validateResponses } from "@/lib/form-validation";
 
-const FORM_COLUMNS = "id,slug,title,fields,is_active,whatsapp_link";
+const FORM_COLUMNS = "id,slug,title,fields,is_active,issue_ticket,whatsapp_link,event_id";
+
+function getPublicTicketImageUrl(req: Request, ticketCode: string): string {
+  const envUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : "");
+
+  if (envUrl && !envUrl.includes("localhost") && !envUrl.includes("127.0.0.1")) {
+    const baseUrl = envUrl.startsWith("http") ? envUrl : `https://${envUrl}`;
+    return `${baseUrl}/api/tickets/qr?ticket=${encodeURIComponent(ticketCode)}`;
+  }
+
+  const origin = new URL(req.url).origin;
+  if (
+    origin &&
+    !origin.includes("localhost") &&
+    !origin.includes("127.0.0.1") &&
+    !origin.includes("192.168.")
+  ) {
+    return `${origin}/api/tickets/qr?ticket=${encodeURIComponent(ticketCode)}`;
+  }
+
+  // Fallback to public HTTPS QR service during local testing so email clients (Gmail) can render the image
+  return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(ticketCode)}`;
+}
 
 export async function POST(req: Request) {
   try {
-    const body: unknown = await req.json();
-    if (!isRecord(body)) {
-      return NextResponse.json({ error: "Invalid form submission payload" }, { status: 400 });
-    }
-    const { formId, responses } = body;
+    const { formId, eventId, responses } = await req.json();
 
-    if (typeof formId !== "string" || !formId.trim() || formId.length > 100) {
+    if (!formId || !responses) {
       return NextResponse.json(
         { error: "Invalid form submission payload" },
         { status: 400 },
       );
     }
 
-    // Query form details from Supabase, fallback to local JSON
-    let formObj: FormDefinition | null = null;
+    let formObj: any = null;
     const { data: dbForm } = await supabase
       .from("forms")
       .select(FORM_COLUMNS)
-      .or(`id.eq.${formId.trim()},slug.eq.${formId.trim()}`)
+      .or(`id.eq.${formId},slug.eq.${formId}`)
       .single();
 
-    formObj = (dbForm as FormDefinition | null) ||
-      (getLocalForms().find((f) => f.id === formId || f.slug === formId) as FormDefinition | undefined) ||
-      null;
+    formObj = dbForm || getLocalForms().find((f) => f.id === formId || f.slug === formId);
 
     if (!formObj) {
       return NextResponse.json({ error: "Form not found" }, { status: 404 });
@@ -54,13 +69,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
-    const ticketCode = `AICE-${crypto.randomUUID().replace(/-/g, "").toUpperCase()}`;
+    const issueTicket = formObj.issue_ticket !== false;
+    const ticketCode = issueTicket
+      ? `AICE-${crypto.randomBytes(6).toString("hex").toUpperCase()}`
+      : null;
     const createdAt = new Date().toISOString();
+    const ticketImageUrl = ticketCode ? getPublicTicketImageUrl(req, ticketCode) : null;
 
     const { error: insertError } = await supabase.from("form_submissions").insert([{
       form_id: formId,
       event_id: formObj.event_id || null,
-      responses: { ...validation.responses, __ticket: { code: ticketCode, issuedAt: createdAt } },
+      responses: ticketCode
+        ? { ...validation.responses, __ticket: { code: ticketCode, issuedAt: createdAt } }
+        : validation.responses,
     }]);
     if (insertError) {
       console.error("Unable to save form submission", insertError);
@@ -107,7 +128,7 @@ export async function POST(req: Request) {
     }
 
     // Send ticket email after response is returned
-    if (toEmail) {
+    if (ticketCode && ticketImageUrl && toEmail) {
       after(async () => {
         await sendTicketEmail({
           toEmail,
@@ -115,6 +136,7 @@ export async function POST(req: Request) {
           eventTitle: formObj?.title || "AICE Event",
           ticketId: ticketCode,
           submittedAt: createdAt,
+          ticketImageUrl,
           whatsappLink: formObj?.whatsapp_link || "",
         });
       });
@@ -123,7 +145,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       message: "Registration submitted successfully!",
-      ticketCode,
+      ...(ticketCode ? { ticketCode } : {}),
     });
   } catch (error) {
     console.error("Form submission failed", error);
