@@ -33,35 +33,8 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/membership", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to initiate registration.");
-      }
-
-      if (data.paymentUrl) {
-        window.location.href = data.paymentUrl;
-      } else {
-        throw new Error("Payment gateway URL not received.");
-      }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("An unexpected error occurred.");
-      }
-      setLoading(false);
-    }
+    setError("Membership registration is coming soon! Stay tuned.");
+    return;
   };
 
   return (
@@ -96,6 +69,10 @@ export default function RegisterPage() {
               <span className={styles.feeLabel}>REGISTRATION FEE</span>
               <span className={styles.feeAmount}>₹100 INR</span>
             </div>
+          </div>
+
+          <div className={styles.comingSoonNotice}>
+            Membership registration is currently not finalized and will be opening soon! Stay tuned.
           </div>
 
           {error && <div className={styles.errorMsg}>{error}</div>}

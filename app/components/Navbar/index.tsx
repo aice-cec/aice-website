@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import styles from "./Navbar.module.css";
+import { showToast } from "@/app/components/Toast";
 
 const navLinks = [
   { label: "HOME", href: "/#home", id: "nav-home" },
@@ -112,12 +113,15 @@ const Navbar = () => {
           ))}
         </nav>
 
-        <a
-          href="/register"
+        <button
+          type="button"
           id="cta-join-now"
           className={styles.ctaBtn}
           aria-label="Join AICE now"
-          onClick={(e) => handleNavClick(e, "/register")}
+          onClick={() => {
+            setMobileOpen(false);
+            showToast("Membership registration is coming soon! Stay tuned.");
+          }}
         >
           JOIN NOW
           <svg
@@ -133,7 +137,7 @@ const Navbar = () => {
           >
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
-        </a>
+        </button>
 
         <button
           className={`${styles.hamburger} ${mobileOpen ? styles.hamburgerOpen : ""}`}

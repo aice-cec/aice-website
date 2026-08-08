@@ -238,6 +238,8 @@ export function Execom() {
   const subExecom: TeamMember[] = teamData.subExecom || [];
 
   const teamOrder = [
+    "Finance Team",
+    "Co-Treasurer",
     "Web Team",
     "Tech Team",
     "Content Team",

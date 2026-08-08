@@ -79,6 +79,8 @@ export const metadata: Metadata = {
   },
 };
 
+import ToastContainer from "@/app/components/Toast";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -91,6 +93,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100 selection:bg-white selection:text-black">
         {children}
+        <ToastContainer />
       </body>
     </html>
   );
