@@ -20,6 +20,7 @@ export interface TeamMember {
   name: string;
   role: string;
   dept: string;
+  team?: string;
   image: string;
   linkedin?: string;
   github?: string;
@@ -89,37 +90,31 @@ function GithubIcon() {
   );
 }
 
-export function Execom() {
-  const execomCarouselRef = useRef<HTMLDivElement>(null);
-  const subExecomCarouselRef = useRef<HTMLDivElement>(null);
-  const isExecomHovered = useRef(false);
-  const isSubExecomHovered = useRef(false);
-  const lastExecomInteraction = useRef(0);
-  const lastSubExecomInteraction = useRef(0);
+function TeamSection({
+  title,
+  members,
+}: {
+  title: string;
+  members: TeamMember[];
+}) {
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const isHovered = useRef(false);
+  const lastInteraction = useRef(0);
 
-  const faculty: FacultyMember[] = teamData.faculty || [];
-  const execom: TeamMember[] = teamData.execom || [];
-  const subExecom: TeamMember[] = teamData.subExecom || [];
-
-  const handleExecomUserTouch = () => {
-    lastExecomInteraction.current = Date.now();
-  };
-
-  const handleSubExecomUserTouch = () => {
-    lastSubExecomInteraction.current = Date.now();
+  const handleUserTouch = () => {
+    lastInteraction.current = Date.now();
   };
 
   useEffect(() => {
-    const autoScroll = (
-      ref: React.RefObject<HTMLDivElement | null>,
-      isHovered: boolean,
-      lastInteractionTime: number,
-    ) => {
+    if (members.length <= 3) return;
+    const interval = setInterval(() => {
       const now = Date.now();
-      const isInteractionActive = now - lastInteractionTime < 8000;
-
-      if (ref.current && !isHovered && !isInteractionActive) {
-        const container = ref.current;
+      if (
+        carouselRef.current &&
+        !isHovered.current &&
+        now - lastInteraction.current > 8000
+      ) {
+        const container = carouselRef.current;
         const maxScroll = container.scrollWidth - container.clientWidth;
         if (container.scrollLeft >= maxScroll - 10) {
           container.scrollTo({ left: 0, behavior: "smooth" });
@@ -127,39 +122,135 @@ export function Execom() {
           container.scrollBy({ left: 300, behavior: "smooth" });
         }
       }
-    };
-
-    const interval = setInterval(() => {
-      autoScroll(
-        execomCarouselRef,
-        isExecomHovered.current,
-        lastExecomInteraction.current,
-      );
-      autoScroll(
-        subExecomCarouselRef,
-        isSubExecomHovered.current,
-        lastSubExecomInteraction.current,
-      );
     }, 1750);
-
     return () => clearInterval(interval);
-  }, []);
+  }, [members.length]);
 
-  const scrollContainer = (
-    ref: React.RefObject<HTMLDivElement | null>,
-    direction: "left" | "right",
-    isExecom: boolean,
-  ) => {
-    if (isExecom) {
-      lastExecomInteraction.current = Date.now();
-    } else {
-      lastSubExecomInteraction.current = Date.now();
-    }
-    if (ref.current) {
+  const scrollContainer = (direction: "left" | "right") => {
+    lastInteraction.current = Date.now();
+    if (carouselRef.current) {
       const scrollAmount = direction === "left" ? -340 : 340;
-      ref.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+      carouselRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
+
+  if (!members || members.length === 0) return null;
+
+  return (
+    <div className={styles.categoryGroup}>
+      <div className={styles.categoryHeader}>
+        <h3 className={styles.categoryTitle}>
+          <span className={styles.categoryTitleDot} /> {title}
+        </h3>
+        {members.length > 3 && (
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <div className={styles.carouselNav}>
+              <button
+                type="button"
+                className={styles.navArrowBtn}
+                onClick={() => scrollContainer("left")}
+                aria-label={`Previous ${title} members`}
+              >
+                <ArrowLeftIcon />
+              </button>
+              <button
+                type="button"
+                className={styles.navArrowBtn}
+                onClick={() => scrollContainer("right")}
+                aria-label={`Next ${title} members`}
+              >
+                <ArrowRightIcon />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div
+        className={styles.carouselContainer}
+        ref={carouselRef}
+        onMouseEnter={() => (isHovered.current = true)}
+        onMouseLeave={() => (isHovered.current = false)}
+        onTouchStart={() => {
+          isHovered.current = true;
+          handleUserTouch();
+        }}
+        onTouchEnd={() => (isHovered.current = false)}
+        onPointerDown={handleUserTouch}
+        onClickCapture={handleUserTouch}
+        onScroll={handleUserTouch}
+      >
+        <div className={styles.carouselTrack}>
+          {members.map((member) => (
+            <article key={member.id} className={styles.memberCard}>
+              <div>
+                <div className={styles.cardAvatarWrap}>
+                  <Image
+                    src={member.image}
+                    alt={member.name}
+                    width={280}
+                    height={280}
+                    style={{ height: "auto" }}
+                    className={styles.avatarImg}
+                  />
+                </div>
+                <p className={styles.roleBadge}>{member.role}</p>
+                <h4 className={styles.memberName}>{member.name}</h4>
+                <p className={styles.memberDept}>{member.dept}</p>
+              </div>
+              <div className={styles.memberFooter}>
+                <div className={styles.socialIcons}>
+                  {member.linkedin && (
+                    <a
+                      href={member.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.socialBtn}
+                      aria-label={`${member.name} LinkedIn`}
+                    >
+                      <LinkedInIcon />
+                    </a>
+                  )}
+                  {member.github && (
+                    <a
+                      href={member.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.socialBtn}
+                      aria-label={`${member.name} GitHub`}
+                    >
+                      <GithubIcon />
+                    </a>
+                  )}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function Execom() {
+  const faculty: FacultyMember[] = teamData.faculty || [];
+  const execom: TeamMember[] = teamData.execom || [];
+  const subExecom: TeamMember[] = teamData.subExecom || [];
+
+  const teamOrder = [
+    "Web Team",
+    "Tech Team",
+    "Content Team",
+    "Creative Team",
+    "PR & Outreach Team",
+    "Media Team",
+  ];
+
+  const sortedSubExecom = [...subExecom].sort((a, b) => {
+    const indexA = teamOrder.indexOf(a.team || a.role || "");
+    const indexB = teamOrder.indexOf(b.team || b.role || "");
+    return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
+  });
 
   return (
     <section id="execom" className={styles.section}>
@@ -201,192 +292,8 @@ export function Execom() {
           </div>
         )}
 
-        {execom.length > 0 && (
-          <div className={styles.categoryGroup}>
-            <div className={styles.categoryHeader}>
-              <h3 className={styles.categoryTitle}>
-                <span className={styles.categoryTitleDot} /> EXECUTIVE COMMITTEE
-              </h3>
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "1rem" }}
-              >
-                <div className={styles.carouselNav}>
-                  <button
-                    type="button"
-                    className={styles.navArrowBtn}
-                    onClick={() =>
-                      scrollContainer(execomCarouselRef, "left", true)
-                    }
-                    aria-label="Previous Execom members"
-                  >
-                    <ArrowLeftIcon />
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.navArrowBtn}
-                    onClick={() =>
-                      scrollContainer(execomCarouselRef, "right", true)
-                    }
-                    aria-label="Next Execom members"
-                  >
-                    <ArrowRightIcon />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div
-              className={styles.carouselContainer}
-              ref={execomCarouselRef}
-              onMouseEnter={() => (isExecomHovered.current = true)}
-              onMouseLeave={() => (isExecomHovered.current = false)}
-              onTouchStart={() => {
-                isExecomHovered.current = true;
-                handleExecomUserTouch();
-              }}
-              onTouchEnd={() => (isExecomHovered.current = false)}
-              onPointerDown={handleExecomUserTouch}
-              onClickCapture={handleExecomUserTouch}
-              onScroll={handleExecomUserTouch}
-            >
-              <div className={styles.carouselTrack}>
-                {execom.map((member) => (
-                  <article key={member.id} className={styles.memberCard}>
-                    <div>
-                      <div className={styles.cardAvatarWrap}>
-                        <Image
-                          src={member.image}
-                          alt={member.name}
-                          width={280}
-                          height={280}
-                          style={{ height: "auto" }}
-                          className={styles.avatarImg}
-                        />
-                      </div>
-                      <p className={styles.roleBadge}>{member.role}</p>
-                      <h4 className={styles.memberName}>{member.name}</h4>
-                      <p className={styles.memberDept}>{member.dept}</p>
-                    </div>
-                    <div className={styles.memberFooter}>
-                      <div className={styles.socialIcons}>
-                        {member.linkedin && (
-                          <a
-                            href={member.linkedin}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={styles.socialBtn}
-                            aria-label={`${member.name} LinkedIn`}
-                          >
-                            <LinkedInIcon />
-                          </a>
-                        )}
-                        {member.github && (
-                          <a
-                            href={member.github}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={styles.socialBtn}
-                            aria-label={`${member.name} GitHub`}
-                          >
-                            <GithubIcon />
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {subExecom.length > 0 && (
-          <div className={styles.categoryGroup}>
-            <div className={styles.categoryHeader}>
-              <h3 className={styles.categoryTitle}>
-                <span className={styles.categoryTitleDot} /> SUB-EXECOM
-              </h3>
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "1rem" }}
-              >
-                <div className={styles.carouselNav}>
-                  <button
-                    type="button"
-                    className={styles.navArrowBtn}
-                    onClick={() =>
-                      scrollContainer(subExecomCarouselRef, "left", false)
-                    }
-                    aria-label="Previous Sub-Execom members"
-                  >
-                    <ArrowLeftIcon />
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.navArrowBtn}
-                    onClick={() =>
-                      scrollContainer(subExecomCarouselRef, "right", false)
-                    }
-                    aria-label="Next Sub-Execom members"
-                  >
-                    <ArrowRightIcon />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div
-              className={styles.carouselContainer}
-              ref={subExecomCarouselRef}
-              onMouseEnter={() => (isSubExecomHovered.current = true)}
-              onMouseLeave={() => (isSubExecomHovered.current = false)}
-              onTouchStart={() => {
-                isSubExecomHovered.current = true;
-                handleSubExecomUserTouch();
-              }}
-              onTouchEnd={() => (isSubExecomHovered.current = false)}
-              onPointerDown={handleSubExecomUserTouch}
-              onClickCapture={handleSubExecomUserTouch}
-              onScroll={handleSubExecomUserTouch}
-            >
-              <div className={styles.carouselTrack}>
-                {subExecom.map((member) => (
-                  <article key={member.id} className={styles.memberCard}>
-                    <div>
-                      <div className={styles.cardAvatarWrap}>
-                        <Image
-                          src={member.image}
-                          alt={member.name}
-                          width={280}
-                          height={280}
-                          style={{ height: "auto" }}
-                          className={styles.avatarImg}
-                        />
-                      </div>
-                      <p className={styles.roleBadge}>{member.role}</p>
-                      <h4 className={styles.memberName}>{member.name}</h4>
-                      <p className={styles.memberDept}>{member.dept}</p>
-                    </div>
-                    <div className={styles.memberFooter}>
-                      <div className={styles.socialIcons}>
-                        {member.linkedin && (
-                          <a
-                            href={member.linkedin}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={styles.socialBtn}
-                            aria-label={`${member.name} LinkedIn`}
-                          >
-                            <LinkedInIcon />
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+        <TeamSection title="EXECUTIVE COMMITTEE" members={execom} />
+        <TeamSection title="SUB-EXECOM" members={sortedSubExecom} />
       </div>
     </section>
   );
