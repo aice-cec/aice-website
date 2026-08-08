@@ -1,0 +1,209 @@
+{
+  "faculty": [
+    {
+      "id": "fac-1",
+      "name": "Manjusha Nair S",
+      "role": "Faculty Advisor",
+      "dept": "Dept of Computer Science & Engg",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/faculty/manjusha.webp",
+      "bio": "Guiding AICE towards research excellence, technical innovation, and collaborative engineering impact.",
+      "linkedin": "https://linkedin.com",
+      "email": "faculty@ceconline.edu"
+    }
+  ],
+  "execom": [
+    {
+      "id": "ex-1",
+      "name": "Melwin Shibu Mathew",
+      "role": "Student Lead",
+      "dept": "CL '28",
+      "team": "Executive Committee",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/melwin.webp",
+      "linkedin": "https://linkedin.com",
+      "github": "https://github.com"
+    },
+    {
+      "id": "ex-2",
+      "name": "Smruthy M Nair",
+      "role": "Student Lead",
+      "dept": "CL '28",
+      "team": "Executive Committee",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/smruthy.webp",
+      "linkedin": "https://linkedin.com",
+      "github": "https://github.com"
+    },
+    {
+      "id": "ex-3",
+      "name": "Sreehari A Nair",
+      "role": "Program Manager",
+      "dept": "CL '28",
+      "team": "Executive Committee",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/sreehari.webp",
+      "linkedin": "https://linkedin.com",
+      "github": "https://github.com"
+    },
+    {
+      "id": "ex-4",
+      "name": "Swathy J",
+      "role": "Treasurer",
+      "dept": "CL '28",
+      "team": "Executive Committee",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/swathi.webp",
+      "linkedin": "https://linkedin.com",
+      "github": "https://github.com"
+    },
+    {
+      "id": "ex-5",
+      "name": "Aiswarya Rose Jacob",
+      "role": "Project Coordinator",
+      "dept": "CL '28",
+      "team": "Executive Committee",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/aiswarya.webp",
+      "linkedin": "https://linkedin.com",
+      "github": "https://github.com"
+    },
+    {
+      "id": "ex-6",
+      "name": "Sarin MS",
+      "role": "Webmaster",
+      "dept": "CL '28",
+      "team": "Executive Committee",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/sarin.webp",
+      "linkedin": "https://linkedin.com",
+      "github": "https://github.com"
+    },
+    {
+      "id": "ex-7",
+      "name": "Ishaani Raj Padickal",
+      "role": "Creative Lead",
+      "dept": "CL '28",
+      "team": "Executive Committee",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/ishaani.webp",
+      "linkedin": "https://linkedin.com",
+      "github": "https://github.com"
+    },
+    {
+      "id": "ex-8",
+      "name": "Hena Mariam Abraham",
+      "role": "Content Lead",
+      "dept": "CL '28",
+      "team": "Executive Committee",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/Hena.png",
+      "linkedin": "https://linkedin.com",
+      "github": "https://github.com"
+    },
+    {
+      "id": "ex-9",
+      "name": "Sreelekshmi",
+      "role": "PR & Outreach Lead",
+      "dept": "CL '28",
+      "team": "Executive Committee",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/sreelekshmi.webp",
+      "linkedin": "https://linkedin.com",
+      "github": "https://github.com"
+    },
+    {
+      "id": "ex-10",
+      "name": "Adhi Narayan",
+      "role": "Tech Lead",
+      "dept": "CL '28",
+      "team": "Executive Committee",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/adhi.webp",
+      "linkedin": "https://linkedin.com",
+      "github": "https://github.com"
+    },
+    {
+      "id": "ex-11",
+      "name": "Sinan",
+      "role": "Media Lead",
+      "dept": "CL '28",
+      "team": "Executive Committee",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/sinan.webp",
+      "linkedin": "https://linkedin.com",
+      "github": "https://github.com"
+    }
+  ],
+  "subExecom": [
+    {
+      "id": "sub-1",
+      "name": "Karthikeyan",
+      "role": "Co-Treasurer",
+      "dept": "CL '28",
+      "team": "Finance Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/sub-execom/karthikeyan.webp",
+      "linkedin": "https://linkedin.com"
+    },
+    {
+      "id": "sub-2",
+      "name": "Kripa",
+      "role": "Web Team",
+      "dept": "CL '28",
+      "team": "Web Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/sub-execom/kripa.webp",
+      "linkedin": "https://linkedin.com"
+    },
+    {
+      "id": "sub-3",
+      "name": "Harikrishnan",
+      "role": "Web Team",
+      "dept": "CL '28",
+      "team": "Web Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/sub-execom/harikrishnan.webp",
+      "linkedin": "https://linkedin.com"
+    },
+    {
+      "id": "sub-4",
+      "name": "Anugraha S",
+      "role": "Content Team",
+      "dept": "CL '28",
+      "team": "Content Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/sub-execom/anugraha.webp",
+      "linkedin": "https://linkedin.com"
+    },
+    {
+      "id": "sub-5",
+      "name": "Elsa",
+      "role": "PR & Outreach Team",
+      "dept": "CL '28",
+      "team": "PR & Outreach Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/sub-execom/elsa.webp",
+      "linkedin": "https://linkedin.com"
+    },
+    {
+      "id": "sub-6",
+      "name": "Sachin",
+      "role": "Tech Team",
+      "dept": "CL '28",
+      "team": "Tech Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/sub-execom/sachin.webp",
+      "linkedin": "https://linkedin.com"
+    },
+    {
+      "id": "sub-7",
+      "name": "Krishna B",
+      "role": "Creative Team",
+      "dept": "CL '28",
+      "team": "Creative Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/sub-execom/krishna.webp",
+      "linkedin": "https://linkedin.com"
+    },
+    {
+      "id": "sub-8",
+      "name": "Roshna",
+      "role": "Creative Team",
+      "dept": "CL '28",
+      "team": "Creative Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/sub-execom/roshana.webp",
+      "linkedin": "https://linkedin.com"
+    },
+    {
+      "id": "sub-9",
+      "name": "Devananda",
+      "role": "Media Team",
+      "dept": "CL '28",
+      "team": "Media Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/sub-execom/devanandha.webp",
+      "linkedin": "https://linkedin.com"
+    }
+  ]
+}

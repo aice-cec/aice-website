@@ -1,0 +1,81 @@
+[
+  {
+    "id": "form-1786114514609",
+    "slug": "aice-event-reg",
+    "event_id": null,
+    "title": "NEW REGISTRATION FORM",
+    "description": "Fill out the registration details below.",
+    "whatsapp_link": "x.com",
+    "fields": [
+      {
+        "id": "field_1786114528159",
+        "type": "text",
+        "label": "name",
+        "options": [
+          "Option 1",
+          "Option 2"
+        ],
+        "required": true,
+        "placeholder": ""
+      },
+      {
+        "id": "field_1786114533769",
+        "type": "radio",
+        "label": "batch",
+        "options": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "required": true,
+        "placeholder": ""
+      },
+      {
+        "id": "field_1786114640490",
+        "type": "email",
+        "label": "email",
+        "options": [
+          "Option 1",
+          "Option 2"
+        ],
+        "required": true,
+        "placeholder": ""
+      },
+      {
+        "id": "field_1786114658522",
+        "type": "phone",
+        "label": "ph number",
+        "options": [
+          "Option 1",
+          "Option 2"
+        ],
+        "required": true,
+        "placeholder": ""
+      }
+    ],
+    "is_active": true
+  },
+  {
+    "id": "form-1786112936482-9ofh",
+    "slug": "test",
+    "event_id": "ai-research-circle-2026",
+    "title": "test",
+    "description": "test form",
+    "whatsapp_link": "",
+    "fields": [
+      {
+        "id": "field_1786112848130",
+        "type": "text",
+        "label": "name",
+        "options": [
+          "Option 1",
+          "Option 2"
+        ],
+        "required": true,
+        "placeholder": ""
+      }
+    ],
+    "is_active": true
+  }
+]

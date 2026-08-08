@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Bebas_Neue } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,11 +12,74 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const bebasNeue = Bebas_Neue({
+  weight: "400",
+  variable: "--font-bebas-neue",
+  subsets: ["latin"],
+});
+
+export const viewport: Viewport = {
+  themeColor: "#000000",
+};
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://aice-cec.vercel.app"),
   title: "AICE",
   description:
-    "Something extraordinary is in the works. Stay tuned for the official launch of AICE.",
+    "Official AI community of College of Engineering Chengannur (CEC). A platform where curious minds meet, ideas evolve, and innovation becomes impact.",
+  keywords: [
+    "AICE",
+    "AICE CEC",
+    "AI Community",
+    "College of Engineering Chengannur",
+    "CEC Chengannur",
+    "Artificial Intelligence",
+    "Machine Learning",
+  ],
+  authors: [{ name: "AICE CEC Team" }],
+  openGraph: {
+    title: "AICE | AI Innovation Community for Excellence",
+    description:
+      "Official AI community of College of Engineering Chengannur. Join us to learn, build, and innovate.",
+    siteName: "AICE CEC",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AICE | AI Innovation Community for Excellence",
+    description:
+      "Official AI community of College of Engineering Chengannur. Join us to learn, build, and innovate.",
+  },
+  applicationName: "AICE",
+  appleWebApp: {
+    capable: true,
+    title: "AICE",
+    statusBarStyle: "black-translucent",
+  },
+  icons: {
+    icon: [
+      { url: "/logos/favicon.ico", type: "image/x-icon" },
+      { url: "/logos/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/logos/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/logos/favicon-48x48.png", sizes: "48x48", type: "image/png" },
+    ],
+    shortcut: "/logos/favicon.ico",
+    apple: [
+      {
+        url: "/logos/apple-touch-icon-180x180.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+      {
+        url: "/logos/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+    ],
+  },
 };
+
+import ToastContainer from "@/app/components/Toast";
 
 export default function RootLayout({
   children,
@@ -26,10 +89,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100 selection:bg-white selection:text-black">
         {children}
+        <ToastContainer />
       </body>
     </html>
   );
