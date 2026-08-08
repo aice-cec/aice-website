@@ -2,14 +2,18 @@ import { redirect } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { getLocalForms } from "@/lib/forms";
 import redirectsFallback from "@/data/redirects.json";
-import CustomFormRender, { CustomFormItem } from "@/app/components/CustomFormRender";
+import CustomFormRender, {
+  CustomFormItem,
+} from "@/app/components/CustomFormRender";
 import NotFound from "../404";
 
 interface RedirectPageProps {
   params: Promise<{ url_name: string }>;
 }
 
-export default async function RedirectOrFormPage({ params }: RedirectPageProps) {
+export default async function RedirectOrFormPage({
+  params,
+}: RedirectPageProps) {
   const resolvedParams = await params;
   const rawUrlName = resolvedParams?.url_name
     ? decodeURIComponent(resolvedParams.url_name)
@@ -23,7 +27,9 @@ export default async function RedirectOrFormPage({ params }: RedirectPageProps) 
   try {
     const { data: formData } = await supabase
       .from("forms")
-      .select("id,slug,event_id,title,description,whatsapp_link,fields,is_active,created_at")
+      .select(
+        "id,slug,event_id,title,description,whatsapp_link,fields,is_active,issue_ticket,created_at",
+      )
       .eq("slug", targetSlug)
       .single();
 
@@ -35,7 +41,7 @@ export default async function RedirectOrFormPage({ params }: RedirectPageProps) 
   if (!matchedForm) {
     const localForms = getLocalForms();
     const fallbackForm = localForms.find(
-      (f) => f.slug === targetSlug || f.id === targetSlug
+      (f) => f.slug === targetSlug || f.id === targetSlug,
     );
     if (fallbackForm) {
       matchedForm = fallbackForm as CustomFormItem;
@@ -67,7 +73,7 @@ export default async function RedirectOrFormPage({ params }: RedirectPageProps) 
 
   if (!targetUrl && Array.isArray(redirectsFallback)) {
     const fallbackMatch = redirectsFallback.find(
-      (item) => item.url_name.trim().toLowerCase() === targetSlug
+      (item) => item.url_name.trim().toLowerCase() === targetSlug,
     );
     if (fallbackMatch) {
       targetUrl = fallbackMatch.target_url;
@@ -76,13 +82,22 @@ export default async function RedirectOrFormPage({ params }: RedirectPageProps) 
 
   if (targetUrl) {
     const target = targetUrl.trim();
-    if (target.startsWith("/") && !target.startsWith("//") && !target.startsWith("/\\")) {
+    if (
+      target.startsWith("/") &&
+      !target.startsWith("//") &&
+      !target.startsWith("/\\")
+    ) {
       redirect(target);
     }
 
     try {
-      const destination = new URL(target.includes("://") ? target : `https://${target}`);
-      if (destination.protocol !== "http:" && destination.protocol !== "https:") {
+      const destination = new URL(
+        target.includes("://") ? target : `https://${target}`,
+      );
+      if (
+        destination.protocol !== "http:" &&
+        destination.protocol !== "https:"
+      ) {
         return <NotFound />;
       }
       redirect(destination.toString());
