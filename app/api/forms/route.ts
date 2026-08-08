@@ -73,7 +73,7 @@ export async function POST(req: Request) {
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)+/g, ""),
       event_id: f.event_id || f.eventId || null,
-      title: f.title || "Untitled Form",
+      title: (f.title || "Untitled Form").slice(0, 100),
       description: f.description || "",
       whatsapp_link: f.whatsapp_link || f.whatsappLink || "",
       fields: Array.isArray(f.fields) ? f.fields : [],

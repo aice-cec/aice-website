@@ -160,19 +160,19 @@ export function FormsSection({
       <section className="flex flex-col gap-6">
         {/* Form Builder Configuration Card */}
         <div className="p-5 md:p-6 bg-[#121217] border border-white/10 rounded-xl space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-white/10 gap-3 min-w-0">
-            <div className="min-w-0 max-w-full">
-              <h3 className="text-base font-bold text-white truncate break-words max-w-full">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between pb-3 border-b border-white/10 gap-3 min-w-0">
+            <div className="min-w-0 flex-1">
+              <h3 className="text-base font-bold text-white break-words break-all leading-snug">
                 Form Builder: {customFormBuilder.title}
               </h3>
-              <p className="text-xs text-gray-400 truncate max-w-full">
+              <p className="text-xs text-gray-400 break-words break-all mt-1">
                 Registration Link:{" "}
                 <code className="text-red-400 font-mono break-all">
                   aice.ceconline.edu/{customFormBuilder.slug || "slug"}
                 </code>
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => copyFormLinkToClipboard(customFormBuilder.slug)}
                 className="px-3 py-1.5 text-xs font-semibold text-gray-200 bg-white/5 border border-white/10 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-1.5"
@@ -191,14 +191,14 @@ export function FormsSection({
           {/* General Form Settings */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5 md:col-span-2">
-              <label className="text-xs font-semibold text-gray-400">Form Title *</label>
+              <label className="text-xs font-semibold text-gray-400">Form Title * (Max 100 characters)</label>
               <input
                 type="text"
                 value={customFormBuilder.title}
-                onChange={(e) => handleCustomFormInputChange("title", e.target.value)}
+                onChange={(e) => handleCustomFormInputChange("title", e.target.value.slice(0, 100))}
                 placeholder="e.g. AICE BUILD NIGHT REGISTRATION"
-                maxLength={150}
-                className="w-full px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-red-500"
+                maxLength={100}
+                className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-red-500 break-all"
               />
             </div>
 
@@ -210,7 +210,7 @@ export function FormsSection({
                 placeholder="Provide event details, instructions, or venue info..."
                 rows={2}
                 maxLength={800}
-                className="w-full px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-red-500 resize-y"
+                className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-red-500 resize-y break-all"
               />
             </div>
 
@@ -226,7 +226,7 @@ export function FormsSection({
                   onChange={(e) => handleCustomFormInputChange("slug", e.target.value)}
                   placeholder="e.g. aice-build-night"
                   maxLength={120}
-                  className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-r-lg text-sm text-white font-mono focus:outline-none focus:border-red-500"
+                  className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-r-lg text-sm text-white font-mono focus:outline-none focus:border-red-500 break-all"
                 />
               </div>
             </div>
@@ -257,7 +257,7 @@ export function FormsSection({
                 onChange={(e) => handleCustomFormInputChange("whatsapp_link", e.target.value)}
                 placeholder="https://chat.whatsapp.com/..."
                 maxLength={300}
-                className="w-full px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-red-500"
+                className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-red-500 break-all"
               />
               <p className="text-[11px] text-gray-500">
                 Shown to attendees immediately after submitting their registration.
@@ -358,7 +358,7 @@ export function FormsSection({
                         }
                         placeholder="Question text..."
                         maxLength={200}
-                        className="w-full px-3 py-1.5 bg-[#121217] border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-red-500"
+                        className="w-full min-w-0 px-3 py-1.5 bg-[#121217] border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-red-500 break-all"
                       />
                     </div>
 
@@ -373,7 +373,7 @@ export function FormsSection({
                             type: e.target.value as any,
                           })
                         }
-                        className="w-full px-3 py-1.5 bg-[#121217] border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-red-500"
+                        className="w-full min-w-0 px-3 py-1.5 bg-[#121217] border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-red-500"
                       >
                         <option value="text">Short Text</option>
                         <option value="email">Email Address</option>
@@ -408,7 +408,7 @@ export function FormsSection({
                         }
                         placeholder="Option 1, Option 2, Option 3"
                         maxLength={500}
-                        className="w-full px-3 py-1.5 bg-[#121217] border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-red-500"
+                        className="w-full min-w-0 px-3 py-1.5 bg-[#121217] border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-red-500 break-all"
                       />
                     </div>
                   )}

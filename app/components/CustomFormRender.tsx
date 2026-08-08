@@ -449,11 +449,11 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
             return (
               <div key={field.id} className="space-y-2">
                 {/* Numbered Section Header */}
-                <div className="flex items-center gap-2.5 pb-1 border-b border-white/10">
-                  <span className="px-2 py-0.5 bg-red-600 text-white font-mono font-black text-xs">
+                <div className="flex items-center gap-2.5 pb-1 border-b border-white/10 min-w-0">
+                  <span className="px-2 py-0.5 bg-red-600 text-white font-mono font-black text-xs shrink-0">
                     {stepNum}
                   </span>
-                  <label className="font-extrabold text-gray-200 font-mono text-xs uppercase tracking-widest">
+                  <label className="font-extrabold text-gray-200 font-mono text-xs uppercase tracking-widest break-words break-all min-w-0">
                     {field.label}{" "}
                     {field.required && <span className="text-red-500">*</span>}
                   </label>
@@ -488,7 +488,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                         : `e.g. Enter ${field.label.toLowerCase()}`)
                     }
                     required={field.required}
-                    className="w-full px-4 py-3 bg-[#070709] border-2 border-white/15 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-0 focus:border-red-500 transition-colors rounded-none"
+                    className="w-full min-w-0 px-4 py-3 bg-[#070709] border-2 border-white/15 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-0 focus:border-red-500 transition-colors rounded-none break-all"
                   />
                 )}
 
@@ -500,7 +500,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                       handleInputChange(field.id, e.target.value)
                     }
                     required={field.required}
-                    className="w-full px-4 py-3 bg-[#070709] border-2 border-white/15 text-sm text-white focus:outline-none focus:border-red-500 transition-colors cursor-pointer rounded-none"
+                    className="w-full min-w-0 px-4 py-3 bg-[#070709] border-2 border-white/15 text-sm text-white focus:outline-none focus:border-red-500 transition-colors cursor-pointer rounded-none break-all"
                   >
                     <option
                       value=""
@@ -527,7 +527,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                     {(field.options || []).map((opt) => (
                       <label
                         key={opt}
-                        className="flex items-center gap-3 p-3 bg-[#070709] border-2 border-white/15 text-xs font-bold text-gray-200 cursor-pointer select-none hover:bg-white/5 transition-colors"
+                        className="flex items-center gap-3 p-3 bg-[#070709] border-2 border-white/15 text-xs font-bold text-gray-200 cursor-pointer select-none hover:bg-white/5 transition-colors break-words break-all min-w-0"
                       >
                         <input
                           type="radio"
@@ -538,9 +538,9 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                             handleInputChange(field.id, e.target.value)
                           }
                           required={field.required}
-                          className="w-4 h-4 accent-red-500 cursor-pointer"
+                          className="w-4 h-4 accent-red-500 cursor-pointer shrink-0"
                         />
-                        {opt}
+                        <span className="break-words break-all min-w-0">{opt}</span>
                       </label>
                     ))}
                   </div>
@@ -558,7 +558,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                       return (
                         <label
                           key={opt}
-                          className="flex items-center gap-3 p-3 bg-[#070709] border-2 border-white/15 text-xs font-bold text-gray-200 cursor-pointer select-none hover:bg-white/5 transition-colors"
+                          className="flex items-center gap-3 p-3 bg-[#070709] border-2 border-white/15 text-xs font-bold text-gray-200 cursor-pointer select-none hover:bg-white/5 transition-colors break-words break-all min-w-0"
                         >
                           <input
                             type="checkbox"
@@ -571,9 +571,9 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                                 e.target.checked,
                               )
                             }
-                            className="w-4 h-4 accent-red-500 rounded-none cursor-pointer"
+                            className="w-4 h-4 accent-red-500 rounded-none cursor-pointer shrink-0"
                           />
-                          {opt}
+                          <span className="break-words break-all min-w-0">{opt}</span>
                         </label>
                       );
                     })}
