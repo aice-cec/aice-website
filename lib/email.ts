@@ -7,6 +7,26 @@ interface SendTicketEmailParams {
   whatsappLink?: string;
 }
 
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>'"]/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "'": "&#39;",
+    '"': "&quot;",
+  })[character] ?? character);
+}
+
+function getSafeExternalUrl(value?: string): string | null {
+  if (!value) return null;
+  try {
+    const url = new URL(value.includes("://") ? value : `https://${value}`);
+    return url.protocol === "https:" || url.protocol === "http:" ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function sendTicketEmail({
   toEmail,
   attendeeName,
@@ -28,7 +48,16 @@ export async function sendTicketEmail({
     email: toEmail,
   });
 
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrPayload)}`;
+  const qrCodeUrl = await QRCode.toDataURL(qrPayload, {
+    width: 250,
+    margin: 1,
+    errorCorrectionLevel: "M",
+  });
+  const safeEventTitle = escapeHtml(eventTitle);
+  const safeAttendeeName = escapeHtml(attendeeName || "Participant");
+  const safeTicketId = escapeHtml(ticketId);
+  const safeWhatsappLink = getSafeExternalUrl(whatsappLink);
+  const issuedAt = escapeHtml(new Date(submittedAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }));
 
   const htmlContent = `
     <!DOCTYPE html>
@@ -67,24 +96,24 @@ export async function sendTicketEmail({
         </table>
 
         <div class="pass-badge">ENTRY PASS CONFIRMED</div>
-        <h1 class="event-title">${eventTitle}</h1>
-        <p class="attendee-name">ATTENDEE: <strong style="color: #ffffff; font-size: 15px;">${attendeeName || "Participant"}</strong></p>
+        <h1 class="event-title">${safeEventTitle}</h1>
+        <p class="attendee-name">ATTENDEE: <strong style="color: #ffffff; font-size: 15px;">${safeAttendeeName}</strong></p>
 
         <div class="ticket-box">
           <div style="font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; font-family: monospace; font-weight: 700;">SCAN QR CODE AT DESK FOR ENTRY</div>
           <img src="${qrCodeUrl}" alt="Event Ticket QR Code" class="qr-img" width="180" height="180" />
           <div style="font-size: 11px; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px; font-family: monospace; font-weight: 700;">PASS IDENTIFIER</div>
-          <div class="ticket-id">${ticketId}</div>
-          <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-family: monospace;">Issued: ${new Date(submittedAt).toLocaleString()}</div>
+          <div class="ticket-id">${safeTicketId}</div>
+          <div style="font-size: 11px; color: #6b7280; margin-top: 8px; font-family: monospace;">Issued: ${issuedAt}</div>
         </div>
 
         ${
-          whatsappLink
+          safeWhatsappLink
             ? `
           <div style="background-color: rgba(16,185,129,0.1); border: 2px solid rgba(16,185,129,0.3); padding: 18px; text-align: center; box-shadow: 4px 4px 0px #000000;">
             <div style="font-size: 12px; font-weight: 900; color: #10b981; margin-bottom: 4px; font-family: monospace; text-transform: uppercase; letter-spacing: 1px;">OFFICIAL WHATSAPP GROUP</div>
             <div style="font-size: 12px; color: #d1d5db; margin-bottom: 12px;">Join for live announcements, workshop files, and updates</div>
-            <a href="${whatsappLink.startsWith("http") ? whatsappLink : `https://${whatsappLink}`}" class="btn-wa" target="_blank">JOIN WHATSAPP GROUP</a>
+            <a href="${escapeHtml(safeWhatsappLink)}" class="btn-wa" target="_blank" rel="noopener noreferrer">JOIN WHATSAPP GROUP</a>
           </div>
         `
             : ""
@@ -138,3 +167,5 @@ export async function sendTicketEmail({
 
   return false;
 }
+import "server-only";
+import QRCode from "qrcode";

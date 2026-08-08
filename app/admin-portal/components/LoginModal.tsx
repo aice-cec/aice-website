@@ -4,9 +4,8 @@ import { useState } from "react";
 import Image from "next/image";
 
 interface LoginModalProps {
-  onLoginSuccess: (token: string) => void;
+  onLoginSuccess: () => void;
   showToast: (text: string, isError?: boolean) => void;
-  TOKEN_KEY: string;
 }
 
 function EyeIcon() {
@@ -27,7 +26,7 @@ function EyeOffIcon() {
   );
 }
 
-export function LoginModal({ onLoginSuccess, showToast, TOKEN_KEY }: LoginModalProps) {
+export function LoginModal({ onLoginSuccess, showToast }: LoginModalProps) {
   const [loginUser, setLoginUser] = useState("");
   const [loginPass, setLoginPass] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -50,8 +49,7 @@ export function LoginModal({ onLoginSuccess, showToast, TOKEN_KEY }: LoginModalP
         return;
       }
 
-      sessionStorage.setItem(TOKEN_KEY, data.token);
-      onLoginSuccess(data.token);
+      onLoginSuccess();
       showToast("Logged in successfully!");
     } catch (err) {
       setLoginError("Network Error");

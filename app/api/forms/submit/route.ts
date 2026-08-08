@@ -2,14 +2,24 @@ import { NextResponse, after } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { sendTicketEmail } from "@/lib/email";
 import { getLocalForms } from "@/lib/forms";
+import {
+  FormDefinition,
+  isRecord,
+  validateResponses,
+} from "@/lib/form-validation";
+import crypto from "crypto";
 
 const FORM_COLUMNS = "id,slug,title,fields,is_active,whatsapp_link";
 
 export async function POST(req: Request) {
   try {
-    const { formId, eventId, responses } = await req.json();
+    const body: unknown = await req.json();
+    if (!isRecord(body)) {
+      return NextResponse.json({ error: "Invalid form submission payload" }, { status: 400 });
+    }
+    const { formId, responses } = body;
 
-    if (!formId || !responses) {
+    if (typeof formId !== "string" || !formId.trim() || formId.length > 100) {
       return NextResponse.json(
         { error: "Invalid form submission payload" },
         { status: 400 },
@@ -17,14 +27,20 @@ export async function POST(req: Request) {
     }
 
     // Query form details from Supabase, fallback to local JSON
-    let formObj: any = null;
+    let formObj: FormDefinition | null = null;
     const { data: dbForm } = await supabase
       .from("forms")
       .select(FORM_COLUMNS)
-      .or(`id.eq.${formId},slug.eq.${formId}`)
+      .or(`id.eq.${formId.trim()},slug.eq.${formId.trim()}`)
       .single();
 
-    formObj = dbForm || getLocalForms().find((f) => f.id === formId || f.slug === formId);
+    formObj = (dbForm as FormDefinition | null) ||
+      (getLocalForms().find((f) => f.id === formId || f.slug === formId) as FormDefinition | undefined) ||
+      null;
+
+    if (!formObj) {
+      return NextResponse.json({ error: "Form not found" }, { status: 404 });
+    }
 
     if (formObj?.is_active === false) {
       return NextResponse.json(
@@ -33,64 +49,31 @@ export async function POST(req: Request) {
       );
     }
 
-    // Server-side validation
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const phoneRegex = /^\d{10}$/;
-
-    if (formObj && Array.isArray(formObj.fields)) {
-      for (const field of formObj.fields) {
-        const val = responses[field.id];
-        if (
-          field.required &&
-          (val === undefined ||
-            val === null ||
-            val === "" ||
-            (Array.isArray(val) && val.length === 0))
-        ) {
-          return NextResponse.json(
-            { error: `Missing required field: ${field.label}` },
-            { status: 400 },
-          );
-        }
-
-        if (val && typeof val === "string") {
-          const label = field.label.toLowerCase();
-          const isEmailField = field.type === "email" || label.includes("email");
-          const isPhoneField = field.type === "phone" || label.includes("phone") || label.includes("whatsapp") || label.includes("mobile");
-
-          if (isEmailField && !emailRegex.test(val.trim())) {
-            return NextResponse.json(
-              { error: `Invalid email address for ${field.label}` },
-              { status: 400 },
-            );
-          }
-
-          if (isPhoneField && !phoneRegex.test(val.replace(/\D/g, ""))) {
-            return NextResponse.json(
-              { error: `Phone number must be exactly 10 digits for ${field.label}` },
-              { status: 400 },
-            );
-          }
-        }
-      }
+    const validation = validateResponses(formObj.fields, responses);
+    if ("error" in validation) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
-    const ticketCode = `AICE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    const ticketCode = `AICE-${crypto.randomUUID().replace(/-/g, "").toUpperCase()}`;
     const createdAt = new Date().toISOString();
 
-    await supabase.from("form_submissions").insert([{
+    const { error: insertError } = await supabase.from("form_submissions").insert([{
       form_id: formId,
-      event_id: eventId || null,
-      responses,
+      event_id: formObj.event_id || null,
+      responses: { ...validation.responses, __ticket: { code: ticketCode, issuedAt: createdAt } },
     }]);
+    if (insertError) {
+      console.error("Unable to save form submission", insertError);
+      return NextResponse.json({ error: "Unable to save your registration. Please try again." }, { status: 503 });
+    }
 
     // Extract email and attendee name from responses
     let toEmail = "";
     let attendeeName = "";
 
-    if (formObj && Array.isArray(formObj.fields)) {
+    if (Array.isArray(formObj.fields)) {
       for (const f of formObj.fields) {
-        const val = responses[f.id];
+        const val = validation.responses[f.id];
         if (!val || typeof val !== "string") continue;
         const label = f.label.toLowerCase();
 
@@ -105,7 +88,7 @@ export async function POST(req: Request) {
 
     // Fallback: scan raw response values
     if (!toEmail || !attendeeName) {
-      for (const val of Object.values(responses)) {
+      for (const val of Object.values(validation.responses)) {
         if (typeof val !== "string") continue;
         if (!toEmail && val.includes("@")) {
           toEmail = val;
@@ -142,10 +125,8 @@ export async function POST(req: Request) {
       message: "Registration submitted successfully!",
       ticketCode,
     });
-  } catch (err: any) {
-    return NextResponse.json(
-      { error: err.message || "Failed to submit form" },
-      { status: 500 },
-    );
+  } catch (error) {
+    console.error("Form submission failed", error);
+    return NextResponse.json({ error: "Failed to submit form" }, { status: 500 });
   }
 }

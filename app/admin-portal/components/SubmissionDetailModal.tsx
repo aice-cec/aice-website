@@ -12,8 +12,6 @@ interface SubmissionDetailModalProps {
   showToast: (text: string, isError?: boolean) => void;
 }
 
-const TOKEN_KEY = "aice_admin_token";
-
 export function SubmissionDetailModal({
   submission,
   form,
@@ -47,12 +45,6 @@ export function SubmissionDetailModal({
 
   const handleSave = async () => {
     setErrorMsg("");
-    const token = sessionStorage.getItem(TOKEN_KEY);
-    if (!token) {
-      showToast("Session expired. Please log in again.", true);
-      return;
-    }
-
     // Validation check
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const phoneRegex = /^\d{10}$/;
@@ -85,7 +77,6 @@ export function SubmissionDetailModal({
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "x-admin-token": token,
         },
         body: JSON.stringify({
           id: submission.id,
@@ -118,18 +109,9 @@ export function SubmissionDetailModal({
       return;
     }
 
-    const token = sessionStorage.getItem(TOKEN_KEY);
-    if (!token) {
-      showToast("Session expired. Please log in again.", true);
-      return;
-    }
-
     try {
       const res = await fetch(`/api/forms/responses?id=${submission.id}`, {
         method: "DELETE",
-        headers: {
-          "x-admin-token": token,
-        },
       });
 
       const data = await res.json();

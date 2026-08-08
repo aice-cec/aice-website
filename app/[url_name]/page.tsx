@@ -75,15 +75,20 @@ export default async function RedirectOrFormPage({ params }: RedirectPageProps) 
   }
 
   if (targetUrl) {
-    let destination = targetUrl.trim();
-    if (
-      !destination.startsWith("http://") &&
-      !destination.startsWith("https://") &&
-      !destination.startsWith("/")
-    ) {
-      destination = `https://${destination}`;
+    const target = targetUrl.trim();
+    if (target.startsWith("/") && !target.startsWith("//") && !target.startsWith("/\\")) {
+      redirect(target);
     }
-    redirect(destination);
+
+    try {
+      const destination = new URL(target.includes("://") ? target : `https://${target}`);
+      if (destination.protocol !== "http:" && destination.protocol !== "https:") {
+        return <NotFound />;
+      }
+      redirect(destination.toString());
+    } catch {
+      return <NotFound />;
+    }
   }
 
   return <NotFound />;

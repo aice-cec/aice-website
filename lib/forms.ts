@@ -1,3 +1,4 @@
+import "server-only";
 import formsFallback from "@/data/forms.json";
 import fs from "fs";
 import path from "path";

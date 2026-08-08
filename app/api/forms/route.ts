@@ -80,23 +80,12 @@ export async function POST(req: Request) {
       is_active: f.is_active !== undefined ? Boolean(f.is_active) : true,
     }));
 
-    // Delete forms (and their submissions) that are no longer in the payload
+    // Upsert first: a failed write must never erase existing data.
     const validIds = new Set(formattedForms.map((f: any) => f.id).filter(Boolean));
     const { data: existingDbForms } = await supabase.from("forms").select("id");
 
-    if (existingDbForms?.length) {
-      const idsToDelete = existingDbForms
-        .map((f: any) => f.id)
-        .filter((id: string) => !validIds.has(id));
-
-      if (idsToDelete.length) {
-        await supabase.from("form_submissions").delete().in("form_id", idsToDelete);
-        await supabase.from("forms").delete().in("id", idsToDelete);
-      }
-    }
-
     if (!formattedForms.length) {
-      return NextResponse.json({ success: true, forms: [] });
+      return NextResponse.json({ error: "At least one form is required" }, { status: 400 });
     }
 
     const { data, error } = await supabase
@@ -105,17 +94,33 @@ export async function POST(req: Request) {
       .select();
 
     if (error) {
+      console.error("Supabase form sync failed", error);
       return NextResponse.json(
-        { error: `Supabase Sync Error: ${error.message} (${error.code || "unknown"})` },
+        { error: "Unable to save forms" },
         { status: 500 },
       );
     }
 
+    const idsToDelete = (existingDbForms || [])
+      .map((f: any) => f.id)
+      .filter((id: string) => !validIds.has(id));
+    if (idsToDelete.length) {
+      const { error: submissionDeleteError } = await supabase
+        .from("form_submissions")
+        .delete()
+        .in("form_id", idsToDelete);
+      const { error: formDeleteError } = submissionDeleteError
+        ? { error: submissionDeleteError }
+        : await supabase.from("forms").delete().in("id", idsToDelete);
+      if (formDeleteError) {
+        console.error("Supabase form deletion failed", formDeleteError);
+        return NextResponse.json({ error: "Forms saved, but obsolete forms could not be removed" }, { status: 500 });
+      }
+    }
+
     return NextResponse.json({ success: true, forms: data || formattedForms });
-  } catch (err: any) {
-    return NextResponse.json(
-      { error: err.message || "Server Error" },
-      { status: 500 },
-    );
+  } catch (error) {
+    console.error("Forms update failed", error);
+    return NextResponse.json({ error: "Unable to save forms" }, { status: 500 });
   }
 }

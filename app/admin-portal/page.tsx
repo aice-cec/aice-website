@@ -22,8 +22,6 @@ const MONTHS = [
   "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
   "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
 ];
-const TOKEN_KEY = "aice_admin_token";
-
 export default function AdminPortalPage() {
   const [activeSection, setActiveSection] = useState<"events" | "redirects" | "forms">("events");
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
@@ -106,10 +104,9 @@ export default function AdminPortalPage() {
 
   // Check auth on mount
   useEffect(() => {
-    const token = sessionStorage.getItem(TOKEN_KEY);
-    if (token) {
-      setIsAuthenticated(true);
-    }
+    fetch("/api/admin/login")
+      .then((res) => setIsAuthenticated(res.ok))
+      .catch(() => setIsAuthenticated(false));
   }, []);
 
   // Fetch initial events
@@ -169,14 +166,9 @@ export default function AdminPortalPage() {
   // Fetch form responses when selecting a custom form
   const fetchSubmissions = useCallback(async () => {
     if (activeSection === "forms" && selectedFormId) {
-      const token = sessionStorage.getItem(TOKEN_KEY);
-      if (!token) return;
-
       setLoadingSubmissions(true);
       try {
-        const res = await fetch(`/api/forms/responses?form_id=${selectedFormId}`, {
-          headers: { "x-admin-token": token },
-        });
+        const res = await fetch(`/api/forms/responses?form_id=${encodeURIComponent(selectedFormId)}`);
         const data = await res.json();
         if (Array.isArray(data)) {
           setFormSubmissions(data);
@@ -300,8 +292,8 @@ export default function AdminPortalPage() {
     handleCustomFormInputChange("fields", fields);
   };
 
-  const handleLogout = () => {
-    sessionStorage.removeItem(TOKEN_KEY);
+  const handleLogout = async () => {
+    await fetch("/api/admin/login", { method: "DELETE" });
     setIsAuthenticated(false);
     showToast("Logged out");
   };
@@ -475,26 +467,17 @@ export default function AdminPortalPage() {
 
   // Publish / Save Changes to Backend API
   const handlePublishChanges = async () => {
-    const token = sessionStorage.getItem(TOKEN_KEY);
-    if (!token) {
-      setIsAuthenticated(false);
-      showToast("Please log in first!", true);
-      return;
-    }
-
     try {
       if (activeSection === "events") {
         const res = await fetch("/api/events", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-admin-token": token,
           },
           body: JSON.stringify(events),
         });
 
         if (res.status === 401) {
-          sessionStorage.removeItem(TOKEN_KEY);
           setIsAuthenticated(false);
           showToast("Session expired. Please log in again.", true);
           return;
@@ -510,13 +493,11 @@ export default function AdminPortalPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-admin-token": token,
           },
           body: JSON.stringify(redirects),
         });
 
         if (res.status === 401) {
-          sessionStorage.removeItem(TOKEN_KEY);
           setIsAuthenticated(false);
           showToast("Session expired. Please log in again.", true);
           return;
@@ -532,13 +513,11 @@ export default function AdminPortalPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-admin-token": token,
           },
           body: JSON.stringify(customForms),
         });
 
         if (res.status === 401) {
-          sessionStorage.removeItem(TOKEN_KEY);
           setIsAuthenticated(false);
           showToast("Session expired. Please log in again.", true);
           return;
@@ -679,7 +658,6 @@ export default function AdminPortalPage() {
         <LoginModal
           onLoginSuccess={() => setIsAuthenticated(true)}
           showToast={showToast}
-          TOKEN_KEY={TOKEN_KEY}
         />
       )}
 

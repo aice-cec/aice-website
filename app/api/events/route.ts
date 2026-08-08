@@ -60,21 +60,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
     }
 
-    // Delete events that are no longer in the payload
+    // Upsert first: a failed write must never erase existing data.
     const validIds = new Set(rawEvents.map((e: any) => e.id).filter(Boolean));
     const { data: existingDbEvents } = await supabase
       .from("events")
       .select("id");
-
-    if (existingDbEvents?.length) {
-      const idsToDelete = existingDbEvents
-        .map((e: any) => e.id)
-        .filter((id: string) => !validIds.has(id));
-
-      if (idsToDelete.length) {
-        await supabase.from("events").delete().in("id", idsToDelete);
-      }
-    }
 
     const formattedEvents = rawEvents.map((e: any) => ({
       id: e.id,
@@ -99,14 +89,24 @@ export async function POST(req: Request) {
       .upsert(formattedEvents, { onConflict: "id" });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.error("Supabase event sync failed", error);
+      return NextResponse.json({ error: "Unable to save events" }, { status: 500 });
+    }
+
+    const idsToDelete = (existingDbEvents || [])
+      .map((e: any) => e.id)
+      .filter((id: string) => !validIds.has(id));
+    if (idsToDelete.length) {
+      const { error: deleteError } = await supabase.from("events").delete().in("id", idsToDelete);
+      if (deleteError) {
+        console.error("Supabase event deletion failed", deleteError);
+        return NextResponse.json({ error: "Events saved, but obsolete events could not be removed" }, { status: 500 });
+      }
     }
 
     return NextResponse.json({ success: true, count: formattedEvents.length });
-  } catch (err: any) {
-    return NextResponse.json(
-      { error: err.message || "Failed to update events" },
-      { status: 500 },
-    );
+  } catch (error) {
+    console.error("Events update failed", error);
+    return NextResponse.json({ error: "Unable to save events" }, { status: 500 });
   }
 }

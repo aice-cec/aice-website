@@ -214,6 +214,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
           (Array.isArray(val) && val.length === 0)
         ) {
           setErrorMsg(`Please fill out the required field: "${field.label}"`);
+          submittingRef.current = false;
           return;
         }
       }
@@ -224,6 +225,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
 
         if (isEmailField && !emailRegex.test(val.trim())) {
           setErrorMsg(`Please enter a valid email address with domain extension (e.g. name@gmail.com) for "${field.label}"`);
+          submittingRef.current = false;
           return;
         }
 
@@ -231,6 +233,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
           const cleanPhone = val.replace(/\D/g, "");
           if (!phoneRegex.test(cleanPhone)) {
             setErrorMsg(`"${field.label}" must be exactly 10 digits.`);
+            submittingRef.current = false;
             return;
           }
         }

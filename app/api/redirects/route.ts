@@ -41,21 +41,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
     }
 
-    // Delete redirects no longer in the payload
+    // Upsert first: a failed write must never erase existing data.
     const validIds = new Set(rawRedirects.map((r: any) => r.id).filter(Boolean));
     const { data: existingDbRedirects } = await supabase
       .from("redirects")
       .select("id");
-
-    if (existingDbRedirects?.length) {
-      const idsToDelete = existingDbRedirects
-        .map((r: any) => String(r.id))
-        .filter((id: string) => !validIds.has(id));
-
-      if (idsToDelete.length) {
-        await supabase.from("redirects").delete().in("id", idsToDelete);
-      }
-    }
 
     const formatted = rawRedirects.map((r: any) => ({
       id: String(r.id),
@@ -69,14 +59,24 @@ export async function POST(req: Request) {
       .upsert(formatted, { onConflict: "id" });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.error("Supabase redirect sync failed", error);
+      return NextResponse.json({ error: "Unable to save redirects" }, { status: 500 });
+    }
+
+    const idsToDelete = (existingDbRedirects || [])
+      .map((r: any) => String(r.id))
+      .filter((id: string) => !validIds.has(id));
+    if (idsToDelete.length) {
+      const { error: deleteError } = await supabase.from("redirects").delete().in("id", idsToDelete);
+      if (deleteError) {
+        console.error("Supabase redirect deletion failed", deleteError);
+        return NextResponse.json({ error: "Redirects saved, but obsolete redirects could not be removed" }, { status: 500 });
+      }
     }
 
     return NextResponse.json({ success: true, count: formatted.length });
-  } catch (err: any) {
-    return NextResponse.json(
-      { error: err.message || "Failed to update redirects" },
-      { status: 500 },
-    );
+  } catch (error) {
+    console.error("Redirect update failed", error);
+    return NextResponse.json({ error: "Unable to save redirects" }, { status: 500 });
   }
 }

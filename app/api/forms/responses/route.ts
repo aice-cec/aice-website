@@ -25,8 +25,9 @@ export async function GET(req: Request) {
     }
 
     return NextResponse.json(data || []);
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Server Error" }, { status: 500 });
+  } catch (error) {
+    console.error("Failed to load form submissions", error);
+    return NextResponse.json({ error: "Unable to load submissions" }, { status: 500 });
   }
 }
 
@@ -48,12 +49,14 @@ export async function PUT(req: Request) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.error("Submission update failed", error);
+      return NextResponse.json({ error: "Unable to update submission" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, submission: data });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Server Error" }, { status: 500 });
+  } catch (error) {
+    console.error("Failed to update form submission", error);
+    return NextResponse.json({ error: "Unable to update submission" }, { status: 500 });
   }
 }
 
@@ -73,11 +76,13 @@ export async function DELETE(req: Request) {
       .eq("id", id);
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.error("Submission deletion failed", error);
+      return NextResponse.json({ error: "Unable to delete submission" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Server Error" }, { status: 500 });
+  } catch (error) {
+    console.error("Failed to delete form submission", error);
+    return NextResponse.json({ error: "Unable to delete submission" }, { status: 500 });
   }
 }
