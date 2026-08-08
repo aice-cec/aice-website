@@ -61,14 +61,16 @@ export function Join() {
             <div className={styles.card}>
               <p className={styles.cardBadge}>OPEN TO CEC STUDENTS</p>
               <p className={styles.cardText}>
-                Bring your questions, your half-finished projects, and the
-                appetite to make something meaningful.
+                Join our community to learn, connect, collaborate, and discover
+                opportunities that turn curiosity into meaningful experiences.
               </p>
               <button
                 type="button"
                 className={styles.ctaButton}
                 onClick={() =>
-                  showToast("Membership registration is coming soon! Stay tuned.")
+                  showToast(
+                    "Membership registration is coming soon! Stay tuned.",
+                  )
                 }
               >
                 START YOUR AICE JOURNEY <ArrowIcon />
