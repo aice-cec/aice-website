@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { requireAdmin } from "@/lib/admin-auth";
-import eventsFallback from "@/data/events.json";
 
 const EVENTS_COLUMNS = "id,title,description,type,label,dateISO,date,month,time,place,stat,featured,isPast,bgImage,registrationLink,registrationDeadline";
 
@@ -12,7 +11,7 @@ export async function GET() {
       .select(EVENTS_COLUMNS);
 
     if (error || !data?.length) {
-      return NextResponse.json(eventsFallback, {
+      return NextResponse.json([], {
         headers: { "Cache-Control": "s-maxage=60, stale-while-revalidate=300" },
       });
     }
@@ -46,7 +45,7 @@ export async function GET() {
       headers: { "Cache-Control": "s-maxage=60, stale-while-revalidate=300" },
     });
   } catch {
-    return NextResponse.json(eventsFallback);
+    return NextResponse.json([]);
   }
 }
 

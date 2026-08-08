@@ -3,7 +3,6 @@
 import { useEffect, useState, useMemo } from "react";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
-import eventsData from "@/data/events.json";
 import styles from "./Events.module.css";
 
 export interface EventItem {
@@ -98,7 +97,7 @@ function SearchIcon() {
 }
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<EventItem[]>(eventsData as EventItem[]);
+  const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [tab, setTab] = useState<"all" | "upcoming" | "past">("all");
   const [category, setCategory] = useState<string>("All");
@@ -108,11 +107,13 @@ export default function EventsPage() {
     fetch("/api/events")
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setEvents(data);
+        } else {
+          setEvents([]);
         }
       })
-      .catch((err) => console.error("Failed to fetch events:", err))
+      .catch(() => setEvents([]))
       .finally(() => setLoading(false));
   }, []);
 
@@ -288,20 +289,22 @@ export default function EventsPage() {
             <div className={styles.emptyIcon}>
               <CalendarIcon />
             </div>
-            <h3 className={styles.emptyTitle}>No events found</h3>
+            <h3 className={styles.emptyTitle}>Stay Tuned for Upcoming Events</h3>
             <p className={styles.emptyText}>
-              No matching events found for the selected filter or search query.
+              We are preparing exciting workshops and hackathons.
             </p>
-            <button
-              onClick={() => {
-                setTab("all");
-                setCategory("All");
-                setSearchQuery("");
-              }}
-              className={styles.resetBtn}
-            >
-              Reset Filters
-            </button>
+            {(searchQuery.trim() || category !== "All" || tab !== "all") && (
+              <button
+                onClick={() => {
+                  setTab("all");
+                  setCategory("All");
+                  setSearchQuery("");
+                }}
+                className={styles.resetBtn}
+              >
+                Reset Filters
+              </button>
+            )}
           </div>
         ) : (
           <div className={styles.eventsGrid}>
@@ -319,7 +322,6 @@ export default function EventsPage() {
                     event.featured ? styles.eventCardFeatured : ""
                   }`}
                 >
-
                   {/* Card Content Container */}
                   <div className={styles.cardContent}>
                     <div>

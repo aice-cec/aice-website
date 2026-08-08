@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import styles from "./Event.module.css";
-import eventsData from "@/data/events.json";
 
 export interface EventItem {
   id: string;
@@ -76,19 +75,23 @@ function MapPinIcon() {
 }
 
 export function Events() {
-  const [eventsList, setEventsList] = useState<EventItem[]>(
-    eventsData as EventItem[]
-  );
+  const [eventsList, setEventsList] = useState<EventItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     fetch("/api/events")
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setEventsList(data);
+        } else {
+          setEventsList([]);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        setEventsList([]);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   // Filter upcoming events & sort chronologically
@@ -105,17 +108,7 @@ export function Events() {
       return timeA - timeB;
     });
 
-  // If fewer than 3 upcoming events, fallback to showing featured past events to keep 3 cards grid full
-  let displayEvents = upcomingEvents.slice(0, 3);
-  if (displayEvents.length < 3) {
-    const remainingCount = 3 - displayEvents.length;
-    const pastFillers = eventsList
-      .filter((e) => e.isPast && !displayEvents.some((d) => d.id === e.id))
-      .sort((a, b) => new Date(b.dateISO).getTime() - new Date(a.dateISO).getTime())
-      .slice(0, remainingCount);
-    displayEvents = [...displayEvents, ...pastFillers];
-  }
-
+  const displayEvents = upcomingEvents.slice(0, 3);
   const now = new Date();
 
   return (
@@ -145,11 +138,15 @@ export function Events() {
 
         {/* 3-Column Events Grid */}
         <div className={styles.eventsGrid}>
-          {displayEvents.length === 0 ? (
+          {loading ? (
+            <div className={styles.emptyCard}>
+              <div className={styles.emptyTitle}>Loading Events...</div>
+            </div>
+          ) : displayEvents.length === 0 ? (
             <div className={styles.emptyCard}>
               <div className={styles.emptyTitle}>Stay Tuned for Upcoming Events</div>
               <div className={styles.emptyDesc}>
-                We are preparing exciting workshops and hackathons. Explore past events in the archive.
+                No upcoming events at the moment. We are preparing exciting workshops and hackathons.
               </div>
               <a href="/events" className={styles.viewAllLink}>
                 EXPLORE ARCHIVE <ArrowIcon />
@@ -170,7 +167,6 @@ export function Events() {
                     event.featured ? styles.featuredCard : ""
                   }`}
                 >
-
                   {/* Card Top Header & Body */}
                   <div className={styles.cardTop}>
                     <div className={styles.cardHeader}>
