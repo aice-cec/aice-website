@@ -1,3 +1,4 @@
+import { NextResponse } from "next/server";
 import crypto from "crypto";
 
 export const ADMIN_USER = process.env.ADMIN_USER ?? "";
@@ -38,4 +39,15 @@ export function verifyToken(token: string | null): boolean {
     .digest("hex");
 
   return safeCompare(signature, expectedSig);
+}
+
+/** Returns a 401 response if unauthorized, or null if the request is authenticated. */
+export function requireAdmin(req: Request): NextResponse | null {
+  if (!verifyToken(req.headers.get("x-admin-token"))) {
+    return NextResponse.json(
+      { error: "Unauthorized or Session Expired" },
+      { status: 401 },
+    );
+  }
+  return null;
 }

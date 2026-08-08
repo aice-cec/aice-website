@@ -1,24 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { sendTicketEmail } from "@/lib/email";
-import formsFallback from "@/data/forms.json";
-import fs from "fs";
-import path from "path";
+import { getLocalForms } from "@/lib/forms";
 
-// Fallback in-memory store for submissions if Supabase table is not created yet
-let submissionsFallbackStore: any[] = [];
-
-const formsFilePath = path.join(process.cwd(), "data", "forms.json");
-
-function getLocalForms(): any[] {
-  try {
-    if (fs.existsSync(formsFilePath)) {
-      const fileData = fs.readFileSync(formsFilePath, "utf8");
-      return JSON.parse(fileData);
-    }
-  } catch (e) {}
-  return formsFallback as any[];
-}
+const FORM_COLUMNS = "id,slug,title,fields,is_active,whatsapp_link";
 
 export async function POST(req: Request) {
   try {
@@ -27,36 +12,28 @@ export async function POST(req: Request) {
     if (!formId || !responses) {
       return NextResponse.json(
         { error: "Invalid form submission payload" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Query form details from Supabase OR local fallback file
+    // Query form details from Supabase, fallback to local JSON
     let formObj: any = null;
-    try {
-      const { data: dbForm } = await supabase
-        .from("forms")
-        .select("*")
-        .or(`id.eq.${formId},slug.eq.${formId}`)
-        .single();
-      if (dbForm) formObj = dbForm;
-    } catch (e) {}
+    const { data: dbForm } = await supabase
+      .from("forms")
+      .select(FORM_COLUMNS)
+      .or(`id.eq.${formId},slug.eq.${formId}`)
+      .single();
 
-    if (!formObj) {
-      const localForms = getLocalForms();
-      formObj = localForms.find(
-        (f) => f.id === formId || f.slug === formId
-      );
-    }
+    formObj = dbForm || getLocalForms().find((f) => f.id === formId || f.slug === formId);
 
-    if (formObj && formObj.is_active === false) {
+    if (formObj?.is_active === false) {
       return NextResponse.json(
         { error: "Registrations for this event are currently closed." },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
-    // Server-side validation for email and phone numbers
+    // Server-side validation
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const phoneRegex = /^\d{10}$/;
 
@@ -66,65 +43,40 @@ export async function POST(req: Request) {
         if (field.required && (val === undefined || val === null || val === "")) {
           return NextResponse.json(
             { error: `Missing required field: ${field.label}` },
-            { status: 400 }
+            { status: 400 },
           );
         }
 
         if (val && typeof val === "string") {
-          const isEmailField = field.type === "email" || field.label.toLowerCase().includes("email");
-          const isPhoneField = field.type === "phone" || field.label.toLowerCase().includes("phone") || field.label.toLowerCase().includes("whatsapp") || field.label.toLowerCase().includes("mobile");
+          const label = field.label.toLowerCase();
+          const isEmailField = field.type === "email" || label.includes("email");
+          const isPhoneField = field.type === "phone" || label.includes("phone") || label.includes("whatsapp") || label.includes("mobile");
 
           if (isEmailField && !emailRegex.test(val.trim())) {
             return NextResponse.json(
-              { error: `Invalid email address with domain extension (e.g. name@gmail.com) for ${field.label}` },
-              { status: 400 }
+              { error: `Invalid email address for ${field.label}` },
+              { status: 400 },
             );
           }
 
-          if (isPhoneField) {
-            const cleanPhone = val.replace(/\D/g, "");
-            if (!phoneRegex.test(cleanPhone)) {
-              return NextResponse.json(
-                { error: `Phone number must be exactly 10 digits for ${field.label}` },
-                { status: 400 }
-              );
-            }
+          if (isPhoneField && !phoneRegex.test(val.replace(/\D/g, ""))) {
+            return NextResponse.json(
+              { error: `Phone number must be exactly 10 digits for ${field.label}` },
+              { status: 400 },
+            );
           }
         }
       }
     }
 
     const ticketCode = `AICE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    const createdAt = new Date().toISOString();
 
-    const newSubmission = {
-      id: `sub-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+    await supabase.from("form_submissions").insert([{
       form_id: formId,
       event_id: eventId || null,
-      responses: responses,
-      ticket_code: ticketCode,
-      created_at: new Date().toISOString(),
-    };
-
-    submissionsFallbackStore.push(newSubmission);
-
-    // Try inserting into Supabase
-    const { data, error } = await supabase
-      .from("form_submissions")
-      .insert([
-        {
-          form_id: formId,
-          event_id: eventId || null,
-          responses: responses,
-        },
-      ])
-      .select();
-
-    if (error) {
-      console.warn(
-        "Supabase form_submissions insert warning (falling back to memory):",
-        error
-      );
-    }
+      responses,
+    }]);
 
     // Extract email and attendee name from responses
     let toEmail = "";
@@ -134,38 +86,25 @@ export async function POST(req: Request) {
       for (const f of formObj.fields) {
         const val = responses[f.id];
         if (!val || typeof val !== "string") continue;
+        const label = f.label.toLowerCase();
 
-        if (f.type === "email" || f.label.toLowerCase().includes("email")) {
+        if (!toEmail && (f.type === "email" || label.includes("email"))) {
           toEmail = val;
         }
-        if (
-          f.label.toLowerCase().includes("name") ||
-          f.label.toLowerCase().includes("full name") ||
-          f.label.toLowerCase().includes("participant")
-        ) {
+        if (!attendeeName && (label.includes("name") || label.includes("participant"))) {
           attendeeName = val;
         }
       }
     }
 
-    // Fallback search for email and name in responses if not matched above
-    if (!toEmail) {
-      const keys = Object.keys(responses);
-      for (const k of keys) {
-        const val = responses[k];
-        if (typeof val === "string" && val.includes("@")) {
+    // Fallback: scan raw response values
+    if (!toEmail || !attendeeName) {
+      for (const val of Object.values(responses)) {
+        if (typeof val !== "string") continue;
+        if (!toEmail && val.includes("@")) {
           toEmail = val;
-          break;
-        }
-      }
-    }
-
-    if (!attendeeName) {
-      const keys = Object.keys(responses);
-      for (const k of keys) {
-        const val = responses[k];
-        if (
-          typeof val === "string" &&
+        } else if (
+          !attendeeName &&
           !val.includes("@") &&
           !val.startsWith("data:") &&
           !val.startsWith("http") &&
@@ -173,33 +112,34 @@ export async function POST(req: Request) {
           val.length < 50
         ) {
           attendeeName = val;
-          break;
         }
+        if (toEmail && attendeeName) break;
       }
     }
 
-    // Attempt to send email ticket asynchronously
+    // Send ticket email after response is returned
     if (toEmail) {
-      sendTicketEmail({
-        toEmail,
-        attendeeName: attendeeName || "Participant",
-        eventTitle: formObj?.title || "AICE Event",
-        ticketId: ticketCode,
-        submittedAt: newSubmission.created_at,
-        whatsappLink: formObj?.whatsapp_link || "",
-      }).catch((err) => console.warn("Background email error:", err));
+      after(async () => {
+        await sendTicketEmail({
+          toEmail,
+          attendeeName: attendeeName || "Participant",
+          eventTitle: formObj?.title || "AICE Event",
+          ticketId: ticketCode,
+          submittedAt: createdAt,
+          whatsappLink: formObj?.whatsapp_link || "",
+        });
+      });
     }
 
     return NextResponse.json({
       success: true,
       message: "Registration submitted successfully!",
-      id: newSubmission.id,
       ticketCode,
     });
   } catch (err: any) {
     return NextResponse.json(
       { error: err.message || "Failed to submit form" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

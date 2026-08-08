@@ -1,18 +1,20 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { requireAdmin } from "@/lib/admin-auth";
 import eventsFallback from "@/data/events.json";
+
+const EVENTS_COLUMNS = "id,title,description,type,label,dateISO,date,month,time,place,stat,featured,isPast,bgImage,registrationLink,registrationDeadline";
 
 export async function GET() {
   try {
-    const { data, error } = await supabase.from("events").select("*");
+    const { data, error } = await supabase
+      .from("events")
+      .select(EVENTS_COLUMNS);
 
-    if (error) {
-      console.error("Supabase GET error:", error);
-      return NextResponse.json(eventsFallback);
-    }
-
-    if (!data || data.length === 0) {
-      return NextResponse.json(eventsFallback);
+    if (error || !data?.length) {
+      return NextResponse.json(eventsFallback, {
+        headers: { "Cache-Control": "s-maxage=60, stale-while-revalidate=300" },
+      });
     }
 
     const normalized = data
@@ -28,15 +30,11 @@ export async function GET() {
         time: item.time || "",
         place: item.place || "",
         stat: item.stat || "",
-        featured: item.featured !== undefined ? Boolean(item.featured) : false,
-        isPast:
-          item.isPast !== undefined
-            ? Boolean(item.isPast)
-            : Boolean(item.ispast),
+        featured: Boolean(item.featured),
+        isPast: item.isPast !== undefined ? Boolean(item.isPast) : Boolean(item.ispast),
         bgImage: item.bgImage || item.bgimage || "",
         registrationLink: item.registrationLink || item.registrationlink || "",
-        registrationDeadline:
-          item.registrationDeadline || item.registrationdeadline || "",
+        registrationDeadline: item.registrationDeadline || item.registrationdeadline || "",
       }))
       .sort((a: any, b: any) => {
         if (!a.dateISO) return 1;
@@ -44,50 +42,37 @@ export async function GET() {
         return new Date(a.dateISO).getTime() - new Date(b.dateISO).getTime();
       });
 
-    return NextResponse.json(normalized);
-  } catch (err) {
-    console.error("GET events route error:", err);
+    return NextResponse.json(normalized, {
+      headers: { "Cache-Control": "s-maxage=60, stale-while-revalidate=300" },
+    });
+  } catch {
     return NextResponse.json(eventsFallback);
   }
 }
 
-import { verifyToken } from "@/lib/admin-auth";
-
 export async function POST(req: Request) {
-  try {
-    const token = req.headers.get("x-admin-token");
-    if (!verifyToken(token)) {
-      return NextResponse.json(
-        { error: "Unauthorized or Session Expired" },
-        { status: 401 },
-      );
-    }
+  const authError = requireAdmin(req);
+  if (authError) return authError;
 
+  try {
     const rawEvents = await req.json();
     if (!Array.isArray(rawEvents)) {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
     }
 
+    // Delete events that are no longer in the payload
     const validIds = new Set(rawEvents.map((e: any) => e.id).filter(Boolean));
     const { data: existingDbEvents } = await supabase
       .from("events")
       .select("id");
-    if (existingDbEvents && existingDbEvents.length > 0) {
+
+    if (existingDbEvents?.length) {
       const idsToDelete = existingDbEvents
         .map((e: any) => e.id)
         .filter((id: string) => !validIds.has(id));
 
-      if (idsToDelete.length > 0) {
-        const { error: delErr } = await supabase
-          .from("events")
-          .delete()
-          .in("id", idsToDelete);
-        if (delErr) {
-          console.warn(
-            "Failed to delete removed events from Supabase:",
-            delErr,
-          );
-        }
+      if (idsToDelete.length) {
+        await supabase.from("events").delete().in("id", idsToDelete);
       }
     }
 
@@ -106,60 +91,18 @@ export async function POST(req: Request) {
       featured: Boolean(e.featured),
       isPast: Boolean(e.isPast),
       registrationLink: e.registrationLink || e.registrationlink || "",
-      registrationlink: e.registrationLink || e.registrationlink || "",
-      registrationDeadline:
-        e.registrationDeadline || e.registrationdeadline || "",
-      registrationdeadline:
-        e.registrationDeadline || e.registrationdeadline || "",
+      registrationDeadline: e.registrationDeadline || e.registrationdeadline || "",
     }));
 
-    let { data, error } = await supabase
+    const { error } = await supabase
       .from("events")
-      .upsert(formattedEvents, { onConflict: "id" })
-      .select();
-
-    if (
-      error &&
-      (error.code === "PGRST204" || error.message.includes("column"))
-    ) {
-      console.warn("Retrying Supabase upsert with lowercased column names...");
-      const lowercasedEvents = rawEvents.map((e: any) => ({
-        id: e.id,
-        dateiso: e.dateISO || e.dateiso || "",
-        date: e.date || "",
-        month: e.month || "",
-        title: e.title || "",
-        type: e.type || "",
-        label: e.label || "",
-        time: e.time || "",
-        place: e.place || "",
-        description: e.description || "",
-        stat: e.stat || "",
-        featured: Boolean(e.featured),
-        ispast: Boolean(e.isPast || e.ispast),
-        registrationlink: e.registrationLink || e.registrationlink || "",
-        registrationdeadline:
-          e.registrationDeadline || e.registrationdeadline || "",
-      }));
-
-      const retry = await supabase
-        .from("events")
-        .upsert(lowercasedEvents, { onConflict: "id" })
-        .select();
-
-      data = retry.data;
-      error = retry.error;
-    }
+      .upsert(formattedEvents, { onConflict: "id" });
 
     if (error) {
-      console.error("Supabase upsert error:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({
-      success: true,
-      count: data ? data.length : rawEvents.length,
-    });
+    return NextResponse.json({ success: true, count: formattedEvents.length });
   } catch (err: any) {
     return NextResponse.json(
       { error: err.message || "Failed to update events" },

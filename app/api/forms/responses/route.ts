@@ -1,33 +1,27 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
-import { verifyToken } from "@/lib/admin-auth";
+import { requireAdmin } from "@/lib/admin-auth";
+
+const SUBMISSION_COLUMNS = "id,form_id,responses,created_at";
 
 export async function GET(req: Request) {
+  const authError = requireAdmin(req);
+  if (authError) return authError;
+
   try {
-    const token = req.headers.get("x-admin-token");
-    if (!verifyToken(token)) {
-      return NextResponse.json(
-        { error: "Unauthorized or Session Expired" },
-        { status: 401 }
-      );
-    }
-
-    const { searchParams } = new URL(req.url);
-    const formId = searchParams.get("form_id");
-
+    const formId = new URL(req.url).searchParams.get("form_id");
     if (!formId) {
       return NextResponse.json({ error: "Missing form_id parameter" }, { status: 400 });
     }
 
     const { data, error } = await supabase
       .from("form_submissions")
-      .select("*")
+      .select(SUBMISSION_COLUMNS)
       .eq("form_id", formId)
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.warn("Supabase form_submissions fetch error:", error);
-      return NextResponse.json([]);
+      return NextResponse.json([], { status: 200 });
     }
 
     return NextResponse.json(data || []);
@@ -37,17 +31,11 @@ export async function GET(req: Request) {
 }
 
 export async function PUT(req: Request) {
+  const authError = requireAdmin(req);
+  if (authError) return authError;
+
   try {
-    const token = req.headers.get("x-admin-token");
-    if (!verifyToken(token)) {
-      return NextResponse.json(
-        { error: "Unauthorized or Session Expired" },
-        { status: 401 }
-      );
-    }
-
     const { id, responses } = await req.json();
-
     if (!id || !responses) {
       return NextResponse.json({ error: "Missing submission id or responses payload" }, { status: 400 });
     }
@@ -60,7 +48,6 @@ export async function PUT(req: Request) {
       .single();
 
     if (error) {
-      console.warn("Supabase form_submissions update error:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -71,18 +58,11 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  const authError = requireAdmin(req);
+  if (authError) return authError;
+
   try {
-    const token = req.headers.get("x-admin-token");
-    if (!verifyToken(token)) {
-      return NextResponse.json(
-        { error: "Unauthorized or Session Expired" },
-        { status: 401 }
-      );
-    }
-
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
-
+    const id = new URL(req.url).searchParams.get("id");
     if (!id) {
       return NextResponse.json({ error: "Missing submission id" }, { status: 400 });
     }
@@ -93,7 +73,6 @@ export async function DELETE(req: Request) {
       .eq("id", id);
 
     if (error) {
-      console.warn("Supabase form_submissions delete error:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 

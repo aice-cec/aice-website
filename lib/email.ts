@@ -15,19 +15,12 @@ export async function sendTicketEmail({
   submittedAt,
   whatsappLink,
 }: SendTicketEmailParams) {
-  const brevoApiKey = (
-    process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY || ""
-  ).trim();
-  const senderEmail =
-    process.env.BREVO_SENDER_EMAIL || "aice@ceconline.edu";
+  const brevoApiKey = (process.env.BREVO_API_KEY || "").trim();
+  const senderEmail = process.env.BREVO_SENDER_EMAIL || "aice@ceconline.edu";
   const senderName = process.env.BREVO_SENDER_NAME || "AICE";
 
-  if (!brevoApiKey) {
-    console.warn("BREVO_API_KEY is missing in environment variables. Email ticket skipped.");
-    return false;
-  }
+  if (!brevoApiKey) return false;
 
-  // Generate QR Code URL containing payload for scanning attendance later
   const qrPayload = JSON.stringify({
     tkt: ticketId,
     event: eventTitle,
@@ -35,7 +28,6 @@ export async function sendTicketEmail({
     email: toEmail,
   });
 
-  // Gmail strips data:image/png;base64 URIs, so we use a public HTTPS QR Code URL
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrPayload)}`;
 
   const htmlContent = `
@@ -62,7 +54,6 @@ export async function sendTicketEmail({
     </head>
     <body>
       <div class="card">
-        <!-- AICE Branding Header -->
         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 20px; border-bottom: 2px solid rgba(255,255,255,0.15); padding-bottom: 16px;">
           <tr>
             <td align="left">
@@ -78,8 +69,7 @@ export async function sendTicketEmail({
         <div class="pass-badge">ENTRY PASS CONFIRMED</div>
         <h1 class="event-title">${eventTitle}</h1>
         <p class="attendee-name">ATTENDEE: <strong style="color: #ffffff; font-size: 15px;">${attendeeName || "Participant"}</strong></p>
-        
-        <!-- Neo-Brutalist Ticket Container with QR Code -->
+
         <div class="ticket-box">
           <div style="font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; font-family: monospace; font-weight: 700;">SCAN QR CODE AT DESK FOR ENTRY</div>
           <img src="${qrCodeUrl}" alt="Event Ticket QR Code" class="qr-img" width="180" height="180" />
@@ -109,12 +99,18 @@ export async function sendTicketEmail({
     </html>
   `;
 
-  // Direct Brevo HTTP REST API Request with retry mechanism
-  const maxRetries = 2;
+  const payload = JSON.stringify({
+    sender: { name: senderName, email: senderEmail },
+    to: [{ email: toEmail, name: attendeeName || "Participant" }],
+    subject: `🎟️ ENTRY PASS: ${eventTitle} (${ticketId})`,
+    htmlContent,
+  });
+
+  const maxRetries = 3;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
 
       const res = await fetch("https://api.brevo.com/v3/smtp/email", {
         method: "POST",
@@ -122,39 +118,21 @@ export async function sendTicketEmail({
           accept: "application/json",
           "api-key": brevoApiKey,
           "content-type": "application/json",
-          "user-agent": "AICE-App/1.0",
-          connection: "close",
         },
-        body: JSON.stringify({
-          sender: { name: senderName, email: senderEmail },
-          to: [{ email: toEmail, name: attendeeName || "Participant" }],
-          subject: `🎟️ ENTRY PASS: ${eventTitle} (${ticketId})`,
-          htmlContent: htmlContent,
-        }),
+        body: payload,
         signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
 
-      if (res.ok) {
-        return true;
-      }
-      const errData = await res.json();
-      console.warn(`Brevo API error response (attempt ${attempt}/${maxRetries}):`, errData);
-      if (res.status === 401 || res.status === 403) {
-        // Invalid API Key - no point retrying
-        break;
-      }
-    } catch (err: any) {
-      const isTimeout = err.name === "AbortError" || err.code === "UND_ERR_CONNECT_TIMEOUT";
-      console.warn(
-        `Brevo API request failed (attempt ${attempt}/${maxRetries}): ${
-          isTimeout ? "Connection Timeout (api.brevo.com reachable check needed)" : err.message || err
-        }`
-      );
-      if (attempt < maxRetries) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
+      if (res.ok) return true;
+      if (res.status === 401 || res.status === 403) break;
+    } catch {
+      // Retry on network/timeout/socket errors
+    }
+
+    if (attempt < maxRetries) {
+      await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, attempt - 1)));
     }
   }
 
