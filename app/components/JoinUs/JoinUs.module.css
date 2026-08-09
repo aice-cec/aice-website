@@ -1,10 +1,14 @@
 .joinSection {
   position: relative;
+  z-index: 10;
   overflow: hidden;
   background-color: #ef4444;
+  margin-top: -100vh;
   padding-top: 3.5rem;
   padding-bottom: 3.5rem;
   color: #000;
+  border-radius: 2.5rem 2.5rem 0 0;
+  box-shadow: 0 -30px 80px rgba(0, 0, 0, 0.5);
 }
 
 @media (min-width: 640px) {

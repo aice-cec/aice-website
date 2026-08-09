@@ -11,6 +11,7 @@ const Hero = () => {
   const titleRef = useRef<HTMLDivElement>(null);
   const eyeGlowRef = useRef<HTMLDivElement>(null);
   const aboutPanelRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -18,6 +19,7 @@ const Hero = () => {
     const eyeGlow = eyeGlowRef.current;
     const title = titleRef.current;
     const aboutPanel = aboutPanelRef.current;
+    const cta = ctaRef.current;
 
     if (!section || !robotWrap) return;
 
@@ -58,8 +60,8 @@ const Hero = () => {
         }
 
         if (title) {
-          const minSpacing = 0.06;
-          const maxSpacing = isMobile ? 0.22 : 0.45;
+          const minSpacing = 0;
+          const maxSpacing = isMobile ? 0.55 : 0.45;
           const spacing = minSpacing + eased1 * (maxSpacing - minSpacing);
           const spread = spacing * 1.7;
 
@@ -75,6 +77,16 @@ const Hero = () => {
             e.style.transform = `translateX(${1.5 * spread}em)`;
           }
 
+          const subWords = title.querySelectorAll(`.${styles.subWord}`);
+          const subWordOpacity = Math.min(Math.max((eased1 - 0.2) / 0.6, 0), 1);
+          const subWordY = (1 - subWordOpacity) * 12;
+
+          subWords.forEach((word) => {
+            const el = word as HTMLElement;
+            el.style.opacity = String(subWordOpacity.toFixed(3));
+            el.style.transform = `translateX(-50%) translateY(${subWordY.toFixed(1)}px)`;
+          });
+
           const titleY = eased1 * -30 + eased2 * -450;
           const titleOpacity = Math.max(1 - eased2 * 1.5, 0);
 
@@ -82,6 +94,17 @@ const Hero = () => {
           title.style.filter = `blur(${(eased2 * 12).toFixed(1)}px)`;
           title.style.transform = `translate(-50%, calc(-50% + ${titleY.toFixed(1)}px))`;
           title.style.visibility = titleOpacity <= 0 ? "hidden" : "visible";
+        }
+
+        if (cta) {
+          const ctaY = eased1 * -50 + eased2 * -450;
+          const ctaOpacity = Math.max(1 - eased1 * 5.0, 0);
+
+          cta.style.opacity = String(ctaOpacity.toFixed(3));
+          cta.style.filter = `blur(${(eased1 * 15 + eased2 * 12).toFixed(1)}px)`;
+          cta.style.transform = `translate(-50%, calc(-50% + ${ctaY.toFixed(1)}px))`;
+          cta.style.pointerEvents = ctaOpacity <= 0.05 ? "none" : "auto";
+          cta.style.visibility = ctaOpacity <= 0 ? "hidden" : "visible";
         }
 
         if (aboutPanel) {
@@ -132,6 +155,13 @@ const Hero = () => {
     };
   }, []);
 
+  const handleCtaClick = () => {
+    const aboutEl = document.getElementById("about");
+    if (aboutEl) {
+      aboutEl.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div
       id="home"
@@ -143,11 +173,51 @@ const Hero = () => {
 
       <div className={styles.heroSticky}>
         <div className={styles.bgTitle} ref={titleRef} aria-hidden="true">
-          <span className={styles.letterA}>A</span>
-          <span className={styles.letterI}>I</span>
-          <span className={styles.letterC}>C</span>
-          <span className={styles.letterE}>E</span>
+          <div className={styles.letterA}>
+            <span className={styles.letterChar}>A</span>
+            <span className={styles.subWord}>AI</span>
+          </div>
+          <div className={styles.letterI}>
+            <span className={styles.letterChar}>I</span>
+            <span className={styles.subWord}>INNOVATION</span>
+          </div>
+          <div className={styles.letterC}>
+            <span className={styles.letterChar}>C</span>
+            <span className={styles.subWord}>COMMUNITY</span>
+          </div>
+          <div className={styles.letterE}>
+            <span className={styles.letterChar}>E</span>
+            <span className={`${styles.subWord} ${styles.subWordE}`}>
+              <span>FOR</span>
+              <span>EXCELLENCE</span>
+            </span>
+          </div>
         </div>
+
+        <button
+          type="button"
+          className={styles.squareCta}
+          ref={ctaRef}
+          onClick={handleCtaClick}
+          aria-label="Explore AICE"
+          id="hero-square-cta"
+        >
+          <span className={styles.squareCtaText}>EXPLORE AICE</span>
+          <svg
+            className={styles.squareCtaArrow}
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="square"
+            strokeLinejoin="miter"
+            aria-hidden="true"
+          >
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </button>
 
         <div className={styles.robotWrap} ref={robotWrapRef}>
           <div className={styles.robotContainer}>
