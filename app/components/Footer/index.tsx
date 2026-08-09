@@ -1,5 +1,6 @@
 "use client";
 
+import Map from "./Map";
 import Image from "next/image";
 import styles from "./Footer.module.css";
 
@@ -11,13 +12,10 @@ function ArrowUpIcon() {
       stroke="currentColor"
       strokeWidth="2"
       aria-hidden="true"
-      className={styles.icon}
+      style={{ width: 16, height: 16 }}
     >
-      <path
-        d="M12 19V5M5 12l7-7 7 7"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M12 19V5" />
+      <path d="M6 11l6-6 6 6" />
     </svg>
   );
 }
@@ -30,7 +28,7 @@ function InstagramIcon() {
       aria-hidden="true"
       style={{ width: 16, height: 16 }}
     >
-      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+      <path d="M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.25-3.25a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z" />
     </svg>
   );
 }
@@ -43,7 +41,7 @@ function LinkedInIcon() {
       aria-hidden="true"
       style={{ width: 16, height: 16 }}
     >
-      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77Z" />
+      <path d="M5.2 3.5A2.2 2.2 0 1 1 5.2 7.9a2.2 2.2 0 0 1 0-4.4ZM3.2 9h4v11h-4V9Zm6.4 0h3.8v1.5h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V20h-4v-4.82c0-1.15-.02-2.63-1.6-2.63-1.6 0-1.85 1.25-1.85 2.55V20h-4V9Z" />
     </svg>
   );
 }
@@ -58,91 +56,125 @@ function MailIcon() {
       aria-hidden="true"
       style={{ width: 16, height: 16 }}
     >
-      <rect x="2" y="4" width="20" height="16" rx="2" />
-      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m3 7 9 6 9-6" />
     </svg>
   );
 }
 
 export function Footer() {
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   return (
     <footer className={styles.footer}>
-      <div className={styles.glowAmbient} />
-
       <div className={styles.container}>
         <div className={styles.grid}>
-          {/* ─── Column 1: Brand ─── */}
+          {/*BRAND*/}
+
           <div className={styles.brandCol}>
-            <a href="#home" className={styles.logoRow} aria-label="AICE Home">
+            <a
+              href="#home"
+              className={styles.logoRow}
+              aria-label="AICE Home"
+            >
               <Image
                 src="/logos/aice_logo.png"
                 alt="AICE Logo"
-                width={32}
-                height={32}
+                width={56}
+                height={56}
                 style={{ height: "auto" }}
               />
-              <span className={styles.logoText}>AICE</span>
+
+              <span className={styles.logoText}></span>
             </a>
+
             <p className={styles.tagline}>
-              AI Innovation Community for Excellence
+              AI INNOVATION COMMUNITY FOR EXCELLENCE
             </p>
+
             <p className={styles.collegeText}>
-              College of Engineering Chengannur
+              COLLEGE OF ENGINEERING CHENGANNUR
             </p>
+
             <p className={styles.subDescription}>
               Cultivating curious minds, fostering innovation, and building
               real-world AI solutions at CEC.
             </p>
-          </div>
 
-          {/* ─── Column 2: Social & Contact ─── */}
-          <div className={styles.rightCol}>
-            <p className={styles.columnLabel}>CONNECT WITH US</p>
-            <div className={styles.socialRow}>
-              <a
-                href="https://www.instagram.com/aice.cec"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.socialBtn}
-                aria-label="AICE Instagram"
-              >
-                <InstagramIcon />
-              </a>
-              <a
-                href="https://www.linkedin.com/company/aice-cec"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.socialBtn}
-                aria-label="AICE LinkedIn"
-              >
-                <LinkedInIcon />
-              </a>
-              <a
-                href="mailto:aice@ceconline.edu"
-                className={styles.socialBtn}
-                aria-label="Send Email to AICE"
-              >
-                <MailIcon />
-              </a>
+            {/* CONNECT WITH US*/}
+
+            <div className={styles.rightCol}>
+              <p className={styles.columnLabel}>CONNECT WITH US</p>
+
+              <div className={styles.socialRow}>
+                <a
+                  href="https://www.instagram.com/aice.cec"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.socialItem}
+                  aria-label="AICE Instagram"
+                >
+                  <div className={styles.socialBtn}>
+                    <InstagramIcon />
+                  </div>
+
+                </a>
+                <a
+                  href="https://www.linkedin.com/company/aice-cec"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.socialItem}
+                  aria-label="AICE LinkedIn"
+                >
+                  <div className={styles.socialBtn}>
+                    <LinkedInIcon />
+                  </div>
+              
+                </a>
+                <a
+                  href="mailto:aice@ceconline.edu"
+                  className={styles.socialItem}
+                  aria-label="Send Email to AICE"
+                >
+                  <div className={styles.socialBtn}>
+                    <MailIcon />
+                  </div>
+                </a>
+              </div>
             </div>
-          </div>
+         </div>
+         <div className={styles.MapWrap}>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3937.1798097474593!2d76.61261467582871!3d9.317330560600364!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b0622ea027eb08f%3A0x41105b207db821c6!2sCollege%20of%20Engineering%20Chengannur!5e0!3m2!1sen!2sin!4v1786270661445!5m2!1sen!2sin"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Location Map"
+            />
+         </div>
         </div>
 
-        {/* ─── Bottom Bar ─── */}
+        {/*BOTTOM BAR*/}
+
         <div className={styles.bottomBar}>
           <p className={styles.copyright}>
-            &copy; {new Date().getFullYear()} AICE CEC. All rights reserved.
+            © {new Date().getFullYear()}{" "}
+            <span>AICE CEC</span>. All rights reserved.
           </p>
+
           <button
             type="button"
             className={styles.scrollTopBtn}
             onClick={scrollToTop}
           >
-            BACK TO TOP <ArrowUpIcon />
+            BACK TO TOP
+            <ArrowUpIcon />
           </button>
         </div>
       </div>
