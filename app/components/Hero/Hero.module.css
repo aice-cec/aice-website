@@ -41,10 +41,7 @@
 .spotlightPattern {
   position: absolute;
   inset: 0;
-  background-image: url("/hero-stripe-pattern.svg");
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-color: #000000;
   -webkit-mask-image: radial-gradient(
     circle 260px at var(--mouse-x, -1000px) var(--mouse-y, -1000px),
     rgba(0, 0, 0, 1) 0%,
@@ -60,6 +57,12 @@
     rgba(0, 0, 0, 0) 100%
   );
   filter: contrast(1.2) brightness(1.1);
+}
+
+.vectorPatternSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .spotlightGlow {
