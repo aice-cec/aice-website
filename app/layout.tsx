@@ -91,6 +91,7 @@ export const metadata: Metadata = {
 };
 
 import ToastContainer from "@/app/components/Toast";
+import CustomCursor from "@/app/components/CustomCursor";
 import { Analytics } from "@vercel/analytics/react";
 
 export default function RootLayout({
@@ -104,6 +105,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} ${spaceGrotesk.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100 selection:bg-white selection:text-black">
+        <CustomCursor />
         {children}
         <ToastContainer />
         <Analytics />

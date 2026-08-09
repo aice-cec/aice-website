@@ -541,16 +541,12 @@ const Hero = () => {
 
         <div className={styles.robotWrap} ref={robotWrapRef}>
           <div className={styles.robotContainer}>
+            <div className={styles.backGlow} aria-hidden="true" />
             <img
-              src="/robot/robot.webp"
+              src="/robot/robot.png"
               alt="robot"
               className={styles.robotImg}
               draggable="false"
-            />
-            <div
-              className={styles.eyeGlow}
-              ref={eyeGlowRef}
-              aria-hidden="true"
             />
           </div>
         </div>
