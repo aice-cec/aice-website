@@ -56,7 +56,7 @@ function StatusContent() {
 export default function MembershipStatusPage() {
   return (
     <main className={styles.page}>
-      <div className={styles.glowLeft} />
+      <div className={styles.stripeEffect} />
       <div className={styles.glowRight} />
 
       <div className={styles.container}>

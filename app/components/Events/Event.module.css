@@ -92,10 +92,11 @@
 }
 
 .headingAccent {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ef4444 50%, #dc2626 100%);
+  background: linear-gradient(135deg, var(--color-grad-3) 0%, var(--color-grad-2) 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.3));
+  filter: drop-shadow(0 0 20px rgba(232, 80, 2, 0.3));
 }
 
 .subheading {
@@ -128,10 +129,10 @@
 
 .viewAllLink:hover,
 .archiveBtn:hover {
-  background-color: var(--color-accent, #ff2020);
-  border-color: var(--color-accent, #ff2020);
-  color: #000000;
-  box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+  background-color: var(--color-accent, #e85002);
+  border-color: var(--color-accent, #e85002);
+  color: var(--color-white);
+  box-shadow: 0 0 15px rgba(232, 80, 2, 0.4);
 }
 
 .arrowTranslate {
@@ -246,7 +247,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #ef4444;
+  color: #ff5500;
 }
 
 .featuredBadge {
@@ -257,7 +258,7 @@
   letter-spacing: 0.1em;
   background-color: rgba(239, 68, 68, 0.15);
   border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #f87171;
+  color: #ff7700;
   border-radius: 0.375rem;
 }
 
@@ -281,7 +282,7 @@
 }
 
 .eventCard:hover .cardTitle {
-  color: #f87171;
+  color: #ff7700;
 }
 
 .cardDesc {
@@ -290,6 +291,7 @@
   line-height: 1.55;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   margin-bottom: 1rem;
@@ -342,7 +344,7 @@
   gap: 0.375rem;
   padding: 0.45rem 0.875rem;
   border-radius: 9999px;
-  background-color: #ef4444;
+  background-color: #ff5500;
   color: #ffffff;
   font-family: var(--font-primary, var(--font-geist-sans), sans-serif);
   font-size: 0.725rem;
@@ -357,7 +359,7 @@
 }
 
 .regBtn:hover {
-  background-color: #dc2626;
+  background-color: #cc4400;
   transform: scale(1.03);
 }
 

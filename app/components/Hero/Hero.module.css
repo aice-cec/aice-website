@@ -194,7 +194,7 @@
   transform: translateX(-50%);
   width: 200px;
   height: 50px;
-  background: radial-gradient(ellipse, #ff2020 0%, transparent 70%);
+  background: radial-gradient(ellipse, var(--color-accent) 0%, transparent 70%);
   filter: blur(24px);
   opacity: 0.3;
   pointer-events: none;
@@ -262,7 +262,7 @@
     color 0.3s ease;
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.6),
-    0 0 15px rgba(255, 32, 32, 0.12),
+    0 0 15px rgba(232, 80, 2, 0.12),
     inset 0 0 0 1px rgba(255, 255, 255, 0.05);
   will-change: transform, opacity, filter;
 }
@@ -272,13 +272,13 @@
 }
 
 .squareCta:hover {
-  background: #ff2020;
-  border-color: #ff2020;
-  color: #ffffff;
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-white);
   transform: translate(-50%, calc(-50% - 3px));
   box-shadow:
-    0 12px 40px rgba(255, 32, 32, 0.45),
-    0 0 25px rgba(255, 32, 32, 0.3);
+    0 12px 40px rgba(232, 80, 2, 0.45),
+    0 0 25px rgba(232, 80, 2, 0.3);
 }
 
 .squareCta:active {

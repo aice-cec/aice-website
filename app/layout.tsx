@@ -4,7 +4,6 @@ import {
   Geist_Mono,
   Bebas_Neue,
   Space_Grotesk,
-  Kanit,
 } from "next/font/google";
 import "./globals.css";
 
@@ -28,12 +27,6 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-});
-
-const kanit = Kanit({
-  variable: "--font-kanit",
-  subsets: ["latin"],
-  weight: ["700", "800", "900"],
 });
 
 export const viewport: Viewport = {
@@ -108,7 +101,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} ${spaceGrotesk.variable} ${kanit.variable} h-full antialiased dark`}
+      className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} ${spaceGrotesk.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100 selection:bg-white selection:text-black">
         {children}

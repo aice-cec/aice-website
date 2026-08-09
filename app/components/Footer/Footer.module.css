@@ -110,7 +110,7 @@
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: #ef4444;
+  color: #ff5500;
   text-transform: uppercase;
 }
 
@@ -208,8 +208,8 @@
 }
 
 .socialBtn:hover {
-  border-color: #ef4444;
-  background-color: #ef4444;
+  border-color: #ff5500;
+  background-color: #ff5500;
   color: #ffffff;
   transform: translateY(-3px);
   box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
@@ -229,7 +229,7 @@
 }
 
 .emailPill:hover {
-  color: #ef4444;
+  color: #ff5500;
   border-color: rgba(239, 68, 68, 0.3);
   background: rgba(239, 68, 68, 0.06);
 }
@@ -288,8 +288,8 @@
 
 .scrollTopBtn:hover {
   color: #ffffff;
-  background: #ef4444;
-  border-color: #ef4444;
+  background: #ff5500;
+  border-color: #ff5500;
   transform: translateY(-2px);
   box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
 }

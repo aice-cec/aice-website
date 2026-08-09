@@ -64,7 +64,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #f87171;
+  color: #ff7700;
   background-color: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.2);
   border-radius: 9999px;
@@ -75,8 +75,8 @@
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 9999px;
-  background-color: #ef4444;
-  box-shadow: 0 0 8px #ef4444;
+  background-color: #ff5500;
+  box-shadow: 0 0 8px #ff5500;
   animation: pulse 2s infinite;
 }
 
@@ -104,7 +104,7 @@
   color: transparent;
   background-clip: text;
   -webkit-background-clip: text;
-  background-image: linear-gradient(to right, #ef4444, #f43f5e, #dc2626);
+  background-image: linear-gradient(to right, var(--color-grad-3), var(--color-grad-2));
 }
 
 .heroSubtitle {
@@ -185,7 +185,7 @@
 }
 
 .tabBtnActive {
-  background-color: #ef4444 !important;
+  background-color: #ff5500 !important;
   color: #ffffff !important;
   box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
 }
@@ -218,7 +218,7 @@
 }
 
 .searchInput:focus {
-  border-color: #ef4444;
+  border-color: #ff5500;
 }
 
 .searchIcon {
@@ -367,7 +367,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #f87171;
+  color: #ff7700;
 }
 
 .featuredBadge {
@@ -378,7 +378,7 @@
   letter-spacing: 0.1em;
   background-color: rgba(239, 68, 68, 0.2);
   border: 1px solid rgba(239, 68, 68, 0.4);
-  color: #f87171;
+  color: #ff7700;
   border-radius: 0.5rem;
 }
 
@@ -402,7 +402,7 @@
 }
 
 .eventCard:hover .cardTitle {
-  color: #f87171;
+  color: #ff7700;
 }
 
 .cardDesc {
@@ -461,7 +461,7 @@
   font-size: 0.75rem;
   font-weight: 800;
   color: #ffffff;
-  background-color: #ef4444;
+  background-color: #ff5500;
   border-radius: 0.75rem;
   border: none;
   text-decoration: none;
@@ -470,7 +470,7 @@
 }
 
 .regBtn:hover {
-  background-color: #dc2626;
+  background-color: #cc4400;
   box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
 }
 
@@ -560,7 +560,7 @@
   padding: 0.5rem 1rem;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #f87171;
+  color: #ff7700;
   background-color: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.2);
   border-radius: 0.75rem;

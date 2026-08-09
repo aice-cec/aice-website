@@ -103,7 +103,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background-color: #ef4444;
+  background-color: #ff5500;
   transform: scaleX(0);
   transform-origin: right;
   transition:
@@ -156,8 +156,8 @@
 }
 
 .ctaBtn:hover {
-  background: #ef4444;
-  border-color: #ef4444;
+  background: #ff5500;
+  border-color: #ff5500;
   color: #ffffff;
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);

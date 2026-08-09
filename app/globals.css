@@ -14,16 +14,23 @@ body::-webkit-scrollbar {
 }
 
 :root {
-  --background: #09090b;
-  --foreground: #f4f4f5;
+  --background: #000000;
+  --foreground: #f9f9f9;
   --nav-height: 80px;
   --transition-base: 0.25s ease;
-  --color-white: #ffffff;
-  --color-bg: #09090b;
-  --color-accent: #ff2020;
+  --color-white: #f9f9f9;
+  --color-bg: #000000;
+  --color-accent: #e85002;
+  --color-gray: #646464;
+  --color-light-gray: #a7a7a7;
+  --color-dark-gray: #333333;
+  --color-grad-1: #000000;
+  --color-grad-2: #c10801;
+  --color-grad-3: #f16001;
+  --color-grad-4: #d9c3ab;
   --font-primary: var(--font-sans), system-ui, sans-serif;
   --font-secondary: var(--font-sans), system-ui, sans-serif;
-  --font-heading: var(--font-kanit), "Kanit", sans-serif;
+  --font-heading: var(--font-space-grotesk), "Space Grotesk", sans-serif;
 }
 
 @theme inline {

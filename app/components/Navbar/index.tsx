@@ -14,7 +14,6 @@ const navLinks = [
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [onRedSection, setOnRedSection] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("HOME");
 
@@ -23,17 +22,6 @@ const Navbar = () => {
       const currentY = window.scrollY;
       setScrolled(currentY > 20);
 
-      const joinEl = document.getElementById("join");
-      if (joinEl) {
-        const rect = joinEl.getBoundingClientRect();
-        if (rect.top <= 60 && rect.bottom >= 60) {
-          setOnRedSection(true);
-        } else {
-          setOnRedSection(false);
-        }
-      } else {
-        setOnRedSection(false);
-      }
 
       const sections = [
         { id: "execom", label: "EXECOM" },
@@ -127,7 +115,7 @@ const Navbar = () => {
 
   return (
     <header
-      className={`${styles.navbar} ${scrolled ? styles.scrolled : ""} ${onRedSection ? styles.onRed : ""}`}
+      className={`${styles.navbar} ${scrolled ? styles.scrolled : ""}`}
       role="banner"
     >
       <div className={styles.container}>

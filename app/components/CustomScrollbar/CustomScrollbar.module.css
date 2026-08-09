@@ -34,7 +34,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  background: linear-gradient(180deg, #ef4444 0%, rgba(239, 68, 68, 0.4) 100%);
+  background: linear-gradient(180deg, var(--color-accent) 0%, rgba(232, 80, 2, 0.4) 100%);
   border-radius: 9999px;
   pointer-events: none;
 }
@@ -45,7 +45,7 @@
   transform: translate(-50%, -50%);
   width: 14px;
   height: 28px;
-  background: #ef4444;
+  background: #ff5500;
   border-radius: 9999px;
   cursor: grab;
   box-shadow:
@@ -115,7 +115,7 @@
 .dot:nth-child(7) { top: 100%; }
 
 .dot:hover {
-  background: #ef4444;
+  background: #ff5500;
   transform: translate(-50%, -50%) scale(1.5);
 }
 

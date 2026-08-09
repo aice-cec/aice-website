@@ -95,10 +95,11 @@
 }
 
 .headingAccent {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ef4444 50%, #dc2626 100%);
+  background: linear-gradient(135deg, var(--color-grad-3) 0%, var(--color-grad-2) 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.3));
+  filter: drop-shadow(0 0 20px rgba(232, 80, 2, 0.3));
 }
 
 .subtext {
@@ -136,7 +137,7 @@
   transform: translateX(-50%);
   width: 8rem;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #ef4444, transparent);
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
   border-radius: 9999px;
 }
 
@@ -157,8 +158,8 @@
   height: 0.55rem;
   width: 0.55rem;
   border-radius: 9999px;
-  background-color: var(--color-accent, #ff2020);
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+  background-color: var(--color-accent, #e85002);
+  box-shadow: 0 0 10px rgba(232, 80, 2, 0.6);
 }
 
 .carouselNav {
@@ -186,9 +187,9 @@
 }
 
 .navArrowBtn:hover {
-  border-color: var(--color-accent, #ff2020);
-  background-color: var(--color-accent, #ff2020);
-  color: #000000;
+  border-color: var(--color-accent, #e85002);
+  background-color: var(--color-accent, #e85002);
+  color: var(--color-white);
   box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
 }
 
@@ -348,7 +349,7 @@
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: var(--color-accent, #ff2020);
+  color: var(--color-accent, #e85002);
   text-transform: uppercase;
   margin-top: 0.1rem;
   min-height: 1.4rem;
