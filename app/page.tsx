@@ -5,11 +5,13 @@ import { Join } from "@/app/components/JoinUs";
 import Execom from "@/app/components/Execom";
 import Footer from "@/app/components/Footer";
 import LoadingScreen from "@/app/components/LoadingScreen";
+import CustomScrollbar from "@/app/components/CustomScrollbar";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white relative">
       <LoadingScreen />
+      <CustomScrollbar />
       <Navbar />
       <Hero />
       <Join />
