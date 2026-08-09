@@ -1,17 +1,33 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./Hero.module.css";
 import Image from "next/image";
 import About from "@/app/components/About";
 
 const Hero = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const robotWrapRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const eyeGlowRef = useRef<HTMLDivElement>(null);
   const aboutPanelRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const handleLoaded = () => setIsLoaded(true);
+
+    window.addEventListener("aice-loading-complete", handleLoaded);
+
+    const fallback = setTimeout(() => {
+      setIsLoaded(true);
+    }, 3800);
+
+    return () => {
+      window.removeEventListener("aice-loading-complete", handleLoaded);
+      clearTimeout(fallback);
+    };
+  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -34,7 +50,10 @@ const Hero = () => {
 
         const scrolled = -rect.top;
 
-        const progress1 = Math.min(Math.max(scrolled / (viewportH * 0.7), 0), 1);
+        const progress1 = Math.min(
+          Math.max(scrolled / (viewportH * 0.7), 0),
+          1,
+        );
         const eased1 = 1 - Math.pow(1 - progress1, 3);
 
         const progress2 = Math.min(
@@ -165,7 +184,7 @@ const Hero = () => {
   return (
     <div
       id="home"
-      className={styles.heroOuter}
+      className={`${styles.heroOuter} ${isLoaded ? styles.loaded : ""}`}
       ref={sectionRef}
       aria-label="AICE Hero"
     >

@@ -87,11 +87,12 @@
 }
 
 .heading {
-  font-family: var(--font-primary, var(--font-geist-sans), sans-serif);
+  font-family: var(--font-heading);
   font-size: clamp(2rem, 3.5vw, 3.25rem);
   font-weight: 900;
   line-height: 1;
-  letter-spacing: -0.04em;
+  letter-spacing: 0.03em;
+  -webkit-text-stroke: 0.5px currentColor;
   color: #ffffff;
   margin-bottom: 0.5rem;
 }

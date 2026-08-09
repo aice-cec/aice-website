@@ -14,6 +14,7 @@ html {
   --color-accent: #ff2020;
   --font-primary: var(--font-sans), system-ui, sans-serif;
   --font-secondary: var(--font-sans), system-ui, sans-serif;
+  --font-heading: var(--font-kanit), "Kanit", sans-serif;
 }
 
 @theme inline {

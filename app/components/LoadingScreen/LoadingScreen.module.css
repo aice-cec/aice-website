@@ -1,0 +1,67 @@
+.loadingOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background-color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform, visibility;
+  transform: translate3d(0, 0, 0);
+}
+
+.fadeOut {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.04) translate3d(0, 0, 0);
+  pointer-events: none;
+}
+
+.videoWrap {
+  position: relative;
+  width: min(85vw, 420px);
+  max-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  transform: translate3d(0, 0, 0);
+  will-change: opacity, transform;
+}
+
+.videoReady {
+  opacity: 1;
+}
+
+.video {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 1.5rem;
+  display: block;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+@media (max-width: 640px) {
+  .videoWrap {
+    width: min(90vw, 320px);
+    border-radius: 1.25rem;
+  }
+
+  .video {
+    border-radius: 1.25rem;
+  }
+}

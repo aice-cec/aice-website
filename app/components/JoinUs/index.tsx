@@ -44,18 +44,17 @@ export function Join() {
   return (
     <>
       <section id="join" className={styles.joinSection}>
-        <div className={styles.decoratorCircleLeft} />
         <div className={styles.decoratorGlowRight} />
         <div className={styles.container}>
           <div className={styles.mainGrid}>
             <div>
               <p className={styles.subtitle}>BECOME PART OF AICE</p>
               <h2 className={styles.heading}>
-                YOUR NEXT
+                <span style={{ whiteSpace: "nowrap" }}>YOUR NEXT</span>
                 <br />
-                IDEA STARTS
+                <span style={{ whiteSpace: "nowrap" }}>IDEA STARTS</span>
                 <br />
-                HERE.
+                <span style={{ whiteSpace: "nowrap" }}>HERE.</span>
               </h2>
             </div>
             <div className={styles.card}>

@@ -7,7 +7,6 @@
   padding-top: 3.5rem;
   padding-bottom: 3.5rem;
   color: #000;
-  border-radius: 2.5rem 2.5rem 0 0;
   box-shadow: 0 -30px 80px rgba(0, 0, 0, 0.5);
 }
 
@@ -20,21 +19,13 @@
 
 @media (min-width: 1024px) {
   .joinSection {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     padding-top: 5rem;
     padding-bottom: 5rem;
   }
-}
-
-.decoratorCircleLeft {
-  pointer-events: none;
-  position: absolute;
-  left: -6rem;
-  top: 50%;
-  height: 27.5rem;
-  width: 27.5rem;
-  transform: translateY(-50%);
-  border-radius: 9999px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 .decoratorGlowRight {
@@ -74,12 +65,12 @@
 
 .mainGrid {
   display: grid;
-  gap: 3rem;
+  gap: 2.5rem;
 }
 
 @media (min-width: 1024px) {
   .mainGrid {
-    grid-template-columns: 1.15fr 0.85fr;
+    grid-template-columns: 1.3fr 0.7fr;
     align-items: flex-end;
   }
 }
@@ -95,11 +86,12 @@
 
 .heading {
   max-width: 56rem;
-  font-family: var(--font-primary, var(--font-geist-sans), sans-serif);
-  font-size: clamp(3.2rem, 8vw, 8rem);
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 5.2vw, 5.4rem);
   font-weight: 900;
-  line-height: 0.8;
-  letter-spacing: -0.075em;
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  -webkit-text-stroke: 0.5px currentColor;
 }
 
 .card {
@@ -142,7 +134,7 @@
   border-radius: 9999px;
   background-color: #fff;
   padding: 1rem 1.25rem;
-  font-family: var(--font-primary, var(--font-geist-sans), sans-serif);
+  font-family: var(--font-heading);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.13em;
@@ -158,11 +150,11 @@
 }
 
 .reasonsGrid {
-  margin-top: 4rem;
+  margin-top: 2.5rem;
   display: grid;
   gap: 1.25rem;
   border-top: 1px solid rgba(0, 0, 0, 0.15);
-  padding-top: 2rem;
+  padding-top: 1.5rem;
 }
 
 @media (min-width: 768px) {

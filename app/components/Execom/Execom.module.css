@@ -86,11 +86,12 @@
 }
 
 .heading {
-  font-family: var(--font-primary, var(--font-geist-sans), sans-serif);
+  font-family: var(--font-heading);
   font-size: clamp(2.2rem, 4.5vw, 4.2rem);
   font-weight: 900;
-  line-height: 0.9;
-  letter-spacing: -0.04em;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  -webkit-text-stroke: 0.5px currentColor;
   color: #ffffff;
 }
 
@@ -129,10 +130,10 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-family: var(--font-primary, var(--font-geist-sans), sans-serif);
-  font-size: 1.05rem;
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.04em;
   color: #ffffff;
   text-transform: uppercase;
 }

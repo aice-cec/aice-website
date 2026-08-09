@@ -4,19 +4,11 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  height: var(--nav-height, 80px);
+  height: var(--nav-height, 72px);
   display: flex;
   align-items: center;
-  transition:
-    background var(--transition-base, 0.25s ease),
-    backdrop-filter var(--transition-base, 0.25s ease);
-}
-
-.navbar.scrolled {
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: transparent;
+  pointer-events: none;
 }
 
 .container {
@@ -24,11 +16,12 @@
   max-width: 1280px;
   margin: 0 auto;
   height: 100%;
-  padding: 0 40px;
+  padding: 0 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
+  pointer-events: auto;
 }
 
 /* ─── Logo ─── */
@@ -37,8 +30,8 @@
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
-  transition: opacity var(--transition-base);
+  gap: 12px;
+  transition: opacity 0.2s ease;
 }
 
 .logo:hover {
@@ -47,57 +40,78 @@
 
 .logoMark {
   flex-shrink: 0;
-  display: block;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  align-items: center;
+  transition:
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.3s ease;
 }
 
 .logo:hover .logoMark {
-  transform: scale(1.1) rotate(-3deg);
+  transform: scale(1.08);
 }
 
 .logoText {
-  font-family: var(--font-primary);
-  font-size: 2.3rem;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 1.45rem;
   font-weight: 800;
   letter-spacing: 0.12em;
-  color: var(--color-white);
+  color: #ffffff;
   display: block;
   line-height: 1;
+  transition: color 0.3s ease;
 }
 
-/* ─── Nav Pill ─── */
-.navPill {
+/* ─── Nav Links ─── */
+.navLinks {
   display: flex;
   align-items: center;
-  gap: 4px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 100px;
-  padding: 6px 10px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  gap: 32px;
 }
 
 .navLink {
+  position: relative;
   display: block;
-  padding: 8px 20px;
-  border-radius: 100px;
+  padding: 6px 0;
   text-decoration: none;
-  font-family: var(--font-primary);
-  font-size: 0.72rem;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   color: rgba(255, 255, 255, 0.6);
-  transition:
-    color var(--transition-base),
-    background var(--transition-base);
+  transition: color 0.25s ease;
   white-space: nowrap;
 }
 
-.navLink:hover,
+.navLink::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #ef4444;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition:
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.3s ease;
+}
+
+.navLink:hover {
+  color: #ffffff;
+}
+
 .navLink.active {
-  color: var(--color-white);
-  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.navLink.active::after,
+.navLink:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 /* ─── CTA Button ─── */
@@ -105,30 +119,30 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px;
-  border-radius: 100px;
-  background: #000000;
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 22px;
+  border-radius: 9999px;
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #ffffff;
   text-decoration: none;
-  font-family: var(--font-primary);
-  font-size: 0.78rem;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.725rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   white-space: nowrap;
   flex-shrink: 0;
-  transition:
-    background var(--transition-base),
-    border-color var(--transition-base),
-    transform var(--transition-base),
-    box-shadow var(--transition-base);
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .ctaBtn:hover {
-  background: #18181b;
-  border-color: rgba(255, 255, 255, 0.4);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
 }
 
 .ctaBtn:active {
@@ -136,7 +150,7 @@
 }
 
 .ctaArrow {
-  transition: transform var(--transition-base);
+  transition: transform 0.25s ease;
 }
 
 .ctaBtn:hover .ctaArrow {
@@ -156,7 +170,7 @@
   border: none;
   cursor: pointer;
   border-radius: 8px;
-  transition: background var(--transition-base);
+  transition: background 0.2s ease;
 }
 
 .hamburger:hover {
@@ -166,12 +180,13 @@
 .hamburger span {
   display: block;
   height: 2px;
-  background: var(--color-white);
+  background: #ffffff;
   border-radius: 2px;
   transition:
-    transform var(--transition-base),
-    opacity var(--transition-base),
-    width var(--transition-base);
+    transform 0.25s ease,
+    opacity 0.25s ease,
+    width 0.25s ease,
+    background-color 0.3s ease;
 }
 
 .hamburger span:nth-child(1) {
@@ -196,6 +211,46 @@
   transform: translateY(-7px) rotate(-45deg);
 }
 
+/* ─── On Red Section Adaptations ─── */
+.navbar.onRed .logoText {
+  color: #000000;
+}
+
+.navbar.onRed .logoMark {
+  filter: brightness(0);
+}
+
+.navbar.onRed .navLink {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.navbar.onRed .navLink:hover,
+.navbar.onRed .navLink.active {
+  color: #000000;
+}
+
+.navbar.onRed .navLink::after {
+  background-color: #000000;
+}
+
+.navbar.onRed .ctaBtn {
+  background: #000000;
+  color: #ffffff;
+  border-color: #000000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.navbar.onRed .ctaBtn:hover {
+  background: #ffffff;
+  color: #000000;
+  border-color: #000000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.navbar.onRed .hamburger span {
+  background: #000000;
+}
+
 /* ─── Responsive ─── */
 @media (max-width: 768px) {
   .container {
@@ -214,9 +269,9 @@
     display: none;
   }
 
-  .navPill {
+  .navLinks {
     position: fixed;
-    top: var(--nav-height);
+    top: var(--nav-height, 72px);
     left: 0;
     right: 0;
     flex-direction: column;
@@ -237,7 +292,7 @@
     pointer-events: none;
   }
 
-  .navPillOpen {
+  .navLinksOpen {
     max-height: 300px;
     opacity: 1;
     pointer-events: all;
@@ -247,5 +302,9 @@
     padding: 14px 20px;
     border-radius: 8px;
     font-size: 0.85rem;
+  }
+
+  .navLink::after {
+    display: none;
   }
 }
