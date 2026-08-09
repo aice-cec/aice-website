@@ -241,7 +241,7 @@ const Hero = () => {
         <div className={styles.robotWrap} ref={robotWrapRef}>
           <div className={styles.robotContainer}>
             <img
-              src="/robot/robot.png"
+              src="/robot/robot.webp"
               alt="robot"
               className={styles.robotImg}
               draggable="false"
