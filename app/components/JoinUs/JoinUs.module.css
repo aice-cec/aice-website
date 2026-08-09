@@ -119,9 +119,9 @@
 
 .cardText {
   margin-top: 1rem;
-  max-width: 24rem;
-  font-size: 1.125rem;
-  line-height: 1.375;
+  max-width: 26rem;
+  font-size: 1.2rem;
+  line-height: 1.4;
   color: rgba(255, 255, 255, 0.8);
 }
 
@@ -186,8 +186,8 @@
 
 .reasonText {
   margin-top: 0.5rem;
-  font-size: 0.875rem;
-  line-height: 1.625;
+  font-size: 0.95rem;
+  line-height: 1.6;
   color: rgba(0, 0, 0, 0.65);
 }
 

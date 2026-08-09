@@ -341,7 +341,7 @@
   }
   .subWord {
     top: 92%;
-    font-size: clamp(0.38rem, 1.8vw, 0.6rem);
+    font-size: clamp(0.55rem, 2.2vw, 0.75rem);
     letter-spacing: 0.05em;
   }
   .subWordE {

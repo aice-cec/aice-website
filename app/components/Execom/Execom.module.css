@@ -88,7 +88,7 @@
 .heading {
   font-family: var(--font-heading);
   font-size: clamp(2.4rem, 5vw, 4.5rem);
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1;
   letter-spacing: 0.04em;
   color: #ffffff;
@@ -102,15 +102,15 @@
 }
 
 .subtext {
-  max-width: 32rem;
-  font-size: 0.9rem;
+  max-width: 36rem;
+  font-size: 1rem;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.6);
 }
 
 @media (min-width: 640px) {
   .subtext {
-    font-size: 1rem;
+    font-size: 1.125rem;
   }
 }
 
@@ -423,8 +423,8 @@
   }
 
   .facultyBio {
-    font-size: 0.8rem;
-    line-height: 1.45;
+    font-size: 0.9rem;
+    line-height: 1.5;
   }
 
   .memberName {
@@ -432,6 +432,6 @@
   }
 
   .memberRole {
-    font-size: 0.6rem;
+    font-size: 0.72rem;
   }
 }

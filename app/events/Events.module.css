@@ -108,14 +108,14 @@
 }
 
 .heroSubtitle {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: #9ca3af;
   line-height: 1.6;
 }
 
 @media (min-width: 640px) {
   .heroSubtitle {
-    font-size: 1.125rem;
+    font-size: 1.225rem;
   }
 }
 
@@ -406,7 +406,7 @@
 }
 
 .cardDesc {
-  font-size: 0.75rem;
+  font-size: 0.925rem;
   color: #9ca3af;
   line-height: 1.6;
   margin-bottom: 1.5rem;
@@ -422,7 +422,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.625rem;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   color: #9ca3af;
 }
 
