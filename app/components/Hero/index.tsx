@@ -8,11 +8,97 @@ import About from "@/app/components/About";
 const Hero = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
   const robotWrapRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const eyeGlowRef = useRef<HTMLDivElement>(null);
   const aboutPanelRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLButtonElement>(null);
+
+  const mousePosRef = useRef<{ x: number; y: number }>({ x: -1000, y: -1000 });
+  const mouseActiveRef = useRef<boolean>(false);
+  const animFrameRef = useRef<number | null>(null);
+
+  const updateSpotlightCSS = () => {
+    if (stickyRef.current) {
+      stickyRef.current.style.setProperty(
+        "--mouse-x",
+        `${mousePosRef.current.x}px`,
+      );
+      stickyRef.current.style.setProperty(
+        "--mouse-y",
+        `${mousePosRef.current.y}px`,
+      );
+      stickyRef.current.style.setProperty(
+        "--spotlight-opacity",
+        mouseActiveRef.current ? "1" : "0",
+      );
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!stickyRef.current) return;
+    const rect = stickyRef.current.getBoundingClientRect();
+    mousePosRef.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
+    mouseActiveRef.current = true;
+
+    if (!animFrameRef.current) {
+      animFrameRef.current = requestAnimationFrame(() => {
+        updateSpotlightCSS();
+        animFrameRef.current = null;
+      });
+    }
+  };
+
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!stickyRef.current) return;
+    const rect = stickyRef.current.getBoundingClientRect();
+    mousePosRef.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
+    mouseActiveRef.current = true;
+    updateSpotlightCSS();
+  };
+
+  const handleMouseLeave = () => {
+    mouseActiveRef.current = false;
+    updateSpotlightCSS();
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!stickyRef.current || e.touches.length === 0) return;
+    const touch = e.touches[0];
+    const rect = stickyRef.current.getBoundingClientRect();
+    mousePosRef.current = {
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top,
+    };
+    mouseActiveRef.current = true;
+
+    if (!animFrameRef.current) {
+      animFrameRef.current = requestAnimationFrame(() => {
+        updateSpotlightCSS();
+        animFrameRef.current = null;
+      });
+    }
+  };
+
+  const handleTouchEnd = () => {
+    mouseActiveRef.current = false;
+    updateSpotlightCSS();
+  };
+
+  useEffect(() => {
+    return () => {
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const handleLoaded = () => setIsLoaded(true);
@@ -190,7 +276,20 @@ const Hero = () => {
     >
       <div id="about" className={styles.aboutAnchor} />
 
-      <div className={styles.heroSticky}>
+      <div
+        className={styles.heroSticky}
+        ref={stickyRef}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div className={styles.spotlightContainer} aria-hidden="true">
+          <div className={styles.spotlightPattern} />
+          <div className={styles.spotlightGlow} />
+        </div>
+
         <div className={styles.bgTitle} ref={titleRef} aria-hidden="true">
           <div className={styles.letterA}>
             <span className={styles.letterChar}>A</span>
