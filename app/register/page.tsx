@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Image from "next/image";
@@ -207,11 +207,22 @@ export default function RegisterPage() {
               disabled={loading}
               className={styles.submitBtn}
             >
-              {loading
-                ? "PROCESSING..."
-                : formData.skipPayment
-                  ? "JOIN NOW (TEST BYPASS) â†’"
-                  : "PAY â‚¹100 & JOIN NOW â†’"}
+              {loading ? (
+                <>
+                  <span>PROCESSING...</span>
+                  <span>&rarr;</span>
+                </>
+              ) : formData.skipPayment ? (
+                <>
+                  <span>JOIN NOW (TEST BYPASS)</span>
+                  <span>&rarr;</span>
+                </>
+              ) : (
+                <>
+                  <span>PAY ₹100 & JOIN NOW</span>
+                  <span>&rarr;</span>
+                </>
+              )}
             </button>
           </form>
         </div>

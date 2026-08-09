@@ -308,6 +308,25 @@ export function Execom() {
   const execom: TeamMember[] = teamData.execom || [];
   const subExecom: TeamMember[] = teamData.subExecom || [];
 
+  const execomRoleOrder = [
+    "Student Lead",
+    "Treasurer",
+    "Program Manager",
+    "Webmaster",
+    "Tech Lead",
+    "Creative Lead",
+    "Content Lead",
+    "PR & Outreach Lead",
+    "Media Lead",
+    "Project Coordinator",
+  ];
+
+  const sortedExecom = [...execom].sort((a, b) => {
+    const indexA = execomRoleOrder.indexOf(a.role);
+    const indexB = execomRoleOrder.indexOf(b.role);
+    return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
+  });
+
   const teamOrder = [
     "Finance Team",
     "Co-Treasurer",
@@ -396,7 +415,7 @@ export function Execom() {
         </div>
 
         <TeamSection title="FACULTY ADVISOR" members={faculty} center />
-        <TeamSection title="EXECUTIVE COMMITTEE" members={execom} />
+        <TeamSection title="EXECUTIVE COMMITTEE" members={sortedExecom} />
         <TeamSection title="SUB-EXECOM" members={sortedSubExecom} reverse />
       </div>
     </section>

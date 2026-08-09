@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./CustomScrollbar.module.css";
 
 const SECTIONS = [
-  { id: "home", label: "HOME" },
-  { id: "about", label: "ABOUT" },
-  { id: "join", label: "JOIN US" },
-  { id: "events", label: "EVENTS" },
-  { id: "execom", label: "EXECOM" },
+  { id: "home", label: "HOME", top: "0%" },
+  { id: "about", label: "ABOUT", top: "25%" },
+  { id: "join", label: "JOIN US", top: "50%" },
+  { id: "events", label: "EVENTS", top: "75%" },
+  { id: "execom", label: "EXECOM", top: "100%" },
 ];
 
 export default function CustomScrollbar() {
@@ -142,18 +142,24 @@ export default function CustomScrollbar() {
 
         {/* Section Waypoint Dots */}
         {SECTIONS.map((sec) => (
-          <button
+          <div
             key={sec.id}
-            type="button"
-            className={styles.dot}
-            onClick={(e) => {
-              e.stopPropagation();
-              document
-                .getElementById(sec.id)
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
-            title={sec.label}
-          />
+            className={styles.dotWrapper}
+            style={{ top: sec.top }}
+          >
+            <span className={styles.dotLabel}>{sec.label}</span>
+            <button
+              type="button"
+              className={styles.dot}
+              onClick={(e) => {
+                e.stopPropagation();
+                document
+                  .getElementById(sec.id)
+                  ?.scrollIntoView({ behavior: "smooth" });
+              }}
+              title={sec.label}
+            />
+          </div>
         ))}
       </div>
     </aside>

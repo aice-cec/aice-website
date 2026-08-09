@@ -1,4 +1,4 @@
-﻿.scrollbarContainer {
+.scrollbarContainer {
   position: fixed;
   right: 1.25rem;
   top: 50%;
@@ -94,8 +94,50 @@
   }
 }
 
-.dot {
+.dotWrapper {
   position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.dotLabel {
+  font-family: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0);
+  position: absolute;
+  right: 16px;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: color 0.22s ease, transform 0.22s ease, opacity 0.22s ease;
+  transform: translateX(8px);
+  opacity: 0;
+}
+
+.scrollbarContainer:hover .dotLabel,
+.active .dotLabel {
+  color: rgba(255, 255, 255, 0.45);
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.dotWrapper:hover .dotLabel {
+  color: var(--color-accent, #ff6a00) !important;
+  transform: translateX(-2px);
+}
+
+.dot {
+  pointer-events: auto;
+  position: absolute;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 8px;
@@ -105,18 +147,12 @@
   border: 1px solid rgba(0, 0, 0, 0.5);
   cursor: pointer;
   transition: all 0.2s ease;
-  z-index: 1;
+  flex-shrink: 0;
 }
 
-.dot:nth-child(3) { top: 0%; }
-.dot:nth-child(4) { top: 25%; }
-.dot:nth-child(5) { top: 50%; }
-.dot:nth-child(6) { top: 75%; }
-.dot:nth-child(7) { top: 100%; }
-
-.dot:hover {
-  background: #ff6a00;
-  transform: translate(-50%, -50%) scale(1.5);
+.dotWrapper:hover .dot {
+  background: var(--color-accent, #ff6a00);
+  transform: translate(-50%, -50%) scale(1.45);
 }
 
 /* â”€â”€â”€ Join Us Section Theme Inversion (Black on Red) â”€â”€â”€ */

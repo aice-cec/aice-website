@@ -47,7 +47,8 @@ function StatusContent() {
       </div>
 
       <Link href="/" className={styles.submitBtn} style={{ textDecoration: "none" }}>
-        RETURN TO HOME &rarr;
+        <span>RETURN TO HOME</span>
+        <span>&rarr;</span>
       </Link>
     </div>
   );

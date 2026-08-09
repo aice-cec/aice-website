@@ -16,12 +16,19 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("HOME");
+  const [onJoinSection, setOnJoinSection] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY;
       setScrolled(currentY > 20);
 
+      const joinEl = document.getElementById("join");
+      if (joinEl) {
+        const rect = joinEl.getBoundingClientRect();
+        // Turn orange when membership section starts appearing under header (80px is navbar height)
+        setOnJoinSection(rect.top <= 80 && rect.bottom >= 0);
+      }
 
       const sections = [
         { id: "execom", label: "EXECOM" },
@@ -159,7 +166,7 @@ const Navbar = () => {
         <button
           type="button"
           id="cta-join-now"
-          className={styles.ctaBtn}
+          className={`${styles.ctaBtn} ${onJoinSection ? styles.orangeBtn : ""}`}
           aria-label="Join AICE now"
           onClick={() => {
             setMobileOpen(false);

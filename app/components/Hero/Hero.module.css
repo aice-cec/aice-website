@@ -1,4 +1,4 @@
-﻿.heroOuter {
+.heroOuter {
   position: relative;
   width: 100%;
   height: 340vh;
@@ -239,7 +239,7 @@
   padding: 1px;
   border: 0;
   border-radius: 999px;
-  background: var(--gradient-signal);
+  background: linear-gradient(112deg, #000000 0%, #ff3300 58%, #ff773d 100%);
   color: #ffffff;
   font-family: var(--font-heading);
   font-size: 0.82rem;
@@ -273,7 +273,7 @@
   inset: -5px;
   z-index: -2;
   border-radius: inherit;
-  border: 1px solid rgba(255, 106, 0, 0.28);
+  border: 1px solid rgba(255, 51, 0, 0.28);
   opacity: 0;
   transform: scale(0.9);
   transition: opacity 0.3s ease, transform 0.3s ease;
@@ -284,7 +284,7 @@
 }
 
 .squareCta:hover {
-  box-shadow: 0 16px 38px rgba(255, 106, 0, 0.32);
+  box-shadow: 0 16px 38px rgba(255, 51, 0, 0.32);
   filter: brightness(1.15);
 }
 
