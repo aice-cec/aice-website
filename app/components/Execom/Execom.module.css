@@ -195,7 +195,7 @@
 .carouselContainer {
   width: 100%;
   overflow-x: auto;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding-top: 0.5rem;

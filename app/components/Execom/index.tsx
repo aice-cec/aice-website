@@ -119,13 +119,39 @@ function TeamSection({
     lastInteraction.current = Date.now();
   };
 
+  const displayMembers =
+    members.length > 3 ? [...members, ...members, ...members] : members;
+
   useEffect(() => {
-    if (members.length <= 3 || !reverse) return;
-    if (carouselRef.current) {
-      carouselRef.current.scrollLeft =
-        carouselRef.current.scrollWidth - carouselRef.current.clientWidth;
-    }
+    if (members.length <= 3 || !carouselRef.current) return;
+    const container = carouselRef.current;
+
+    const setInitialPos = () => {
+      const singleSetWidth = container.scrollWidth / 3;
+      if (reverse) {
+        container.scrollLeft = singleSetWidth * 2 - container.clientWidth;
+      } else {
+        container.scrollLeft = singleSetWidth;
+      }
+    };
+
+    setInitialPos();
+    const timer = setTimeout(setInitialPos, 100);
+    return () => clearTimeout(timer);
   }, [members.length, reverse]);
+
+  const handleScroll = () => {
+    if (members.length <= 3 || !carouselRef.current) return;
+    const container = carouselRef.current;
+    const singleSetWidth = container.scrollWidth / 3;
+    if (!singleSetWidth) return;
+
+    if (container.scrollLeft >= singleSetWidth * 2.2) {
+      container.scrollLeft -= singleSetWidth;
+    } else if (container.scrollLeft <= singleSetWidth * 0.2) {
+      container.scrollLeft += singleSetWidth;
+    }
+  };
 
   useEffect(() => {
     if (members.length <= 3) return;
@@ -134,19 +160,17 @@ function TeamSection({
         const now = Date.now();
         if (now - lastInteraction.current > 2000) {
           const container = carouselRef.current;
-          const maxScroll = container.scrollWidth - container.clientWidth;
+          const singleSetWidth = container.scrollWidth / 3;
           if (reverse) {
-            if (container.scrollLeft <= 10) {
-              container.scrollTo({ left: maxScroll, behavior: "smooth" });
-            } else {
-              container.scrollBy({ left: -340, behavior: "smooth" });
+            if (container.scrollLeft <= singleSetWidth + 340) {
+              container.scrollLeft += singleSetWidth;
             }
+            container.scrollBy({ left: -340, behavior: "smooth" });
           } else {
-            if (container.scrollLeft >= maxScroll - 10) {
-              container.scrollTo({ left: 0, behavior: "smooth" });
-            } else {
-              container.scrollBy({ left: 340, behavior: "smooth" });
+            if (container.scrollLeft >= singleSetWidth * 2 - 340) {
+              container.scrollLeft -= singleSetWidth;
             }
+            container.scrollBy({ left: 340, behavior: "smooth" });
           }
         }
       }
@@ -177,9 +201,20 @@ function TeamSection({
 
   const scrollContainer = (direction: "left" | "right") => {
     lastInteraction.current = Date.now();
-    if (carouselRef.current) {
-      const scrollAmount = direction === "left" ? -340 : 340;
-      carouselRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    if (carouselRef.current && members.length > 3) {
+      const container = carouselRef.current;
+      const singleSetWidth = container.scrollWidth / 3;
+      if (direction === "right") {
+        if (container.scrollLeft >= singleSetWidth * 2 - 340) {
+          container.scrollLeft -= singleSetWidth;
+        }
+        container.scrollBy({ left: 340, behavior: "smooth" });
+      } else {
+        if (container.scrollLeft <= singleSetWidth + 340) {
+          container.scrollLeft += singleSetWidth;
+        }
+        container.scrollBy({ left: -340, behavior: "smooth" });
+      }
     }
   };
 
@@ -216,6 +251,7 @@ function TeamSection({
       <div
         className={styles.carouselContainer}
         ref={carouselRef}
+        onScroll={handleScroll}
         onMouseEnter={() => (isHovered.current = true)}
         onMouseLeave={() => (isHovered.current = false)}
         onTouchStart={() => {
@@ -229,8 +265,8 @@ function TeamSection({
         <div
           className={`${styles.carouselTrack} ${center ? styles.centerTrack : ""}`}
         >
-          {members.map((member) => (
-            <article key={member.id} className={styles.memberCard}>
+          {displayMembers.map((member, index) => (
+            <article key={`${member.id}-${index}`} className={styles.memberCard}>
               <div className={styles.cardImageWrap}>
                 <Image
                   src={member.image}
