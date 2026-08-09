@@ -8,11 +8,97 @@ import About from "@/app/components/About";
 const Hero = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
   const robotWrapRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const eyeGlowRef = useRef<HTMLDivElement>(null);
   const aboutPanelRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLButtonElement>(null);
+
+  const mousePosRef = useRef<{ x: number; y: number }>({ x: -1000, y: -1000 });
+  const mouseActiveRef = useRef<boolean>(false);
+  const animFrameRef = useRef<number | null>(null);
+
+  const updateSpotlightCSS = () => {
+    if (stickyRef.current) {
+      stickyRef.current.style.setProperty(
+        "--mouse-x",
+        `${mousePosRef.current.x}px`,
+      );
+      stickyRef.current.style.setProperty(
+        "--mouse-y",
+        `${mousePosRef.current.y}px`,
+      );
+      stickyRef.current.style.setProperty(
+        "--spotlight-opacity",
+        mouseActiveRef.current ? "1" : "0",
+      );
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!stickyRef.current) return;
+    const rect = stickyRef.current.getBoundingClientRect();
+    mousePosRef.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
+    mouseActiveRef.current = true;
+
+    if (!animFrameRef.current) {
+      animFrameRef.current = requestAnimationFrame(() => {
+        updateSpotlightCSS();
+        animFrameRef.current = null;
+      });
+    }
+  };
+
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!stickyRef.current) return;
+    const rect = stickyRef.current.getBoundingClientRect();
+    mousePosRef.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
+    mouseActiveRef.current = true;
+    updateSpotlightCSS();
+  };
+
+  const handleMouseLeave = () => {
+    mouseActiveRef.current = false;
+    updateSpotlightCSS();
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!stickyRef.current || e.touches.length === 0) return;
+    const touch = e.touches[0];
+    const rect = stickyRef.current.getBoundingClientRect();
+    mousePosRef.current = {
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top,
+    };
+    mouseActiveRef.current = true;
+
+    if (!animFrameRef.current) {
+      animFrameRef.current = requestAnimationFrame(() => {
+        updateSpotlightCSS();
+        animFrameRef.current = null;
+      });
+    }
+  };
+
+  const handleTouchEnd = () => {
+    mouseActiveRef.current = false;
+    updateSpotlightCSS();
+  };
+
+  useEffect(() => {
+    return () => {
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const handleLoaded = () => setIsLoaded(true);
@@ -218,7 +304,192 @@ const Hero = () => {
     >
       <div id="about" className={styles.aboutAnchor} />
 
-      <div className={styles.heroSticky}>
+      <div
+        className={styles.heroSticky}
+        ref={stickyRef}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div className={styles.spotlightContainer} aria-hidden="true">
+          <div className={styles.spotlightPattern}>
+            <svg
+              viewBox="0 0 1000 600"
+              width="100%"
+              height="100%"
+              preserveAspectRatio="none"
+              className={styles.vectorPatternSvg}
+            >
+              <defs>
+                <linearGradient id="g0" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ff7700" />
+                  <stop offset="30%" stopColor="#aa2200" />
+                  <stop offset="85%" stopColor="#440000" />
+                  <stop offset="100%" stopColor="#0a0000" />
+                </linearGradient>
+                <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ff9900" />
+                  <stop offset="25%" stopColor="#cc3300" />
+                  <stop offset="80%" stopColor="#660000" />
+                  <stop offset="100%" stopColor="#110000" />
+                </linearGradient>
+                <linearGradient id="g2" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ffbb00" />
+                  <stop offset="25%" stopColor="#ee4400" />
+                  <stop offset="80%" stopColor="#880000" />
+                  <stop offset="100%" stopColor="#150000" />
+                </linearGradient>
+                <linearGradient id="g3" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ffdd00" />
+                  <stop offset="20%" stopColor="#ff5500" />
+                  <stop offset="75%" stopColor="#aa0000" />
+                  <stop offset="100%" stopColor="#1a0000" />
+                </linearGradient>
+                <linearGradient id="g4" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ffee00" />
+                  <stop offset="20%" stopColor="#ff6600" />
+                  <stop offset="75%" stopColor="#bb0000" />
+                  <stop offset="100%" stopColor="#200000" />
+                </linearGradient>
+                <linearGradient id="g5" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ffff22" />
+                  <stop offset="20%" stopColor="#ff7700" />
+                  <stop offset="75%" stopColor="#cc0000" />
+                  <stop offset="100%" stopColor="#220000" />
+                </linearGradient>
+                <linearGradient id="g6" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ffdd00" />
+                  <stop offset="20%" stopColor="#ff5500" />
+                  <stop offset="75%" stopColor="#bb0000" />
+                  <stop offset="100%" stopColor="#1e0000" />
+                </linearGradient>
+                <linearGradient id="g7" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ffaa00" />
+                  <stop offset="22%" stopColor="#ff3300" />
+                  <stop offset="75%" stopColor="#aa0000" />
+                  <stop offset="100%" stopColor="#1a0000" />
+                </linearGradient>
+                <linearGradient id="g8" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ff7700" />
+                  <stop offset="22%" stopColor="#ee1100" />
+                  <stop offset="75%" stopColor="#990000" />
+                  <stop offset="100%" stopColor="#180000" />
+                </linearGradient>
+                <linearGradient id="g9" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ff5500" />
+                  <stop offset="25%" stopColor="#dd0000" />
+                  <stop offset="75%" stopColor="#880000" />
+                  <stop offset="100%" stopColor="#150000" />
+                </linearGradient>
+                <linearGradient id="g10" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ff3300" />
+                  <stop offset="25%" stopColor="#cc0000" />
+                  <stop offset="75%" stopColor="#770000" />
+                  <stop offset="100%" stopColor="#120000" />
+                </linearGradient>
+                <linearGradient id="g11" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ee2200" />
+                  <stop offset="25%" stopColor="#bb0000" />
+                  <stop offset="75%" stopColor="#660000" />
+                  <stop offset="100%" stopColor="#100000" />
+                </linearGradient>
+                <linearGradient id="g12" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#dd1100" />
+                  <stop offset="25%" stopColor="#aa0000" />
+                  <stop offset="75%" stopColor="#550000" />
+                  <stop offset="100%" stopColor="#0e0000" />
+                </linearGradient>
+                <linearGradient id="g13" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#cc0000" />
+                  <stop offset="25%" stopColor="#990000" />
+                  <stop offset="75%" stopColor="#440000" />
+                  <stop offset="100%" stopColor="#0c0000" />
+                </linearGradient>
+                <linearGradient id="g14" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#bb0000" />
+                  <stop offset="25%" stopColor="#880000" />
+                  <stop offset="75%" stopColor="#380000" />
+                  <stop offset="100%" stopColor="#0a0000" />
+                </linearGradient>
+                <linearGradient id="g15" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#aa0000" />
+                  <stop offset="25%" stopColor="#770000" />
+                  <stop offset="75%" stopColor="#300000" />
+                  <stop offset="100%" stopColor="#080000" />
+                </linearGradient>
+                <linearGradient id="g16" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#990000" />
+                  <stop offset="25%" stopColor="#660000" />
+                  <stop offset="75%" stopColor="#280000" />
+                  <stop offset="100%" stopColor="#060000" />
+                </linearGradient>
+                <linearGradient id="g17" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#880000" />
+                  <stop offset="25%" stopColor="#550000" />
+                  <stop offset="75%" stopColor="#200000" />
+                  <stop offset="100%" stopColor="#040000" />
+                </linearGradient>
+                <linearGradient id="g18" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#770000" />
+                  <stop offset="25%" stopColor="#440000" />
+                  <stop offset="75%" stopColor="#180000" />
+                  <stop offset="100%" stopColor="#020000" />
+                </linearGradient>
+                <linearGradient id="g19" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#550000" />
+                  <stop offset="25%" stopColor="#330000" />
+                  <stop offset="75%" stopColor="#100000" />
+                  <stop offset="100%" stopColor="#000000" />
+                </linearGradient>
+
+                <linearGradient id="vertVignette" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#000000" stopOpacity="0.85" />
+                  <stop offset="15%" stopColor="#000000" stopOpacity="0.3" />
+                  <stop offset="50%" stopColor="#000000" stopOpacity="0" />
+                  <stop offset="85%" stopColor="#000000" stopOpacity="0.3" />
+                  <stop offset="100%" stopColor="#000000" stopOpacity="0.85" />
+                </linearGradient>
+
+                <radialGradient id="centerArcGlow" cx="28%" cy="50%" r="45%">
+                  <stop offset="0%" stopColor="#ffee66" stopOpacity="0.35" />
+                  <stop offset="40%" stopColor="#ff5500" stopOpacity="0.2" />
+                  <stop offset="80%" stopColor="#aa0000" stopOpacity="0.05" />
+                  <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+
+              <rect width="1000" height="600" fill="#000000" />
+
+              <rect x="5" y="0" width="42" height="600" fill="url(#g0)" />
+              <rect x="55" y="0" width="42" height="600" fill="url(#g1)" />
+              <rect x="105" y="0" width="42" height="600" fill="url(#g2)" />
+              <rect x="155" y="0" width="42" height="600" fill="url(#g3)" />
+              <rect x="205" y="0" width="42" height="600" fill="url(#g4)" />
+              <rect x="255" y="0" width="42" height="600" fill="url(#g5)" />
+              <rect x="305" y="0" width="42" height="600" fill="url(#g6)" />
+              <rect x="355" y="0" width="42" height="600" fill="url(#g7)" />
+              <rect x="405" y="0" width="42" height="600" fill="url(#g8)" />
+              <rect x="455" y="0" width="42" height="600" fill="url(#g9)" />
+              <rect x="505" y="0" width="42" height="600" fill="url(#g10)" />
+              <rect x="555" y="0" width="42" height="600" fill="url(#g11)" />
+              <rect x="605" y="0" width="42" height="600" fill="url(#g12)" />
+              <rect x="655" y="0" width="42" height="600" fill="url(#g13)" />
+              <rect x="705" y="0" width="42" height="600" fill="url(#g14)" />
+              <rect x="755" y="0" width="42" height="600" fill="url(#g15)" />
+              <rect x="805" y="0" width="42" height="600" fill="url(#g16)" />
+              <rect x="855" y="0" width="42" height="600" fill="url(#g17)" />
+              <rect x="905" y="0" width="42" height="600" fill="url(#g18)" />
+              <rect x="955" y="0" width="40" height="600" fill="url(#g19)" />
+
+              <rect width="1000" height="600" fill="url(#centerArcGlow)" />
+              <rect width="1000" height="600" fill="url(#vertVignette)" />
+            </svg>
+          </div>
+          <div className={styles.spotlightGlow} />
+        </div>
+
         <div className={styles.bgTitle} ref={titleRef} aria-hidden="true">
           <div className={styles.letterA}>
             <span className={styles.letterChar}>A</span>
