@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import styles from "./Hero.module.css";
@@ -324,20 +324,20 @@ const Hero = () => {
               <defs>
                 <linearGradient id="g0" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#ff7700" />
-                  <stop offset="30%" stopColor="#aa2200" />
-                  <stop offset="85%" stopColor="#440000" />
-                  <stop offset="100%" stopColor="#0a0000" />
+                  <stop offset="30%" stopColor="#d94b00" />
+                  <stop offset="85%" stopColor="#5e1b00" />
+                  <stop offset="100%" stopColor="#0d0000" />
                 </linearGradient>
                 <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#ff9900" />
-                  <stop offset="25%" stopColor="#cc3300" />
-                  <stop offset="80%" stopColor="#660000" />
+                  <stop offset="25%" stopColor="#e65c00" />
+                  <stop offset="80%" stopColor="#8c2b00" />
                   <stop offset="100%" stopColor="#110000" />
                 </linearGradient>
                 <linearGradient id="g2" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#ffbb00" />
-                  <stop offset="25%" stopColor="#ee4400" />
-                  <stop offset="80%" stopColor="#880000" />
+                  <stop offset="25%" stopColor="#ff7300" />
+                  <stop offset="80%" stopColor="#ad3600" />
                   <stop offset="100%" stopColor="#150000" />
                 </linearGradient>
                 <linearGradient id="g3" x1="0" y1="0" x2="1" y2="0">
@@ -349,19 +349,19 @@ const Hero = () => {
                 <linearGradient id="g4" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#ffee00" />
                   <stop offset="20%" stopColor="#ff6600" />
-                  <stop offset="75%" stopColor="#bb0000" />
-                  <stop offset="100%" stopColor="#200000" />
+                  <stop offset="75%" stopColor="#d94000" />
+                  <stop offset="100%" stopColor="#300800" />
                 </linearGradient>
                 <linearGradient id="g5" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#ffff22" />
                   <stop offset="20%" stopColor="#ff7700" />
-                  <stop offset="75%" stopColor="#cc0000" />
+                  <stop offset="75%" stopColor="#e64600" />
                   <stop offset="100%" stopColor="#220000" />
                 </linearGradient>
                 <linearGradient id="g6" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#ffdd00" />
                   <stop offset="20%" stopColor="#ff6a00" />
-                  <stop offset="75%" stopColor="#bb0000" />
+                  <stop offset="75%" stopColor="#d94000" />
                   <stop offset="100%" stopColor="#1e0000" />
                 </linearGradient>
                 <linearGradient id="g7" x1="0" y1="0" x2="1" y2="0">
@@ -372,74 +372,74 @@ const Hero = () => {
                 </linearGradient>
                 <linearGradient id="g8" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#ff7700" />
-                  <stop offset="22%" stopColor="#ee1100" />
-                  <stop offset="75%" stopColor="#990000" />
-                  <stop offset="100%" stopColor="#180000" />
+                  <stop offset="22%" stopColor="#ff5100" />
+                  <stop offset="75%" stopColor="#bd2d00" />
+                  <stop offset="100%" stopColor="#240400" />
                 </linearGradient>
                 <linearGradient id="g9" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#ff6a00" />
-                  <stop offset="25%" stopColor="#dd0000" />
-                  <stop offset="75%" stopColor="#880000" />
+                  <stop offset="25%" stopColor="#f23a00" />
+                  <stop offset="75%" stopColor="#ad3600" />
                   <stop offset="100%" stopColor="#150000" />
                 </linearGradient>
                 <linearGradient id="g10" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#ff3300" />
-                  <stop offset="25%" stopColor="#cc0000" />
-                  <stop offset="75%" stopColor="#770000" />
-                  <stop offset="100%" stopColor="#120000" />
+                  <stop offset="25%" stopColor="#e64600" />
+                  <stop offset="75%" stopColor="#9e2e00" />
+                  <stop offset="100%" stopColor="#1c0000" />
                 </linearGradient>
                 <linearGradient id="g11" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#ee2200" />
-                  <stop offset="25%" stopColor="#bb0000" />
-                  <stop offset="75%" stopColor="#660000" />
-                  <stop offset="100%" stopColor="#100000" />
+                  <stop offset="0%" stopColor="#ff6200" />
+                  <stop offset="25%" stopColor="#d94000" />
+                  <stop offset="75%" stopColor="#8c2b00" />
+                  <stop offset="100%" stopColor="#170000" />
                 </linearGradient>
                 <linearGradient id="g12" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#dd1100" />
+                  <stop offset="0%" stopColor="#f24800" />
                   <stop offset="25%" stopColor="#ff6a00" />
-                  <stop offset="75%" stopColor="#550000" />
-                  <stop offset="100%" stopColor="#0e0000" />
+                  <stop offset="75%" stopColor="#7a1f00" />
+                  <stop offset="100%" stopColor="#140000" />
                 </linearGradient>
                 <linearGradient id="g13" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#cc0000" />
-                  <stop offset="25%" stopColor="#990000" />
-                  <stop offset="75%" stopColor="#440000" />
-                  <stop offset="100%" stopColor="#0c0000" />
+                  <stop offset="0%" stopColor="#e64600" />
+                  <stop offset="25%" stopColor="#bd2d00" />
+                  <stop offset="75%" stopColor="#5e1b00" />
+                  <stop offset="100%" stopColor="#100000" />
                 </linearGradient>
                 <linearGradient id="g14" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#bb0000" />
-                  <stop offset="25%" stopColor="#880000" />
-                  <stop offset="75%" stopColor="#380000" />
-                  <stop offset="100%" stopColor="#0a0000" />
+                  <stop offset="0%" stopColor="#d94000" />
+                  <stop offset="25%" stopColor="#ad3600" />
+                  <stop offset="75%" stopColor="#521400" />
+                  <stop offset="100%" stopColor="#0d0000" />
                 </linearGradient>
                 <linearGradient id="g15" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#ff6a00" />
-                  <stop offset="25%" stopColor="#770000" />
-                  <stop offset="75%" stopColor="#300000" />
-                  <stop offset="100%" stopColor="#080000" />
+                  <stop offset="25%" stopColor="#9e2e00" />
+                  <stop offset="75%" stopColor="#471000" />
+                  <stop offset="100%" stopColor="#0a0000" />
                 </linearGradient>
                 <linearGradient id="g16" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#990000" />
-                  <stop offset="25%" stopColor="#660000" />
-                  <stop offset="75%" stopColor="#280000" />
-                  <stop offset="100%" stopColor="#060000" />
+                  <stop offset="0%" stopColor="#bd2d00" />
+                  <stop offset="25%" stopColor="#8c2b00" />
+                  <stop offset="75%" stopColor="#3d0c00" />
+                  <stop offset="100%" stopColor="#080000" />
                 </linearGradient>
                 <linearGradient id="g17" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#880000" />
-                  <stop offset="25%" stopColor="#550000" />
-                  <stop offset="75%" stopColor="#200000" />
-                  <stop offset="100%" stopColor="#040000" />
+                  <stop offset="0%" stopColor="#ad3600" />
+                  <stop offset="25%" stopColor="#7a1f00" />
+                  <stop offset="75%" stopColor="#300800" />
+                  <stop offset="100%" stopColor="#050000" />
                 </linearGradient>
                 <linearGradient id="g18" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#770000" />
-                  <stop offset="25%" stopColor="#440000" />
-                  <stop offset="75%" stopColor="#180000" />
+                  <stop offset="0%" stopColor="#9e2e00" />
+                  <stop offset="25%" stopColor="#5e1b00" />
+                  <stop offset="75%" stopColor="#240400" />
                   <stop offset="100%" stopColor="#020000" />
                 </linearGradient>
                 <linearGradient id="g19" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#550000" />
+                  <stop offset="0%" stopColor="#7a1f00" />
                   <stop offset="25%" stopColor="#330000" />
-                  <stop offset="75%" stopColor="#100000" />
+                  <stop offset="75%" stopColor="#170000" />
                   <stop offset="100%" stopColor="#000000" />
                 </linearGradient>
 
