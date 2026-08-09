@@ -1,4 +1,4 @@
-.scrollbarContainer {
+﻿.scrollbarContainer {
   position: fixed;
   right: 1.25rem;
   top: 50%;
@@ -34,7 +34,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  background: linear-gradient(180deg, var(--color-accent) 0%, rgba(232, 80, 2, 0.4) 100%);
+  background: linear-gradient(180deg, var(--color-accent) 0%, rgba(255, 106, 0, 0.4) 100%);
   border-radius: 9999px;
   pointer-events: none;
 }
@@ -45,12 +45,12 @@
   transform: translate(-50%, -50%);
   width: 14px;
   height: 28px;
-  background: #ff5500;
+  background: #ff6a00;
   border-radius: 9999px;
   cursor: grab;
   box-shadow:
-    0 0 12px rgba(239, 68, 68, 0.9),
-    0 0 24px rgba(239, 68, 68, 0.5),
+    0 0 12px rgba(255, 106, 0, 0.9),
+    0 0 24px rgba(255, 106, 0, 0.5),
     inset 0 0 0 1px rgba(255, 255, 255, 0.4);
   transition:
     transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
@@ -74,7 +74,7 @@
   position: absolute;
   inset: -4px;
   border-radius: 9999px;
-  border: 1px solid rgba(239, 68, 68, 0.5);
+  border: 1px solid rgba(255, 106, 0, 0.5);
   animation: pulseRing 2.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
   pointer-events: none;
 }
@@ -115,11 +115,11 @@
 .dot:nth-child(7) { top: 100%; }
 
 .dot:hover {
-  background: #ff5500;
+  background: #ff6a00;
   transform: translate(-50%, -50%) scale(1.5);
 }
 
-/* ─── Join Us Section Theme Inversion (Black on Red) ─── */
+/* â”€â”€â”€ Join Us Section Theme Inversion (Black on Red) â”€â”€â”€ */
 .joinTheme .track {
   background: rgba(0, 0, 0, 0.25);
 }

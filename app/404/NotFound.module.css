@@ -1,4 +1,4 @@
-.container {
+﻿.container {
   height: 100vh;
   height: 100dvh;
   max-height: 100vh;
@@ -34,7 +34,7 @@
   height: 550px;
   background: radial-gradient(
     circle,
-    rgba(255, 85, 0, 0.18) 0%,
+    rgba(255, 106, 0, 0.18) 0%,
     transparent 70%
   );
   filter: blur(120px);
@@ -162,7 +162,7 @@
   -webkit-text-fill-color: transparent;
   margin: 0;
   font-family: var(--font-bebas-neue), var(--font-sans), sans-serif;
-  filter: drop-shadow(0 4px 20px rgba(232, 80, 2, 0.15));
+  filter: drop-shadow(0 4px 20px rgba(255, 106, 0, 0.15));
 }
 
 @media (min-width: 868px) {
@@ -225,12 +225,12 @@
   border-radius: 12px;
   text-decoration: none;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 24px rgba(232, 80, 2, 0.4);
+  box-shadow: 0 4px 24px rgba(255, 106, 0, 0.4);
 }
 
 .primaryBtn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 32px rgba(232, 80, 2, 0.6);
+  box-shadow: 0 8px 32px rgba(255, 106, 0, 0.6);
   background: linear-gradient(135deg, var(--color-grad-3) 0%, var(--color-grad-2) 100%);
 }
 
@@ -263,8 +263,8 @@
   inset: 5%;
   background: radial-gradient(
     circle,
-    rgba(255, 85, 0, 0.3) 0%,
-    rgba(255, 85, 0, 0.08) 55%,
+    rgba(255, 106, 0, 0.3) 0%,
+    rgba(255, 106, 0, 0.08) 55%,
     transparent 75%
   );
   filter: blur(50px);
@@ -293,7 +293,7 @@
 .robotImg {
   object-fit: contain;
   filter: drop-shadow(0 25px 35px rgba(0, 0, 0, 0.8))
-    drop-shadow(0 0 30px rgba(255, 85, 0, 0.25));
+    drop-shadow(0 0 30px rgba(255, 106, 0, 0.25));
 }
 
 .footerBar {

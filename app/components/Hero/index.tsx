@@ -1,8 +1,7 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 import styles from "./Hero.module.css";
-import Image from "next/image";
 import About from "@/app/components/About";
 
 const Hero = () => {
@@ -343,8 +342,8 @@ const Hero = () => {
                 </linearGradient>
                 <linearGradient id="g3" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#ffdd00" />
-                  <stop offset="20%" stopColor="#ff5500" />
-                  <stop offset="75%" stopColor="#aa0000" />
+                  <stop offset="20%" stopColor="#ff6a00" />
+                  <stop offset="75%" stopColor="#ff6a00" />
                   <stop offset="100%" stopColor="#1a0000" />
                 </linearGradient>
                 <linearGradient id="g4" x1="0" y1="0" x2="1" y2="0">
@@ -361,14 +360,14 @@ const Hero = () => {
                 </linearGradient>
                 <linearGradient id="g6" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#ffdd00" />
-                  <stop offset="20%" stopColor="#ff5500" />
+                  <stop offset="20%" stopColor="#ff6a00" />
                   <stop offset="75%" stopColor="#bb0000" />
                   <stop offset="100%" stopColor="#1e0000" />
                 </linearGradient>
                 <linearGradient id="g7" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#ffaa00" />
                   <stop offset="22%" stopColor="#ff3300" />
-                  <stop offset="75%" stopColor="#aa0000" />
+                  <stop offset="75%" stopColor="#ff6a00" />
                   <stop offset="100%" stopColor="#1a0000" />
                 </linearGradient>
                 <linearGradient id="g8" x1="0" y1="0" x2="1" y2="0">
@@ -378,7 +377,7 @@ const Hero = () => {
                   <stop offset="100%" stopColor="#180000" />
                 </linearGradient>
                 <linearGradient id="g9" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#ff5500" />
+                  <stop offset="0%" stopColor="#ff6a00" />
                   <stop offset="25%" stopColor="#dd0000" />
                   <stop offset="75%" stopColor="#880000" />
                   <stop offset="100%" stopColor="#150000" />
@@ -397,7 +396,7 @@ const Hero = () => {
                 </linearGradient>
                 <linearGradient id="g12" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#dd1100" />
-                  <stop offset="25%" stopColor="#aa0000" />
+                  <stop offset="25%" stopColor="#ff6a00" />
                   <stop offset="75%" stopColor="#550000" />
                   <stop offset="100%" stopColor="#0e0000" />
                 </linearGradient>
@@ -414,7 +413,7 @@ const Hero = () => {
                   <stop offset="100%" stopColor="#0a0000" />
                 </linearGradient>
                 <linearGradient id="g15" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#aa0000" />
+                  <stop offset="0%" stopColor="#ff6a00" />
                   <stop offset="25%" stopColor="#770000" />
                   <stop offset="75%" stopColor="#300000" />
                   <stop offset="100%" stopColor="#080000" />
@@ -454,8 +453,8 @@ const Hero = () => {
 
                 <radialGradient id="centerArcGlow" cx="28%" cy="50%" r="45%">
                   <stop offset="0%" stopColor="#ffee66" stopOpacity="0.35" />
-                  <stop offset="40%" stopColor="#ff5500" stopOpacity="0.2" />
-                  <stop offset="80%" stopColor="#aa0000" stopOpacity="0.05" />
+                  <stop offset="40%" stopColor="#ff6a00" stopOpacity="0.2" />
+                  <stop offset="80%" stopColor="#ff6a00" stopOpacity="0.05" />
                   <stop offset="100%" stopColor="#000000" stopOpacity="0" />
                 </radialGradient>
               </defs>
@@ -520,21 +519,24 @@ const Hero = () => {
           aria-label="Explore AICE"
           id="hero-square-cta"
         >
-          <span className={styles.squareCtaText}>EXPLORE AICE</span>
-          <svg
-            className={styles.squareCtaArrow}
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="square"
-            strokeLinejoin="miter"
-            aria-hidden="true"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
+          <span className={styles.squareCtaInner}>
+            <span className={styles.squareCtaText}>EXPLORE AICE</span>
+            <span className={styles.squareCtaArrowWrap} aria-hidden="true">
+              <svg
+                className={styles.squareCtaArrow}
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="square"
+                strokeLinejoin="miter"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </span>
+          </span>
         </button>
 
         <div className={styles.robotWrap} ref={robotWrapRef}>

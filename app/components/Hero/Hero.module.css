@@ -1,4 +1,4 @@
-.heroOuter {
+﻿.heroOuter {
   position: relative;
   width: 100%;
   height: 340vh;
@@ -26,7 +26,7 @@
   justify-content: center;
 }
 
-/* ─── Interactive Spotlight Overlay ─── */
+/* â”€â”€â”€ Interactive Spotlight Overlay â”€â”€â”€ */
 .spotlightContainer {
   position: absolute;
   inset: 0;
@@ -72,7 +72,7 @@
     circle 260px at var(--mouse-x, -1000px) var(--mouse-y, -1000px),
     rgba(255, 90, 0, 0.5) 0%,
     rgba(255, 20, 0, 0.3) 40%,
-    rgba(200, 0, 0, 0.08) 70%,
+    rgba(255, 106, 0, 0.08) 70%,
     transparent 100%
   );
   mix-blend-mode: screen;
@@ -184,7 +184,7 @@
   object-fit: contain;
   object-position: top center;
   display: block;
-  filter: drop-shadow(0 -20px 60px rgba(255, 30, 30, 0.08));
+  filter: drop-shadow(0 -20px 60px rgba(255, 106, 0, 0.08));
 }
 
 .eyeGlow {
@@ -228,7 +228,7 @@
   z-index: 1;
 }
 
-/* ─── Square CTA Button ─── */
+/* â”€â”€â”€ Square CTA Button â”€â”€â”€ */
 .squareCta {
   position: absolute;
   top: calc(50% + clamp(75px, 11vw, 150px));
@@ -236,15 +236,10 @@
   transform: translate(-50%, -50%);
   z-index: 4;
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 16px 28px;
-  border-radius: 0;
-  background: rgba(0, 0, 0, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  padding: 1px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--gradient-signal);
   color: #ffffff;
   font-family: var(--font-heading);
   font-size: 0.82rem;
@@ -254,17 +249,34 @@
   cursor: pointer;
   white-space: nowrap;
   opacity: 0;
+  isolation: isolate;
   transition:
-    background 0.3s ease,
-    border-color 0.3s ease,
-    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.3s ease,
-    color 0.3s ease;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.6),
-    0 0 15px rgba(232, 80, 2, 0.12),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    filter 0.3s ease;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
   will-change: transform, opacity, filter;
+}
+
+.squareCta::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: #050505;
+  transition: background 0.3s ease;
+}
+
+.squareCta::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  z-index: -2;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 106, 0, 0.28);
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .loaded .squareCta {
@@ -272,21 +284,29 @@
 }
 
 .squareCta:hover {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: var(--color-white);
-  transform: translate(-50%, calc(-50% - 3px));
-  box-shadow:
-    0 12px 40px rgba(232, 80, 2, 0.45),
-    0 0 25px rgba(232, 80, 2, 0.3);
+  box-shadow: 0 16px 38px rgba(255, 106, 0, 0.32);
+  filter: brightness(1.15);
 }
 
-.squareCta:active {
-  transform: translate(-50%, -50%);
+.squareCta:hover::before {
+  background: rgba(7, 7, 7, 0.55);
 }
 
-.squareCtaText {
-  display: inline-block;
+.squareCta:hover::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.squareCta:focus-visible {
+  outline: 2px solid #f9f9f9;
+  outline-offset: 5px;
+}
+
+.squareCtaInner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.45rem 0.5rem 0.45rem 1.25rem;
   line-height: 1;
 }
 
@@ -295,8 +315,24 @@
   flex-shrink: 0;
 }
 
+.squareCtaArrowWrap {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: 50%;
+  color: #000000;
+  background: #f9f9f9;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
 .squareCta:hover .squareCtaArrow {
   transform: translateX(4px);
+}
+
+.squareCta:hover .squareCtaArrowWrap {
+  color: #ffffff;
+  background: #ff6a00;
 }
 
 @keyframes ctaReveal {
@@ -312,7 +348,7 @@
   }
 }
 
-/* ─── Responsive ─── */
+/* â”€â”€â”€ Responsive â”€â”€â”€ */
 @media (max-width: 900px) {
   .robotWrap {
     width: clamp(240px, 68vw, 440px);
@@ -335,9 +371,16 @@
   }
   .squareCta {
     top: calc(50% + clamp(65px, 16vw, 110px));
-    padding: 13px 22px;
     font-size: 0.75rem;
     letter-spacing: 0.12em;
+  }
+  .squareCtaInner {
+    gap: 0.65rem;
+    padding-left: 1rem;
+  }
+  .squareCtaArrowWrap {
+    width: 2rem;
+    height: 2rem;
   }
   .subWord {
     top: 92%;

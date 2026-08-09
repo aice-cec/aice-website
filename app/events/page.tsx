@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import Link from "next/link";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import styles from "./Events.module.css";
@@ -397,9 +398,9 @@ export default function EventsPage() {
                         </a>
                       )
                     ) : (
-                      <a href="/#join" className={styles.detailsBtn}>
+                      <Link href="/#join" className={styles.detailsBtn}>
                         VIEW DETAILS <ArrowRightIcon />
-                      </a>
+                      </Link>
                     )}
                   </div>
                 </article>

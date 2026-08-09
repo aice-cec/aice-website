@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef } from "react";
 import { EventItem } from "../types";
@@ -102,7 +102,7 @@ export function EventsSection({
                 onClick={() => selectEvent(item)}
                 className={`p-3 rounded-lg border cursor-pointer transition-all ${
                   item.id === selectedEventId
-                    ? "border-red-500 bg-red-500/10"
+                    ? "border-red-500 bg-orange-500/10"
                     : "border-white/10 bg-white/[0.02] hover:bg-white/5"
                 }`}
               >
@@ -116,7 +116,7 @@ export function EventsSection({
                       : item.dateISO || `${item.date || ""} ${item.month || ""}`}
                   </span>
                   {item.featured && (
-                    <span className="px-1.5 py-0.5 text-[10px] font-extrabold uppercase bg-red-500/20 text-red-400 rounded">
+                    <span className="px-1.5 py-0.5 text-[10px] font-extrabold uppercase bg-orange-500/20 text-red-400 rounded">
                       Featured
                     </span>
                   )}
@@ -136,7 +136,7 @@ export function EventsSection({
             </span>
             <button
               onClick={handleDeleteCurrentEvent}
-              className="px-3 py-1.5 text-xs font-semibold text-red-400 bg-red-500/15 border border-red-500/30 hover:bg-red-500/25 rounded-lg transition-colors"
+              className="px-3 py-1.5 text-xs font-semibold text-red-400 bg-orange-500/15 border border-red-500/30 hover:bg-orange-500/25 rounded-lg transition-colors"
             >
               Delete Event
             </button>
@@ -214,9 +214,9 @@ export function EventsSection({
               </div>
 
               {isComingSoon ? (
-                <div className="flex items-center justify-between px-3.5 py-2.5 bg-red-500/10 border border-red-500/30 rounded-lg text-sm text-red-300">
+                <div className="flex items-center justify-between px-3.5 py-2.5 bg-orange-500/10 border border-red-500/30 rounded-lg text-sm text-red-300">
                   <span className="font-semibold text-xs flex items-center gap-2 uppercase tracking-wide">
-                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                    <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
                     Date: Coming Soon / TBA
                   </span>
                   <button
@@ -268,7 +268,7 @@ export function EventsSection({
                 type="text"
                 value={form.time || ""}
                 onChange={(e) => handleInputChange("time", e.target.value)}
-                placeholder="e.g. 5:30 PM — 8:30 PM"
+                placeholder="e.g. 5:30 PM â€” 8:30 PM"
                 maxLength={100}
                 className="w-full px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:border-red-500 transition-colors"
               />

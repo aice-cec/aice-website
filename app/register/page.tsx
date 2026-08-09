@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Image from "next/image";
@@ -67,7 +67,7 @@ export default function RegisterPage() {
             </p>
             <div className={styles.feeBadge}>
               <span className={styles.feeLabel}>REGISTRATION FEE</span>
-              <span className={styles.feeAmount}>₹100 INR</span>
+              <span className={styles.feeAmount}>â‚¹100 INR</span>
             </div>
           </div>
 
@@ -195,7 +195,7 @@ export default function RegisterPage() {
                 name="skipPayment"
                 checked={formData.skipPayment}
                 onChange={handleChange}
-                style={{ accentColor: "#ef4444", cursor: "pointer" }}
+                style={{ accentColor: "#ff6a00", cursor: "pointer" }}
               />
               <label htmlFor="skipPayment" style={{ cursor: "pointer" }}>
                 Test Mode: Skip Payment (Bypass PG for dev testing)
@@ -210,8 +210,8 @@ export default function RegisterPage() {
               {loading
                 ? "PROCESSING..."
                 : formData.skipPayment
-                  ? "JOIN NOW (TEST BYPASS) →"
-                  : "PAY ₹100 & JOIN NOW →"}
+                  ? "JOIN NOW (TEST BYPASS) â†’"
+                  : "PAY â‚¹100 & JOIN NOW â†’"}
             </button>
           </form>
         </div>

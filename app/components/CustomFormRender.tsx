@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
@@ -171,7 +171,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
         const canvas = document.createElement("canvas");
         const MAX_WIDTH = 800;
 
-        // Only scale down, never up — preserve aspect ratio
+        // Only scale down, never up â€” preserve aspect ratio
         if (img.width > MAX_WIDTH) {
           const scale = MAX_WIDTH / img.width;
           canvas.width = MAX_WIDTH;
@@ -285,7 +285,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
         />
 
         <div className="w-full max-w-lg p-8 sm:p-10 bg-[#121217] border-2 border-white/20 shadow-[8px_8px_0px_#000000] text-center relative z-10">
-          <div className="w-14 h-14 bg-red-500/15 border-2 border-red-500/30 text-red-500 flex items-center justify-center mx-auto mb-5 shadow-[3px_3px_0px_#000000]">
+          <div className="w-14 h-14 bg-orange-500/15 border-2 border-red-500/30 text-red-500 flex items-center justify-center mx-auto mb-5 shadow-[3px_3px_0px_#000000]">
             <BanIcon />
           </div>
           <h1 className="text-3xl font-black uppercase tracking-tight text-white mb-2 font-mono">
@@ -608,8 +608,8 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
           })}
 
           {errorMsg && (
-            <div ref={errorRef} className="p-3 text-xs font-bold text-center text-red-400 bg-red-500/10 border-2 border-red-500/30 shadow-[3px_3px_0px_#000000]">
-              ⚠️ {errorMsg}
+            <div ref={errorRef} className="p-3 text-xs font-bold text-center text-red-400 bg-orange-500/10 border-2 border-red-500/30 shadow-[3px_3px_0px_#000000]">
+              âš ï¸ {errorMsg}
             </div>
           )}
 
@@ -624,7 +624,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
       </main>
 
       <footer className="text-center text-xs text-gray-500 font-mono font-bold pt-8 z-10">
-        © {new Date().getFullYear()} AICE CEC.
+        Â© {new Date().getFullYear()} AICE CEC.
       </footer>
     </div>
   );

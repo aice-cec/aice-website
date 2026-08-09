@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Image from "next/image";
@@ -120,7 +120,7 @@ export function LoginModal({ onLoginSuccess, showToast }: LoginModalProps) {
           </div>
 
           {loginError && (
-            <div className="p-2.5 text-xs text-center text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg">
+            <div className="p-2.5 text-xs text-center text-red-400 bg-orange-500/10 border border-red-500/20 rounded-lg">
               {loginError}
             </div>
           )}

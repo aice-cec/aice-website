@@ -1,4 +1,4 @@
-.footer {
+﻿.footer {
   position: relative;
   overflow: hidden;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -24,7 +24,7 @@
   height: 16rem;
   width: 36rem;
   border-radius: 9999px;
-  background-color: rgba(239, 68, 68, 0.07);
+  background-color: rgba(255, 106, 0, 0.07);
   filter: blur(110px);
 }
 
@@ -67,7 +67,7 @@
   }
 }
 
-/* ─── Column 1: Brand ─── */
+/* â”€â”€â”€ Column 1: Brand â”€â”€â”€ */
 .brandCol {
   display: flex;
   flex-direction: column;
@@ -110,7 +110,7 @@
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: #ff5500;
+  color: #ff6a00;
   text-transform: uppercase;
 }
 
@@ -146,7 +146,7 @@
   }
 }
 
-/* ─── Column 2: Social & Contact ─── */
+/* â”€â”€â”€ Column 2: Social & Contact â”€â”€â”€ */
 .rightCol {
   display: flex;
   flex-direction: column;
@@ -208,11 +208,11 @@
 }
 
 .socialBtn:hover {
-  border-color: #ff5500;
-  background-color: #ff5500;
+  border-color: #ff6a00;
+  background-color: #ff6a00;
   color: #ffffff;
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 6px 20px rgba(255, 106, 0, 0.4);
 }
 
 .emailPill {
@@ -229,12 +229,12 @@
 }
 
 .emailPill:hover {
-  color: #ff5500;
-  border-color: rgba(239, 68, 68, 0.3);
-  background: rgba(239, 68, 68, 0.06);
+  color: #ff6a00;
+  border-color: rgba(255, 106, 0, 0.3);
+  background: rgba(255, 106, 0, 0.06);
 }
 
-/* ─── Bottom Bar ─── */
+/* â”€â”€â”€ Bottom Bar â”€â”€â”€ */
 .bottomBar {
   display: flex;
   flex-direction: column;
@@ -288,10 +288,10 @@
 
 .scrollTopBtn:hover {
   color: #ffffff;
-  background: #ff5500;
-  border-color: #ff5500;
+  background: #ff6a00;
+  border-color: #ff6a00;
   transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+  box-shadow: 0 4px 14px rgba(255, 106, 0, 0.35);
 }
 
 .icon {

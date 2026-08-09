@@ -1,4 +1,4 @@
-.section {
+﻿.section {
   position: relative;
   overflow: hidden;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -27,7 +27,7 @@
   height: 25rem;
   width: 25rem;
   border-radius: 9999px;
-  background-color: rgba(239, 68, 68, 0.08);
+  background-color: rgba(255, 106, 0, 0.08);
   filter: blur(140px);
 }
 
@@ -96,7 +96,7 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 20px rgba(232, 80, 2, 0.3));
+  filter: drop-shadow(0 0 20px rgba(255, 106, 0, 0.3));
 }
 
 .subheading {
@@ -129,10 +129,10 @@
 
 .viewAllLink:hover,
 .archiveBtn:hover {
-  background-color: var(--color-accent, #e85002);
-  border-color: var(--color-accent, #e85002);
+  background-color: var(--color-accent, #ff6a00);
+  border-color: var(--color-accent, #ff6a00);
   color: var(--color-white);
-  box-shadow: 0 0 15px rgba(232, 80, 2, 0.4);
+  box-shadow: 0 0 15px rgba(255, 106, 0, 0.4);
 }
 
 .arrowTranslate {
@@ -188,12 +188,12 @@
 
 .eventCard:hover {
   transform: translateY(-0.25rem);
-  border-color: rgba(239, 68, 68, 0.4);
-  box-shadow: 0 15px 35px rgba(239, 68, 68, 0.08);
+  border-color: rgba(255, 106, 0, 0.4);
+  box-shadow: 0 15px 35px rgba(255, 106, 0, 0.08);
 }
 
 .featuredCard {
-  border-color: rgba(239, 68, 68, 0.35);
+  border-color: rgba(255, 106, 0, 0.35);
   background: linear-gradient(135deg, #181216, #121217);
 }
 
@@ -247,7 +247,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #ff5500;
+  color: #ff6a00;
 }
 
 .featuredBadge {
@@ -256,8 +256,8 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  background-color: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background-color: rgba(255, 106, 0, 0.15);
+  border: 1px solid rgba(255, 106, 0, 0.3);
   color: #ff7700;
   border-radius: 0.375rem;
 }
@@ -344,7 +344,7 @@
   gap: 0.375rem;
   padding: 0.45rem 0.875rem;
   border-radius: 9999px;
-  background-color: #ff5500;
+  background-color: #ff6a00;
   color: #ffffff;
   font-family: var(--font-primary, var(--font-geist-sans), sans-serif);
   font-size: 0.725rem;
@@ -355,7 +355,7 @@
   transition: all 0.2s ease;
   white-space: nowrap;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+  box-shadow: 0 4px 12px rgba(255, 106, 0, 0.25);
 }
 
 .regBtn:hover {

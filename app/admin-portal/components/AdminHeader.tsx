@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 
@@ -193,7 +193,7 @@ export function AdminHeader({
 
           <button
             onClick={handleLogout}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-400 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 rounded-lg transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-400 bg-orange-500/10 border border-red-500/20 hover:bg-orange-500/20 rounded-lg transition-colors"
           >
             <LogoutIcon /> Logout
           </button>
@@ -263,7 +263,7 @@ export function AdminHeader({
 
             <button
               onClick={handleLogout}
-              className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg"
+              className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-400 bg-orange-500/10 border border-red-500/20 rounded-lg"
             >
               <LogoutIcon /> Logout
             </button>

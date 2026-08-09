@@ -95,7 +95,7 @@
 
 .card {
   border-radius: 1.5rem;
-  border: 1px solid #ff5500;
+  border: 1px solid #ff6a00;
   background-color: transparent;
   padding: 1.75rem 1.5rem;
   color: #fff;
@@ -112,7 +112,7 @@
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.18em;
-  color: #ff5500;
+  color: #ff6a00;
 }
 
 .cardText {
@@ -130,7 +130,7 @@
   align-items: center;
   justify-content: space-between;
   border-radius: 9999px;
-  background-color: #ff5500;
+  background-color: #ff6a00;
   padding: 1rem 1.25rem;
   font-family: var(--font-heading);
   font-size: 0.75rem;
@@ -143,8 +143,8 @@
 
 .ctaButton:hover {
   background-color: transparent;
-  color: #ff5500;
-  outline: 1px solid #ff5500;
+  color: #ff6a00;
+  outline: 1px solid #ff6a00;
 }
 
 .reasonsGrid {
@@ -192,4 +192,300 @@
 .arrowIcon {
   height: 1.25rem;
   width: 1.25rem;
+}
+
+/* Membership signal field */
+.joinSection {
+  min-height: 100vh;
+  margin-top: -100vh;
+  overflow: hidden;
+  isolation: isolate;
+  background: #030303;
+  padding: clamp(5.5rem, 10vw, 9rem) 0 4.5rem;
+}
+
+.joinSection::before {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  background:
+    radial-gradient(circle at 85% 12%, rgba(255, 106, 0, 0.2), transparent 28rem),
+    radial-gradient(circle at 15% 92%, rgba(255, 106, 0, 0.11), transparent 25rem),
+    #030303;
+}
+
+.arrivalField {
+  position: absolute;
+  z-index: -1;
+  top: min(-30rem, -36vw);
+  left: 50%;
+  width: min(112rem, 130vw);
+  aspect-ratio: 1;
+  pointer-events: none;
+  opacity: 0;
+  border: 1px solid rgba(217, 195, 171, 0.26);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, transparent 0 42%, rgba(255, 106, 0, 0.12) 42.2% 42.8%, transparent 43% 52%, rgba(255, 106, 0, 0.14) 52.2% 52.7%, transparent 53%),
+    conic-gradient(from 230deg, transparent 0deg, transparent 40deg, rgba(255, 106, 0, 0.52) 88deg, rgba(255, 106, 0, 0.42) 120deg, transparent 168deg, transparent 360deg);
+  transform: translate(-50%, -25%) scale(0.62) rotate(-38deg);
+  will-change: opacity, transform;
+}
+
+.signalLine {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  pointer-events: none;
+  background: var(--gradient-signal);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.joinActive .arrivalField {
+  animation: eclipseArrival 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.joinActive .signalLine {
+  animation: signalSweep 0.95s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+}
+
+.container {
+  z-index: 1;
+  width: min(100% - 2.5rem, 80rem);
+  padding: 0;
+}
+
+.mainGrid {
+  gap: clamp(2.5rem, 5vw, 6.5rem);
+  align-items: end;
+  opacity: 0;
+  transform: translateY(2rem);
+}
+
+.joinActive .mainGrid {
+  animation: contentArrival 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.26s both;
+}
+
+.heading {
+  max-width: 55rem;
+  margin: 0;
+  font-size: clamp(3.25rem, 7.4vw, 7.75rem);
+  font-weight: 700;
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.heading span:last-child {
+  color: #ff6a00;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 1rem;
+  background:
+    linear-gradient(#080808, #080808) padding-box,
+    var(--gradient-signal) border-box;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  top: -7rem;
+  right: -7rem;
+  width: 15rem;
+  height: 15rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 106, 0, 0.24), transparent 68%);
+  pointer-events: none;
+}
+
+.cardBadge {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: 0.7rem;
+  color: #d9c3ab;
+}
+
+.cardText {
+  position: relative;
+  z-index: 1;
+  max-width: 25rem;
+  margin: 1.1rem 0 0;
+  font-size: clamp(1.1rem, 1.7vw, 1.35rem);
+  line-height: 1.4;
+  color: rgba(249, 249, 249, 0.82);
+}
+
+.ctaButton {
+  position: relative;
+  z-index: 1;
+  gap: 1rem;
+  margin-top: 2.25rem;
+  padding: 0.95rem 1rem 0.95rem 1.2rem;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0.75rem;
+  background: var(--gradient-signal);
+  font-size: 0.78rem;
+  text-align: left;
+  transition: box-shadow 0.25s ease, filter 0.25s ease;
+}
+
+.ctaButton::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: 0.68rem;
+  background: #111111;
+  transition: background 0.25s ease;
+}
+
+.ctaButton:hover {
+  background: var(--gradient-signal);
+  color: #ffffff;
+  outline: 0;
+  filter: brightness(1.18);
+  box-shadow: 0 13px 28px rgba(255, 106, 0, 0.27);
+}
+
+.ctaButton:hover::before {
+  background: rgba(17, 17, 17, 0.28);
+}
+
+.ctaButton:focus-visible {
+  outline: 2px solid #f9f9f9;
+  outline-offset: 4px;
+}
+
+.arrowIcon {
+  width: 1.35rem;
+  height: 1.35rem;
+  transition: transform 0.25s ease;
+}
+
+.ctaButton:hover .arrowIcon {
+  transform: translateX(0.25rem);
+}
+
+.reasonsGrid {
+  margin-top: clamp(4rem, 9vw, 8rem);
+  padding-top: 1.35rem;
+  border-top: 1px solid rgba(217, 195, 171, 0.28);
+  opacity: 0;
+  transform: translateY(1.5rem);
+}
+
+.joinActive .reasonsGrid {
+  animation: contentArrival 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.46s both;
+}
+
+.reasonItem {
+  padding-right: 1rem;
+  border: 0;
+  padding-left: 0;
+}
+
+.reasonTitle {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(1.1rem, 1.6vw, 1.35rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.reasonText {
+  max-width: 24rem;
+  margin: 0.7rem 0 0;
+  font-size: 0.93rem;
+  line-height: 1.65;
+  color: rgba(249, 249, 249, 0.64);
+}
+
+@media (min-width: 1024px) {
+  .mainGrid {
+    grid-template-columns: minmax(0, 1.28fr) minmax(20rem, 0.72fr);
+  }
+}
+
+@keyframes eclipseArrival {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -25%) scale(0.62) rotate(-38deg);
+  }
+  48% { opacity: 1; }
+  100% {
+    opacity: 0.72;
+    transform: translate(-50%, -25%) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes signalSweep {
+  to { transform: scaleX(1); }
+}
+
+@keyframes contentArrival {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .joinSection {
+    padding: 5.5rem 0 3.5rem;
+  }
+
+  .container {
+    width: min(100% - 2rem, 80rem);
+  }
+
+  .heading {
+    font-size: clamp(2.85rem, 13vw, 4.5rem);
+  }
+
+  .arrivalField {
+    top: -10rem;
+    width: 50rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  .joinSection {
+    margin-top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrivalField {
+    opacity: 0.6;
+    transform: translate(-50%, -25%) scale(1);
+  }
+
+  .signalLine {
+    transform: scaleX(1);
+  }
+
+  .mainGrid,
+  .reasonsGrid {
+    opacity: 1;
+    transform: none;
+  }
+
+  .joinActive .arrivalField,
+  .joinActive .signalLine,
+  .joinActive .mainGrid,
+  .joinActive .reasonsGrid {
+    animation: none;
+  }
 }

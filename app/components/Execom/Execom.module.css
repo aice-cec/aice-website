@@ -1,4 +1,4 @@
-.section {
+﻿.section {
   position: relative;
   overflow: hidden;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -69,7 +69,7 @@
   }
 }
 
-/* ─── Header ─── */
+/* â”€â”€â”€ Header â”€â”€â”€ */
 .header {
   margin-bottom: 3rem;
   display: flex;
@@ -99,7 +99,7 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 20px rgba(232, 80, 2, 0.3));
+  filter: drop-shadow(0 0 20px rgba(255, 106, 0, 0.3));
 }
 
 .subtext {
@@ -115,7 +115,7 @@
   }
 }
 
-/* ─── Category Group ─── */
+/* â”€â”€â”€ Category Group â”€â”€â”€ */
 .categoryGroup {
   margin-bottom: 3.5rem;
 }
@@ -158,8 +158,8 @@
   height: 0.55rem;
   width: 0.55rem;
   border-radius: 9999px;
-  background-color: var(--color-accent, #e85002);
-  box-shadow: 0 0 10px rgba(232, 80, 2, 0.6);
+  background-color: var(--color-accent, #ff6a00);
+  box-shadow: 0 0 10px rgba(255, 106, 0, 0.6);
 }
 
 .carouselNav {
@@ -187,10 +187,10 @@
 }
 
 .navArrowBtn:hover {
-  border-color: var(--color-accent, #e85002);
-  background-color: var(--color-accent, #e85002);
+  border-color: var(--color-accent, #ff6a00);
+  background-color: var(--color-accent, #ff6a00);
   color: var(--color-white);
-  box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 15px rgba(255, 106, 0, 0.4);
 }
 
 .carouselContainer {
@@ -349,7 +349,7 @@
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: var(--color-accent, #e85002);
+  color: var(--color-accent, #ff6a00);
   text-transform: uppercase;
   margin-top: 0.1rem;
   min-height: 1.4rem;
@@ -364,7 +364,7 @@
   }
 }
 
-/* ─── LinkedIn Icon ─── */
+/* â”€â”€â”€ LinkedIn Icon â”€â”€â”€ */
 .linkedinLink {
   display: inline-flex;
   align-items: center;
@@ -387,13 +387,13 @@
   box-shadow: 0 0 15px rgba(10, 102, 194, 0.4);
 }
 
-/* ─── Arrows ─── */
+/* â”€â”€â”€ Arrows â”€â”€â”€ */
 .arrowIcon {
   height: 1.125rem;
   width: 1.125rem;
 }
 
-/* ─── Mobile ─── */
+/* â”€â”€â”€ Mobile â”€â”€â”€ */
 @media (max-width: 480px) {
   .categoryHeader {
     margin-bottom: 0.875rem;

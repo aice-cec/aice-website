@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { CustomFormItem, EventItem, FormField, FormSubmission } from "../types";
@@ -131,7 +131,7 @@ export function FormsSection({
                 onClick={() => selectCustomForm(item)}
                 className={`p-3 rounded-lg border cursor-pointer transition-all min-w-0 overflow-hidden ${
                   item.id === selectedFormId
-                    ? "border-red-500 bg-red-500/10"
+                    ? "border-red-500 bg-orange-500/10"
                     : "border-white/10 bg-white/[0.02] hover:bg-white/5"
                 }`}
               >
@@ -144,7 +144,7 @@ export function FormsSection({
                     className={`px-1.5 py-0.5 text-[9px] font-extrabold uppercase rounded shrink-0 ${
                       item.is_active
                         ? "bg-emerald-500/20 text-emerald-400"
-                        : "bg-red-500/20 text-red-400"
+                        : "bg-orange-500/20 text-red-400"
                     }`}
                   >
                     {item.is_active ? "OPEN" : "CLOSED"}
@@ -181,7 +181,7 @@ export function FormsSection({
               </button>
               <button
                 onClick={handleDeleteCurrentCustomForm}
-                className="px-3 py-1.5 text-xs font-semibold text-red-400 bg-red-500/15 border border-red-500/30 hover:bg-red-500/25 rounded-lg transition-colors"
+                className="px-3 py-1.5 text-xs font-semibold text-red-400 bg-orange-500/15 border border-red-500/30 hover:bg-orange-500/25 rounded-lg transition-colors"
               >
                 Delete Form
               </button>
@@ -325,7 +325,7 @@ export function FormsSection({
                         disabled={idx === 0}
                         className="px-2 py-1 text-xs bg-white/5 border border-white/10 hover:bg-white/10 disabled:opacity-30 rounded text-gray-300"
                       >
-                        ↑
+                        â†‘
                       </button>
                       <button
                         type="button"
@@ -333,12 +333,12 @@ export function FormsSection({
                         disabled={idx === customFormBuilder.fields.length - 1}
                         className="px-2 py-1 text-xs bg-white/5 border border-white/10 hover:bg-white/10 disabled:opacity-30 rounded text-gray-300"
                       >
-                        ↓
+                        â†“
                       </button>
                       <button
                         type="button"
                         onClick={() => handleRemoveField(field.id)}
-                        className="px-2 py-1 text-xs bg-red-500/15 border border-red-500/30 hover:bg-red-500/25 rounded text-red-400"
+                        className="px-2 py-1 text-xs bg-orange-500/15 border border-red-500/30 hover:bg-orange-500/25 rounded text-red-400"
                       >
                         Delete
                       </button>

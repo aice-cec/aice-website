@@ -1,21 +1,19 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import styles from "./JoinUs.module.css";
 import { showToast } from "@/app/components/Toast";
 
 const reasons = [
   [
-    "01",
     "LEARN TOGETHER",
     "Explore tools, research, and ideas with people who are actively making things.",
   ],
   [
-    "02",
     "BUILD IN PUBLIC",
     "Turn weekend experiments into real projects, events, and collaborative work.",
   ],
   [
-    "03",
     "FIND YOUR PEOPLE",
     "Meet a community that stays curious, generous, and ready to try the hard thing.",
   ],
@@ -41,14 +39,38 @@ function ArrowIcon() {
 }
 
 export function Join() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [hasArrived, setHasArrived] = useState(false);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setHasArrived(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.18 },
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <>
-      <section id="join" className={styles.joinSection}>
-        <div className={styles.decoratorGlowRight} />
+    <section
+      id="join"
+      ref={sectionRef}
+      className={`${styles.joinSection} ${hasArrived ? styles.joinActive : ""}`}
+    >
+        <div className={styles.arrivalField} aria-hidden="true" />
+        <div className={styles.signalLine} aria-hidden="true" />
         <div className={styles.container}>
           <div className={styles.mainGrid}>
             <div>
-              <p className={styles.subtitle}>BECOME PART OF AICE</p>
               <h2 className={styles.heading}>
                 <span style={{ whiteSpace: "nowrap" }}>YOUR NEXT</span>
                 <br />
@@ -78,9 +100,8 @@ export function Join() {
           </div>
 
           <div className={styles.reasonsGrid}>
-            {reasons.map(([number, title, text]) => (
-              <div key={number} className={styles.reasonItem}>
-                <span className={styles.reasonNumber}>{number}</span>
+            {reasons.map(([title, text]) => (
+              <div key={title} className={styles.reasonItem}>
                 <h3 className={styles.reasonTitle}>{title}</h3>
                 <p className={styles.reasonText}>{text}</p>
               </div>
@@ -88,7 +109,6 @@ export function Join() {
           </div>
         </div>
       </section>
-    </>
   );
 }
 

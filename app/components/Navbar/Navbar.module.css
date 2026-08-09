@@ -1,4 +1,4 @@
-.navbar {
+﻿.navbar {
   position: fixed;
   top: 0;
   left: 0;
@@ -24,7 +24,7 @@
   pointer-events: auto;
 }
 
-/* ─── Logo ─── */
+/* â”€â”€â”€ Logo â”€â”€â”€ */
 .logo {
   text-decoration: none;
   flex-shrink: 0;
@@ -68,7 +68,7 @@
   transition: color 0.3s ease;
 }
 
-/* ─── Nav Links ─── */
+/* â”€â”€â”€ Nav Links â”€â”€â”€ */
 .navLinks {
   display: flex;
   align-items: center;
@@ -103,7 +103,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background-color: #ff5500;
+  background-color: #ff6a00;
   transform: scaleX(0);
   transform-origin: right;
   transition:
@@ -126,7 +126,7 @@
   transform-origin: left;
 }
 
-/* ─── CTA Button ─── */
+/* â”€â”€â”€ CTA Button â”€â”€â”€ */
 .ctaBtn {
   display: flex;
   align-items: center;
@@ -156,11 +156,11 @@
 }
 
 .ctaBtn:hover {
-  background: #ff5500;
-  border-color: #ff5500;
+  background: #ff6a00;
+  border-color: #ff6a00;
   color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 8px 24px rgba(255, 106, 0, 0.4);
 }
 
 .ctaBtn:active {
@@ -175,7 +175,7 @@
   transform: translateX(3px);
 }
 
-/* ─── Hamburger ─── */
+/* â”€â”€â”€ Hamburger â”€â”€â”€ */
 .hamburger {
   display: none;
   flex-direction: column;
@@ -229,7 +229,7 @@
   transform: translateY(-7px) rotate(-45deg);
 }
 
-/* ─── On Red Section Adaptations ─── */
+/* â”€â”€â”€ On Red Section Adaptations â”€â”€â”€ */
 .navbar.onRed .logoText {
   color: #000000;
 }
@@ -269,7 +269,7 @@
   background: #000000;
 }
 
-/* ─── Responsive ─── */
+/* â”€â”€â”€ Responsive â”€â”€â”€ */
 @media (max-width: 768px) {
   .container {
     padding: 0 20px;

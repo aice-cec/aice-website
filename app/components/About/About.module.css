@@ -1,4 +1,4 @@
-/* ─── About Content Panel ─── */
+﻿/* â”€â”€â”€ About Content Panel â”€â”€â”€ */
 .contentPanel {
   position: absolute;
   right: 6%;
@@ -13,7 +13,7 @@
   transform: translateX(80px);
 }
 
-/* ─── Top Row ─── */
+/* â”€â”€â”€ Top Row â”€â”€â”€ */
 .topRow {
   display: flex;
   flex-direction: column;
@@ -25,7 +25,7 @@
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.2em;
-  color: #ff5500;
+  color: #ff6a00;
   margin: 0 0 0.5rem 0;
   text-transform: uppercase;
 }
@@ -43,7 +43,7 @@
 }
 
 .accent {
-  color: #ff5500;
+  color: #ff6a00;
 }
 
 .description {
@@ -55,7 +55,7 @@
   max-width: 560px;
 }
 
-/* ─── Cards Grid ─── */
+/* â”€â”€â”€ Cards Grid â”€â”€â”€ */
 .cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -77,8 +77,8 @@
 }
 
 .card:hover {
-  border-color: rgba(239, 68, 68, 0.25);
-  background: rgba(239, 68, 68, 0.03);
+  border-color: rgba(255, 106, 0, 0.25);
+  background: rgba(255, 106, 0, 0.03);
   transform: translateY(-2px);
 }
 
@@ -89,7 +89,7 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  background: linear-gradient(180deg, var(--color-accent) 0%, rgba(232, 80, 2, 0.15) 100%);
+  background: linear-gradient(180deg, var(--color-accent) 0%, rgba(255, 106, 0, 0.15) 100%);
 }
 
 .cardBody {
@@ -103,8 +103,8 @@
   width: 34px;
   height: 34px;
   border-radius: 0.5rem;
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.15);
+  background: rgba(255, 106, 0, 0.08);
+  border: 1px solid rgba(255, 106, 0, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,7 +128,7 @@
   margin: 0;
 }
 
-/* ─── Responsive ─── */
+/* â”€â”€â”€ Responsive â”€â”€â”€ */
 @media (max-width: 1024px) {
   .contentPanel {
     position: absolute;

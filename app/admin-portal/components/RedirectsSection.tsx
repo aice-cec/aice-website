@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { RedirectItem } from "../types";
 
@@ -85,7 +85,7 @@ export function RedirectsSection({
                 onClick={() => selectRedirect(item)}
                 className={`p-3 rounded-lg border cursor-pointer transition-all ${
                   item.id === selectedRedirectId
-                    ? "border-red-500 bg-red-500/10"
+                    ? "border-red-500 bg-orange-500/10"
                     : "border-white/10 bg-white/[0.02] hover:bg-white/5"
                 }`}
               >
@@ -133,12 +133,12 @@ export function RedirectsSection({
                   rel="noreferrer"
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-200 bg-white/5 border border-white/10 hover:bg-white/10 rounded-lg transition-colors"
                 >
-                  Test Link ↗
+                  Test Link â†—
                 </a>
               )}
               <button
                 onClick={handleDeleteCurrentRedirect}
-                className="px-3 py-1.5 text-xs font-semibold text-red-400 bg-red-500/15 border border-red-500/30 hover:bg-red-500/25 rounded-lg transition-colors"
+                className="px-3 py-1.5 text-xs font-semibold text-red-400 bg-orange-500/15 border border-red-500/30 hover:bg-orange-500/25 rounded-lg transition-colors"
               >
                 Delete
               </button>
