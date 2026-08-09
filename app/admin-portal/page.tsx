@@ -206,19 +206,23 @@ export default function AdminPortalPage() {
 
   // Change Handlers
   const handleInputChange = (field: keyof EventItem, value: any) => {
-    const updatedForm = { ...form, [field]: value };
-    if (field === "dateISO" && typeof value === "string" && value) {
-      const d = new Date(value);
-      if (!isNaN(d.getTime())) {
-        updatedForm.date = String(d.getDate()).padStart(2, "0");
-        updatedForm.month = MONTHS[d.getMonth()];
+    setForm((prevForm) => {
+      const updatedForm = { ...prevForm, [field]: value };
+      if (field === "dateISO" && typeof value === "string" && value) {
+        const d = new Date(value);
+        if (!isNaN(d.getTime())) {
+          updatedForm.date = String(d.getDate()).padStart(2, "0");
+          updatedForm.month = MONTHS[d.getMonth()];
+        }
       }
-    }
-    if (field === "type") {
-      updatedForm.label = value;
-    }
-    setForm(updatedForm);
-    setEvents((prev) => prev.map((e) => (e.id === updatedForm.id ? updatedForm : e)));
+      if (field === "type") {
+        updatedForm.label = value;
+      }
+      setEvents((prevEvents) =>
+        prevEvents.map((e) => (e.id === updatedForm.id ? updatedForm : e))
+      );
+      return updatedForm;
+    });
   };
 
   const handleRedirectInputChange = (field: keyof RedirectItem, value: string) => {

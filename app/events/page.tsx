@@ -328,9 +328,15 @@ export default function EventsPage() {
                       {/* Date Badge & Category Header */}
                       <div className={styles.cardHeader}>
                         <div className={styles.dateBadge}>
-                          <span className={styles.dateNum}>{event.date}</span>
+                          <span className={styles.dateNum}>
+                            {event.date === "SOON" || event.date === "TBA" || (!event.dateISO && event.date)
+                              ? "SOON"
+                              : event.date || "SOON"}
+                          </span>
                           <span className={styles.dateMonth}>
-                            {event.month}
+                            {event.date === "SOON" || event.date === "TBA" || (!event.dateISO && event.date)
+                              ? "COMING"
+                              : event.month || ""}
                           </span>
                         </div>
 
