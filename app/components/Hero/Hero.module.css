@@ -26,6 +26,59 @@
   justify-content: center;
 }
 
+/* ─── Interactive Spotlight Overlay ─── */
+.spotlightContainer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  opacity: var(--spotlight-opacity, 0);
+  transition: opacity 0.4s ease-out;
+  will-change: opacity;
+}
+
+.spotlightPattern {
+  position: absolute;
+  inset: 0;
+  background-color: #000000;
+  -webkit-mask-image: radial-gradient(
+    circle 260px at var(--mouse-x, -1000px) var(--mouse-y, -1000px),
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.85) 45%,
+    rgba(0, 0, 0, 0.25) 75%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: radial-gradient(
+    circle 260px at var(--mouse-x, -1000px) var(--mouse-y, -1000px),
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.85) 45%,
+    rgba(0, 0, 0, 0.25) 75%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  filter: contrast(1.2) brightness(1.1);
+}
+
+.vectorPatternSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.spotlightGlow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle 260px at var(--mouse-x, -1000px) var(--mouse-y, -1000px),
+    rgba(255, 90, 0, 0.5) 0%,
+    rgba(255, 20, 0, 0.3) 40%,
+    rgba(200, 0, 0, 0.08) 70%,
+    transparent 100%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
 .bgTitle {
   position: absolute;
   top: 50%;
