@@ -78,7 +78,49 @@ const Navbar = () => {
       if (targetElement) {
         e.preventDefault();
         if (label) setActiveLink(label);
-        targetElement.scrollIntoView({ behavior: "smooth" });
+
+        let targetY = 0;
+        if (targetId === "about") {
+          const heroEl = document.getElementById("home");
+          targetY = heroEl
+            ? heroEl.offsetTop + window.innerHeight * 1.4
+            : targetElement.offsetTop;
+        } else if (targetId === "home") {
+          targetY = 0;
+        } else {
+          targetY =
+            targetElement.getBoundingClientRect().top + window.scrollY - 70;
+        }
+
+        const startY = window.scrollY || window.pageYOffset;
+        const distance = targetY - startY;
+        const duration = 1500; // 1.5 seconds smooth scroll
+        let startTime: number | null = null;
+
+        const originalScrollBehavior =
+          document.documentElement.style.scrollBehavior;
+        document.documentElement.style.scrollBehavior = "auto";
+
+        const easeInOutCubic = (t: number) =>
+          t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+        const animateScroll = (currentTime: number) => {
+          if (startTime === null) startTime = currentTime;
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const easeProgress = easeInOutCubic(progress);
+
+          window.scrollTo(0, startY + distance * easeProgress);
+
+          if (progress < 1) {
+            requestAnimationFrame(animateScroll);
+          } else {
+            document.documentElement.style.scrollBehavior =
+              originalScrollBehavior;
+          }
+        };
+
+        requestAnimationFrame(animateScroll);
       }
     }
   };

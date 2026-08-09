@@ -1,8 +1,12 @@
 "use client";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./Execom.module.css";
 import teamData from "@/data/team-26/members.json";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export interface FacultyMember {
   id: string;
@@ -64,15 +68,33 @@ function ArrowRightIcon() {
   );
 }
 
-function LinkedInIcon() {
+function LinkedInIcon({ size = 18 }: { size?: number }) {
   return (
     <svg
       viewBox="0 0 24 24"
       fill="currentColor"
       aria-hidden="true"
-      style={{ width: 14, height: 14 }}
+      style={{ width: size, height: size }}
     >
       <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77Z" />
+    </svg>
+  );
+}
+
+function MailIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      style={{ width: size, height: size }}
+    >
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+      <polyline points="22,6 12,13 2,6" />
     </svg>
   );
 }
@@ -80,11 +102,16 @@ function LinkedInIcon() {
 function TeamSection({
   title,
   members,
+  center = false,
+  reverse = false,
 }: {
   title: string;
   members: TeamMember[];
+  center?: boolean;
+  reverse?: boolean;
 }) {
   const carouselRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const isHovered = useRef(false);
   const lastInteraction = useRef(0);
 
@@ -93,25 +120,60 @@ function TeamSection({
   };
 
   useEffect(() => {
+    if (members.length <= 3 || !reverse) return;
+    if (carouselRef.current) {
+      carouselRef.current.scrollLeft =
+        carouselRef.current.scrollWidth - carouselRef.current.clientWidth;
+    }
+  }, [members.length, reverse]);
+
+  useEffect(() => {
     if (members.length <= 3) return;
     const interval = setInterval(() => {
-      const now = Date.now();
-      if (
-        carouselRef.current &&
-        !isHovered.current &&
-        now - lastInteraction.current > 8000
-      ) {
-        const container = carouselRef.current;
-        const maxScroll = container.scrollWidth - container.clientWidth;
-        if (container.scrollLeft >= maxScroll - 10) {
-          container.scrollTo({ left: 0, behavior: "smooth" });
-        } else {
-          container.scrollBy({ left: 300, behavior: "smooth" });
+      if (carouselRef.current && !isHovered.current) {
+        const now = Date.now();
+        if (now - lastInteraction.current > 2000) {
+          const container = carouselRef.current;
+          const maxScroll = container.scrollWidth - container.clientWidth;
+          if (reverse) {
+            if (container.scrollLeft <= 10) {
+              container.scrollTo({ left: maxScroll, behavior: "smooth" });
+            } else {
+              container.scrollBy({ left: -340, behavior: "smooth" });
+            }
+          } else {
+            if (container.scrollLeft >= maxScroll - 10) {
+              container.scrollTo({ left: 0, behavior: "smooth" });
+            } else {
+              container.scrollBy({ left: 340, behavior: "smooth" });
+            }
+          }
         }
       }
-    }, 1750);
+    }, 1000);
     return () => clearInterval(interval);
-  }, [members.length]);
+  }, [members.length, reverse]);
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      gsap.from(sectionRef.current, {
+        opacity: 0,
+        y: 30,
+        duration: 0.7,
+        ease: "power3.out",
+        clearProps: "all",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [members]);
 
   const scrollContainer = (direction: "left" | "right") => {
     lastInteraction.current = Date.now();
@@ -124,11 +186,9 @@ function TeamSection({
   if (!members || members.length === 0) return null;
 
   return (
-    <div className={styles.categoryGroup}>
+    <div className={styles.categoryGroup} ref={sectionRef}>
       <div className={styles.categoryHeader}>
-        <h3 className={styles.categoryTitle}>
-          <span className={styles.categoryTitleDot} /> {title}
-        </h3>
+        <h3 className={styles.categoryTitle}>{title}</h3>
         {members.length > 3 && (
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
             <div className={styles.carouselNav}>
@@ -165,40 +225,38 @@ function TeamSection({
         onTouchEnd={() => (isHovered.current = false)}
         onPointerDown={handleUserTouch}
         onClickCapture={handleUserTouch}
-        onScroll={handleUserTouch}
       >
-        <div className={styles.carouselTrack}>
+        <div
+          className={`${styles.carouselTrack} ${center ? styles.centerTrack : ""}`}
+        >
           {members.map((member) => (
             <article key={member.id} className={styles.memberCard}>
-              <div>
-                <div className={styles.cardAvatarWrap}>
-                  <Image
-                    src={member.image}
-                    alt={member.name}
-                    width={280}
-                    height={280}
-                    style={{ height: "auto" }}
-                    className={styles.avatarImg}
-                  />
-                </div>
-                <p className={styles.roleBadge}>{member.role}</p>
-                <h4 className={styles.memberName}>{member.name}</h4>
-                <p className={styles.memberDept}>{member.dept}</p>
+              <div className={styles.cardImageWrap}>
+                <Image
+                  src={member.image}
+                  alt={member.name}
+                  fill
+                  sizes="(max-width: 640px) 50vw, 18rem"
+                  className={styles.cardImage}
+                />
+                <div className={styles.cardOverlay} />
               </div>
-              <div className={styles.memberFooter}>
-                <div className={styles.socialIcons}>
-                  {member.linkedin && (
-                    <a
-                      href={member.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.socialBtn}
-                      aria-label={`${member.name} LinkedIn`}
-                    >
-                      <LinkedInIcon />
-                    </a>
-                  )}
+              <div className={styles.cardInfo}>
+                <div className={styles.cardInfoText}>
+                  <h4 className={styles.memberName}>{member.name}</h4>
+                  <p className={styles.memberRole}>{member.role}</p>
                 </div>
+                {member.linkedin && (
+                  <a
+                    href={member.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.linkedinLink}
+                    aria-label={`${member.name} LinkedIn`}
+                  >
+                    <LinkedInIcon size={32} />
+                  </a>
+                )}
               </div>
             </article>
           ))}
@@ -209,6 +267,7 @@ function TeamSection({
 }
 
 export function Execom() {
+  const sectionRef = useRef<HTMLElement>(null);
   const faculty: FacultyMember[] = teamData.faculty || [];
   const execom: TeamMember[] = teamData.execom || [];
   const subExecom: TeamMember[] = teamData.subExecom || [];
@@ -230,8 +289,60 @@ export function Execom() {
     return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
   });
 
+  // GSAP scroll animation for heading + faculty card
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      // Heading animation
+      gsap.from(`.${styles.heading}`, {
+        opacity: 0,
+        y: 30,
+        duration: 0.7,
+        ease: "power3.out",
+        clearProps: "all",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      // Subtext animation
+      gsap.from(`.${styles.subtext}`, {
+        opacity: 0,
+        y: 20,
+        duration: 0.6,
+        delay: 0.15,
+        ease: "power3.out",
+        clearProps: "all",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      // Faculty card slide-up
+      gsap.from(`.${styles.facultyCard}`, {
+        opacity: 0,
+        y: 40,
+        duration: 0.7,
+        ease: "power3.out",
+        clearProps: "all",
+        scrollTrigger: {
+          trigger: `.${styles.facultyCard}`,
+          start: "top 88%",
+          toggleActions: "play none none none",
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="execom" className={styles.section}>
+    <section id="execom" className={styles.section} ref={sectionRef}>
       <div className={styles.glowLeft} />
       <div className={styles.glowRight} />
 
@@ -248,30 +359,9 @@ export function Execom() {
           </p>
         </div>
 
-        {faculty.length > 0 && (
-          <div className={styles.categoryGroup}>
-            <div className={styles.facultyCard}>
-              <div className={styles.facultyImageWrap}>
-                <Image
-                  src={faculty[0].image}
-                  alt={faculty[0].name}
-                  width={200}
-                  height={200}
-                  style={{ height: "auto" }}
-                  className={styles.facultyImg}
-                />
-              </div>
-              <div className={styles.facultyContent}>
-                <h4 className={styles.facultyName}>{faculty[0].name}</h4>
-                <p className={styles.facultyDept}>{faculty[0].role}</p>
-                <p className={styles.facultyBio}>{faculty[0].bio}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
+        <TeamSection title="FACULTY ADVISOR" members={faculty} center />
         <TeamSection title="EXECUTIVE COMMITTEE" members={execom} />
-        <TeamSection title="SUB-EXECOM" members={sortedSubExecom} />
+        <TeamSection title="SUB-EXECOM" members={sortedSubExecom} reverse />
       </div>
     </section>
   );

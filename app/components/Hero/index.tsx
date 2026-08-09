@@ -175,10 +175,38 @@ const Hero = () => {
   }, []);
 
   const handleCtaClick = () => {
-    const aboutEl = document.getElementById("about");
-    if (aboutEl) {
-      aboutEl.scrollIntoView({ behavior: "smooth" });
-    }
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const targetY = section.offsetTop + window.innerHeight * 1.4;
+    const startY = window.scrollY || window.pageYOffset;
+    const distance = targetY - startY;
+    const duration = 1500; // 1.5 seconds smooth scroll
+    let startTime: number | null = null;
+
+    // Disable CSS scroll-behavior: smooth during JS animation to prevent frame buffering freeze
+    const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = "auto";
+
+    const easeInOutCubic = (t: number) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+    const animateScroll = (currentTime: number) => {
+      if (startTime === null) startTime = currentTime;
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeProgress = easeInOutCubic(progress);
+
+      window.scrollTo(0, startY + distance * easeProgress);
+
+      if (progress < 1) {
+        requestAnimationFrame(animateScroll);
+      } else {
+        document.documentElement.style.scrollBehavior = originalScrollBehavior;
+      }
+    };
+
+    requestAnimationFrame(animateScroll);
   };
 
   return (

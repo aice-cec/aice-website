@@ -119,15 +119,12 @@ export function Events() {
       <div className={styles.container}>
         {/* Header Row */}
         <div className={styles.headerRow}>
-          <div>
-            <h2 className={styles.heading}>
-              UPCOMING <span className={styles.headingAccent}>EVENTS</span>
-            </h2>
-            <p className={styles.subheading}>
-              Join our interactive workshops, hackathons, and open build sessions.
-            </p>
-          </div>
-
+          <h2 className={styles.heading}>
+            UPCOMING <span className={styles.headingAccent}>EVENTS</span>
+          </h2>
+          <p className={styles.subheading}>
+            Join our interactive workshops, hackathons, and open build sessions.
+          </p>
           <a href="/events" className={styles.viewAllLink}>
             VIEW ALL EVENTS
             <span className={styles.arrowTranslate}>
@@ -148,7 +145,7 @@ export function Events() {
               <div className={styles.emptyDesc}>
                 No upcoming events at the moment. We are preparing exciting workshops and hackathons.
               </div>
-              <a href="/events" className={styles.viewAllLink}>
+              <a href="/events" className={styles.archiveBtn}>
                 EXPLORE ARCHIVE <ArrowIcon />
               </a>
             </div>

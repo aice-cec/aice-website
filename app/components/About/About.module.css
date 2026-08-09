@@ -21,7 +21,7 @@
 }
 
 .sectionLabel {
-  font-family: var(--font-geist-sans), sans-serif;
+  font-family: var(--font-primary);
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.2em;
@@ -47,7 +47,7 @@
 }
 
 .description {
-  font-family: var(--font-geist-sans), sans-serif;
+  font-family: var(--font-primary);
   font-size: clamp(0.9rem, 1.1vw, 1.05rem);
   line-height: 1.65;
   color: rgba(255, 255, 255, 0.75);
@@ -121,7 +121,7 @@
 }
 
 .cardText {
-  font-family: var(--font-geist-sans), sans-serif;
+  font-family: var(--font-primary);
   font-size: 0.8rem;
   line-height: 1.55;
   color: rgba(255, 255, 255, 0.7);
