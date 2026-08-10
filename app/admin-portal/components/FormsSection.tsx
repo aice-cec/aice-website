@@ -103,7 +103,7 @@ export function FormsSection({
   };
 
   return (
-    <main className="flex-1 w-full max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
+    <main className="flex-1 w-full max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 min-w-0 pb-36">
       {/* Sidebar Forms List */}
       <aside className="flex flex-col bg-[#121217] border border-white/10 rounded-xl overflow-hidden h-fit max-h-[300px] lg:max-h-[calc(100vh-120px)] lg:sticky lg:top-24">
         <div className="flex items-center justify-between p-4 border-b border-white/10">
@@ -157,9 +157,9 @@ export function FormsSection({
       </aside>
 
       {/* Form Builder Editor & Responses Table */}
-      <section className="flex flex-col gap-6">
+      <section className="flex flex-col gap-6 min-w-0">
         {/* Form Builder Configuration Card */}
-        <div className="p-5 md:p-6 bg-[#121217] border border-white/10 rounded-xl space-y-6">
+        <div className="p-5 md:p-6 bg-[#121217] border border-white/10 rounded-xl space-y-6 min-w-0">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between pb-3 border-b border-white/10 gap-3 min-w-0">
             <div className="min-w-0 flex-1">
               <h3 className="text-base font-bold text-white break-words leading-snug">
@@ -189,7 +189,7 @@ export function FormsSection({
           </div>
 
           {/* General Form Settings */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 min-w-0">
             <div className="flex flex-col gap-1.5 md:col-span-2">
               <label className="text-xs font-semibold text-gray-400">Form Title * (Max 100 characters)</label>
               <input
@@ -206,11 +206,21 @@ export function FormsSection({
               <label className="text-xs font-semibold text-gray-400">Form Description / Instructions</label>
               <textarea
                 value={customFormBuilder.description || ""}
-                onChange={(e) => handleCustomFormInputChange("description", e.target.value)}
+                onChange={(e) => {
+                  e.target.style.height = "auto";
+                  e.target.style.height = `${Math.min(500, Math.max(120, e.target.scrollHeight))}px`;
+                  handleCustomFormInputChange("description", e.target.value);
+                }}
+                ref={(el) => {
+                  if (el) {
+                    el.style.height = "auto";
+                    el.style.height = `${Math.min(500, Math.max(120, el.scrollHeight))}px`;
+                  }
+                }}
                 placeholder="Provide event details, instructions, or venue info..."
-                rows={5}
+                rows={4}
                 maxLength={2000}
-                className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-red-500 resize-y break-words overflow-y-auto min-h-[120px]"
+                className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-red-500 resize-y break-words overflow-y-auto min-h-[120px] max-h-[500px] [field-sizing:content]"
               />
             </div>
 
@@ -231,12 +241,12 @@ export function FormsSection({
               </div>
             </div>
 
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1.5 min-w-0">
               <label className="text-xs font-semibold text-gray-400">Attach to Event</label>
               <select
                 value={customFormBuilder.event_id || ""}
                 onChange={(e) => handleCustomFormInputChange("event_id", e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-red-500"
+                className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-red-500 truncate"
               >
                 <option value="">-- None (Standalone Form) --</option>
                 {events.map((ev) => (
@@ -484,7 +494,11 @@ export function FormsSection({
                     <th className="p-3 font-semibold whitespace-nowrap">Action</th>
                     <th className="p-3 font-semibold whitespace-nowrap">Submitted At</th>
                     {customFormBuilder.fields.map((f) => (
-                      <th key={f.id} className="p-3 font-semibold whitespace-nowrap max-w-[200px]">
+                      <th
+                        key={f.id}
+                        className="p-3 font-semibold whitespace-nowrap max-w-[200px] truncate"
+                        title={f.label}
+                      >
                         {f.label}
                       </th>
                     ))}

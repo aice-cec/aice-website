@@ -47,7 +47,7 @@ export function RedirectsSection({
   copyShortlinkToClipboard,
 }: RedirectsSectionProps) {
   return (
-    <main className="flex-1 w-full max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
+    <main className="flex-1 w-full max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6 min-w-0 pb-36">
       <aside className="flex flex-col bg-[#121217] border border-white/10 rounded-xl overflow-hidden h-fit max-h-[300px] lg:max-h-[calc(100vh-120px)] lg:sticky lg:top-24">
         <div className="flex items-center justify-between p-4 border-b border-white/10">
           <div className="flex items-center gap-2">
@@ -101,8 +101,8 @@ export function RedirectsSection({
         </div>
       </aside>
 
-      <section className="flex flex-col gap-6">
-        <div className="p-5 md:p-6 bg-[#121217] border border-white/10 rounded-xl">
+      <section className="flex flex-col gap-6 min-w-0">
+        <div className="p-5 md:p-6 bg-[#121217] border border-white/10 rounded-xl min-w-0">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-5 border-b border-white/10 gap-3">
             <div>
               <span className="text-base font-bold text-white truncate block">
