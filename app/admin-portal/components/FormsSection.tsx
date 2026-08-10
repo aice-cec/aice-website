@@ -162,10 +162,10 @@ export function FormsSection({
         <div className="p-5 md:p-6 bg-[#121217] border border-white/10 rounded-xl space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between pb-3 border-b border-white/10 gap-3 min-w-0">
             <div className="min-w-0 flex-1">
-              <h3 className="text-base font-bold text-white break-words break-all leading-snug">
+              <h3 className="text-base font-bold text-white break-words leading-snug">
                 Form Builder: {customFormBuilder.title}
               </h3>
-              <p className="text-xs text-gray-400 break-words break-all mt-1">
+              <p className="text-xs text-gray-400 break-words mt-1">
                 Registration Link:{" "}
                 <code className="text-red-400 font-mono break-all">
                   aice.ceconline.edu/{customFormBuilder.slug || "slug"}
@@ -198,7 +198,7 @@ export function FormsSection({
                 onChange={(e) => handleCustomFormInputChange("title", e.target.value.slice(0, 100))}
                 placeholder="e.g. AICE BUILD NIGHT REGISTRATION"
                 maxLength={100}
-                className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-red-500 break-all"
+                className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-red-500 break-words"
               />
             </div>
 
@@ -226,7 +226,7 @@ export function FormsSection({
                   onChange={(e) => handleCustomFormInputChange("slug", e.target.value)}
                   placeholder="e.g. aice-build-night"
                   maxLength={120}
-                  className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-r-lg text-sm text-white font-mono focus:outline-none focus:border-red-500 break-all"
+                  className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-r-lg text-sm text-white font-mono focus:outline-none focus:border-red-500 break-words"
                 />
               </div>
             </div>

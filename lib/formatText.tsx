@@ -19,7 +19,7 @@ function cleanUrl(rawUrl: string): { url: string; trailing: string } {
 
 export function renderTextWithLinks(
   text: string | undefined | null,
-  linkClassName = "text-red-400 hover:text-red-300 underline font-semibold transition-colors decoration-red-500/50 underline-offset-2 break-all",
+  linkClassName = "text-red-400 hover:text-red-300 underline font-semibold transition-colors decoration-red-500/50 underline-offset-2 break-words",
 ): React.ReactNode {
   if (!text) return null;
 

@@ -439,7 +439,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
       <main className="w-full max-w-3xl mx-auto bg-[#121217] border-2 border-white/15 shadow-[8px_8px_0px_#000000] p-6 sm:p-10 z-10 min-w-0 overflow-hidden">
         {/* Form Title & Subtitle */}
         <div className="border-b-2 border-white/15 pb-6 mb-8 min-w-0">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-white leading-tight mb-3 break-words overflow-wrap-anywhere">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-white leading-tight mb-3 break-words">
             {form.title}
           </h1>
           {form.description && (
@@ -460,7 +460,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                   <span className="px-2 py-0.5 bg-red-600 text-white font-mono font-black text-xs sm:text-sm shrink-0">
                     {stepNum}
                   </span>
-                  <label className="font-extrabold text-gray-200 font-mono text-sm sm:text-base uppercase tracking-widest break-words break-all min-w-0">
+                  <label className="font-extrabold text-gray-200 font-mono text-sm sm:text-base uppercase tracking-widest break-words min-w-0">
                     {renderTextWithLinks(field.label)}{" "}
                     {field.required && <span className="text-red-500">*</span>}
                   </label>
@@ -499,7 +499,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                         : `e.g. Enter ${field.label.toLowerCase()}`)
                     }
                     required={field.required}
-                    className="w-full min-w-0 px-4 py-3 bg-[#070709] border-2 border-white/15 text-base text-white placeholder:text-gray-500 focus:outline-none focus:ring-0 focus:border-red-500 transition-colors rounded-none break-all"
+                    className="w-full min-w-0 px-4 py-3 bg-[#070709] border-2 border-white/15 text-base text-white placeholder:text-gray-500 focus:outline-none focus:ring-0 focus:border-red-500 transition-colors rounded-none break-words"
                   />
                 )}
 
@@ -511,7 +511,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                       handleInputChange(field.id, e.target.value)
                     }
                     required={field.required}
-                    className="w-full min-w-0 px-4 py-3 bg-[#070709] border-2 border-white/15 text-base text-white focus:outline-none focus:border-red-500 transition-colors cursor-pointer rounded-none break-all"
+                    className="w-full min-w-0 px-4 py-3 bg-[#070709] border-2 border-white/15 text-base text-white focus:outline-none focus:border-red-500 transition-colors cursor-pointer rounded-none break-words"
                   >
                     <option
                       value=""
@@ -538,7 +538,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                     {(field.options || []).map((opt) => (
                       <label
                         key={opt}
-                        className="flex items-center gap-3 p-3 bg-[#070709] border-2 border-white/15 text-sm sm:text-base font-bold text-gray-200 cursor-pointer select-none hover:bg-white/5 transition-colors break-words break-all min-w-0"
+                        className="flex items-center gap-3 p-3 bg-[#070709] border-2 border-white/15 text-sm sm:text-base font-bold text-gray-200 cursor-pointer select-none hover:bg-white/5 transition-colors break-words min-w-0"
                       >
                         <input
                           type="radio"
@@ -551,7 +551,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                           required={field.required}
                           className="w-4 h-4 accent-red-500 cursor-pointer shrink-0"
                         />
-                        <span className="break-words break-all min-w-0">
+                        <span className="break-words min-w-0">
                           {renderTextWithLinks(opt)}
                         </span>
                       </label>
@@ -571,7 +571,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                       return (
                         <label
                           key={opt}
-                          className="flex items-center gap-3 p-3 bg-[#070709] border-2 border-white/15 text-sm sm:text-base font-bold text-gray-200 cursor-pointer select-none hover:bg-white/5 transition-colors break-words break-all min-w-0"
+                          className="flex items-center gap-3 p-3 bg-[#070709] border-2 border-white/15 text-sm sm:text-base font-bold text-gray-200 cursor-pointer select-none hover:bg-white/5 transition-colors break-words min-w-0"
                         >
                           <input
                             type="checkbox"
@@ -586,7 +586,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                             }
                             className="w-4 h-4 accent-red-500 rounded-none cursor-pointer shrink-0"
                           />
-                          <span className="break-words break-all min-w-0">
+                          <span className="break-words min-w-0">
                             {renderTextWithLinks(opt)}
                           </span>
                         </label>
