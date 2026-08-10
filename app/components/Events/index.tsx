@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { renderTextWithLinks } from "@/lib/formatText";
 import styles from "./Event.module.css";
 
 export interface EventItem {
@@ -191,7 +192,9 @@ export function Events() {
 
                     <h3 className={styles.cardTitle}>{event.title}</h3>
 
-                    <p className={styles.cardDesc}>{event.description}</p>
+                    <p className={styles.cardDesc}>
+                      {renderTextWithLinks(event.description)}
+                    </p>
                   </div>
 
                   {/* Card Bottom Meta & Button */}

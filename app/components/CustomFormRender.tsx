@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
+import { renderTextWithLinks } from "@/lib/formatText";
 
 export interface FormField {
   id: string;
@@ -436,8 +437,8 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
             {form.title}
           </h1>
           {form.description && (
-            <p className="text-xs sm:text-sm text-gray-300 font-medium leading-relaxed break-words">
-              {form.description}
+            <p className="text-xs sm:text-sm text-gray-300 font-medium leading-relaxed break-words whitespace-pre-line">
+              {renderTextWithLinks(form.description)}
             </p>
           )}
         </div>
@@ -454,7 +455,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                     {stepNum}
                   </span>
                   <label className="font-extrabold text-gray-200 font-mono text-xs uppercase tracking-widest break-words break-all min-w-0">
-                    {field.label}{" "}
+                    {renderTextWithLinks(field.label)}{" "}
                     {field.required && <span className="text-red-500">*</span>}
                   </label>
                 </div>
@@ -540,7 +541,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                           required={field.required}
                           className="w-4 h-4 accent-red-500 cursor-pointer shrink-0"
                         />
-                        <span className="break-words break-all min-w-0">{opt}</span>
+                        <span className="break-words break-all min-w-0">{renderTextWithLinks(opt)}</span>
                       </label>
                     ))}
                   </div>
@@ -573,7 +574,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                             }
                             className="w-4 h-4 accent-red-500 rounded-none cursor-pointer shrink-0"
                           />
-                          <span className="break-words break-all min-w-0">{opt}</span>
+                          <span className="break-words break-all min-w-0">{renderTextWithLinks(opt)}</span>
                         </label>
                       );
                     })}

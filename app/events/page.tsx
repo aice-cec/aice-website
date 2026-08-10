@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
+import { renderTextWithLinks } from "@/lib/formatText";
 import styles from "./Events.module.css";
 
 export interface EventItem {
@@ -352,7 +353,9 @@ export default function EventsPage() {
 
                       <h3 className={styles.cardTitle}>{event.title}</h3>
 
-                      <p className={styles.cardDesc}>{event.description}</p>
+                      <p className={styles.cardDesc}>
+                        {renderTextWithLinks(event.description)}
+                      </p>
                     </div>
 
                     {/* Metadata Footer */}
