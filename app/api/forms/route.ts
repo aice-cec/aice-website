@@ -44,13 +44,22 @@ export async function GET(req: Request) {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (!error && data?.length) {
-      return NextResponse.json(data, {
-        headers: { "Cache-Control": "s-maxage=30, stale-while-revalidate=120" },
+    const localForms = getLocalForms();
+    if (!error && Array.isArray(data)) {
+      const existingIds = new Set(data.map((f: any) => f.id));
+      const existingSlugs = new Set(data.map((f: any) => f.slug));
+      const mergedForms = [...data];
+      for (const lf of localForms) {
+        if (!existingIds.has(lf.id) && !existingSlugs.has(lf.slug)) {
+          mergedForms.push(lf);
+        }
+      }
+      return NextResponse.json(mergedForms, {
+        headers: { "Cache-Control": "s-maxage=10, stale-while-revalidate=30" },
       });
     }
 
-    return NextResponse.json(getLocalForms());
+    return NextResponse.json(localForms);
   } catch {
     return NextResponse.json(getLocalForms());
   }

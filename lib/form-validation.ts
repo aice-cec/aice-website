@@ -86,13 +86,15 @@ export function validateResponses(
     if (!trimmed) continue;
 
     if (field.type === "file") {
-      if (
-        !trimmed.startsWith("data:image/webp;base64,") ||
-        trimmed.length > MAX_FILE_DATA_URL_LENGTH
-      ) {
-        return { error: `Invalid file for ${field.label}` };
+      const isValidFile =
+        trimmed.startsWith("data:image/") ||
+        trimmed.startsWith("data:application/pdf") ||
+        trimmed.startsWith("http://") ||
+        trimmed.startsWith("https://");
+      if (!isValidFile || trimmed.length > 14_000_000) {
+        return { error: `Invalid file format or file size too large for ${field.label}` };
       }
-    } else if (trimmed.length > MAX_VALUE_LENGTH) {
+    } else if (trimmed.length > 5000) {
       return { error: `Value is too long for ${field.label}` };
     }
 

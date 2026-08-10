@@ -1,81 +1,98 @@
 [
   {
-    "id": "form-1786114514609",
-    "slug": "aice-event-reg",
+    "id": "execom-task-submission",
+    "slug": "task-submission",
     "event_id": null,
-    "title": "NEW REGISTRATION FORM",
-    "description": "Fill out the registration details below. Visit https://aice.ceconline.edu for more community updates.",
-    "whatsapp_link": "x.com",
-    "fields": [
-      {
-        "id": "field_1786114528159",
-        "type": "text",
-        "label": "name",
-        "options": [
-          "Option 1",
-          "Option 2"
-        ],
-        "required": true,
-        "placeholder": ""
-      },
-      {
-        "id": "field_1786114533769",
-        "type": "radio",
-        "label": "batch",
-        "options": [
-          "a",
-          "b",
-          "c",
-          "d"
-        ],
-        "required": true,
-        "placeholder": ""
-      },
-      {
-        "id": "field_1786114640490",
-        "type": "email",
-        "label": "email",
-        "options": [
-          "Option 1",
-          "Option 2"
-        ],
-        "required": true,
-        "placeholder": ""
-      },
-      {
-        "id": "field_1786114658522",
-        "type": "phone",
-        "label": "ph number",
-        "options": [
-          "Option 1",
-          "Option 2"
-        ],
-        "required": true,
-        "placeholder": ""
-      }
-    ],
-    "is_active": true
-  },
-  {
-    "id": "form-1786112936482-9ofh",
-    "slug": "test",
-    "event_id": "ai-research-circle-2026",
-    "title": "test",
-    "description": "test form",
+    "title": "EXECOM CALL TASK SUBMISSION",
+    "description": "Submit your tasks for the AICE Execom Call 2026. Attach your PDF documents, design images, GitHub repository links, live website links, or Drive links as required for your applied role(s).",
     "whatsapp_link": "",
     "fields": [
       {
-        "id": "field_1786112848130",
+        "id": "field_name",
         "type": "text",
-        "label": "name",
-        "options": [
-          "Option 1",
-          "Option 2"
-        ],
+        "label": "Full Name",
         "required": true,
-        "placeholder": ""
+        "placeholder": "Enter your full name"
+      },
+      {
+        "id": "field_class",
+        "type": "text",
+        "label": "Class / Batch",
+        "required": true,
+        "placeholder": "e.g. CSA 2026, ECA, EEE B"
+      },
+      {
+        "id": "field_email",
+        "type": "email",
+        "label": "Email Address",
+        "required": true,
+        "placeholder": "name@example.com"
+      },
+      {
+        "id": "field_phone",
+        "type": "phone",
+        "label": "Phone Number",
+        "required": true,
+        "placeholder": "10-digit mobile number"
+      },
+      {
+        "id": "field_roles",
+        "type": "checkbox",
+        "label": "ROLE(S) APPLIED",
+        "options": [
+          "Design Team",
+          "Content Team",
+          "Web Team",
+          "Operations Team",
+          "Media Team",
+          "Project Coordinator"
+        ],
+        "required": true
+      },
+      {
+        "id": "field_pdf",
+        "type": "file",
+        "label": "Task PDF Document",
+        "required": false,
+        "placeholder": "Upload PDF document"
+      },
+      {
+        "id": "field_image",
+        "type": "file",
+        "label": "Design Task Image / Portfolio",
+        "required": false,
+        "placeholder": "Upload Design Image (PNG/JPG/WebP)"
+      },
+      {
+        "id": "field_drive",
+        "type": "text",
+        "label": "Drive Link (Media Team)",
+        "required": false,
+        "placeholder": "https://drive.google.com/..."
+      },
+      {
+        "id": "field_github",
+        "type": "text",
+        "label": "GitHub Link (Web Team)",
+        "required": false,
+        "placeholder": "https://github.com/username/repo"
+      },
+      {
+        "id": "field_live_website",
+        "type": "text",
+        "label": "Live Website Link (Web Team)",
+        "required": false,
+        "placeholder": "https://your-app.vercel.app"
+      },
+      {
+        "id": "field_notes",
+        "type": "text",
+        "label": "Additional Notes / Comments",
+        "required": false,
+        "placeholder": "Any additional information..."
       }
     ],
-    "is_active": true
+    "is_active": true,
+    "issue_ticket": false
   }
 ]
