@@ -168,9 +168,9 @@ export function EventsSection({
                   handleInputChange("description", e.target.value)
                 }
                 placeholder="Short description of the event..."
-                rows={3}
-                maxLength={800}
-                className="w-full px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:border-red-500 transition-colors resize-y"
+                rows={4}
+                maxLength={1500}
+                className="w-full px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:border-red-500 transition-colors resize-y min-h-[100px] overflow-y-auto break-words"
               />
             </div>
 

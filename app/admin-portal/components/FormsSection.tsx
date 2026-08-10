@@ -208,9 +208,9 @@ export function FormsSection({
                 value={customFormBuilder.description || ""}
                 onChange={(e) => handleCustomFormInputChange("description", e.target.value)}
                 placeholder="Provide event details, instructions, or venue info..."
-                rows={2}
-                maxLength={800}
-                className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-red-500 resize-y break-all"
+                rows={5}
+                maxLength={2000}
+                className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-red-500 resize-y break-words overflow-y-auto min-h-[120px]"
               />
             </div>
 

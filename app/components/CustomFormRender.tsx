@@ -123,7 +123,11 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
     }
   }, [errorMsg]);
 
-  const handleInputChange = (fieldId: string, value: any, fieldType?: string) => {
+  const handleInputChange = (
+    fieldId: string,
+    value: any,
+    fieldType?: string,
+  ) => {
     let finalVal = value;
     if (fieldType === "phone" && typeof value === "string") {
       finalVal = value.replace(/\D/g, "").slice(0, 10);
@@ -222,11 +226,18 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
       }
 
       if (val && typeof val === "string") {
-        const isEmailField = field.type === "email" || field.label.toLowerCase().includes("email");
-        const isPhoneField = field.type === "phone" || field.label.toLowerCase().includes("phone") || field.label.toLowerCase().includes("whatsapp") || field.label.toLowerCase().includes("mobile");
+        const isEmailField =
+          field.type === "email" || field.label.toLowerCase().includes("email");
+        const isPhoneField =
+          field.type === "phone" ||
+          field.label.toLowerCase().includes("phone") ||
+          field.label.toLowerCase().includes("whatsapp") ||
+          field.label.toLowerCase().includes("mobile");
 
         if (isEmailField && !emailRegex.test(val.trim())) {
-          setErrorMsg(`Please enter a valid email address with domain extension (e.g. name@gmail.com) for "${field.label}"`);
+          setErrorMsg(
+            `Please enter a valid email address with domain extension (e.g. name@gmail.com) for "${field.label}"`,
+          );
           submittingRef.current = false;
           return;
         }
@@ -338,11 +349,7 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                 SCAN AT DESK FOR ENTRY
               </div>
               <div className="inline-block p-3 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] mx-auto">
-                <QRCodeSVG
-                  value={ticketCode}
-                  size={160}
-                  level="H"
-                />
+                <QRCodeSVG value={ticketCode} size={160} level="H" />
               </div>
               <div className="text-[10px] font-black uppercase tracking-widest text-red-500 font-mono pt-1">
                 PASS IDENTIFIER
@@ -356,11 +363,10 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
           {form.whatsapp_link && (
             <div className="p-5 mb-6 bg-emerald-500/10 border-2 border-emerald-500/30 shadow-[4px_4px_0px_#000000] text-center space-y-3">
               <div className="text-xs font-black uppercase tracking-wider text-emerald-400 font-mono">
-                OFFICIAL EVENT WHATSAPP GROUP
+                OFFICIAL WHATSAPP GROUP
               </div>
               <p className="text-xs text-gray-300 leading-relaxed font-medium">
-                Join the official group for live announcements, workshop
-                updates, and team discussions!
+                Join the official group for task submission and other updates
               </p>
               <a
                 href={
@@ -475,12 +481,16 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                       field.type === "phone"
                         ? 15
                         : field.type === "email"
-                        ? 100
-                        : field.type === "number"
-                        ? 20
-                        : 250
+                          ? 100
+                          : field.type === "number"
+                            ? 20
+                            : 250
                     }
-                    inputMode={field.type === "phone" || field.type === "number" ? "numeric" : undefined}
+                    inputMode={
+                      field.type === "phone" || field.type === "number"
+                        ? "numeric"
+                        : undefined
+                    }
                     pattern={field.type === "phone" ? "[0-9]{10}" : undefined}
                     placeholder={
                       field.placeholder ||
@@ -541,7 +551,9 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                           required={field.required}
                           className="w-4 h-4 accent-red-500 cursor-pointer shrink-0"
                         />
-                        <span className="break-words break-all min-w-0">{renderTextWithLinks(opt)}</span>
+                        <span className="break-words break-all min-w-0">
+                          {renderTextWithLinks(opt)}
+                        </span>
                       </label>
                     ))}
                   </div>
@@ -574,7 +586,9 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                             }
                             className="w-4 h-4 accent-red-500 rounded-none cursor-pointer shrink-0"
                           />
-                          <span className="break-words break-all min-w-0">{renderTextWithLinks(opt)}</span>
+                          <span className="break-words break-all min-w-0">
+                            {renderTextWithLinks(opt)}
+                          </span>
                         </label>
                       );
                     })}
@@ -609,7 +623,10 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
           })}
 
           {errorMsg && (
-            <div ref={errorRef} className="p-3 text-xs font-bold text-center text-red-400 bg-red-500/10 border-2 border-red-500/30 shadow-[3px_3px_0px_#000000]">
+            <div
+              ref={errorRef}
+              className="p-3 text-xs font-bold text-center text-red-400 bg-red-500/10 border-2 border-red-500/30 shadow-[3px_3px_0px_#000000]"
+            >
               ⚠️ {errorMsg}
             </div>
           )}
