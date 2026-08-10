@@ -33,16 +33,6 @@
       "github": "https://github.com"
     },
     {
-      "id": "ex-3",
-      "name": "Sreehari A Nair",
-      "role": "Program Manager",
-      "dept": "CL '28",
-      "team": "Executive Committee",
-      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/sreehari.webp",
-      "linkedin": "https://www.linkedin.com/in/sreehari-a-nair01/",
-      "github": "https://github.com"
-    },
-    {
       "id": "ex-4",
       "name": "Swathy J",
       "role": "Treasurer",
@@ -53,13 +43,13 @@
       "github": "https://github.com"
     },
     {
-      "id": "ex-5",
-      "name": "Aiswarya Rose Jacob",
-      "role": "Project Coordinator",
+      "id": "ex-3",
+      "name": "Sreehari A Nair",
+      "role": "Program Manager",
       "dept": "CL '28",
       "team": "Executive Committee",
-      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/aiswarya.webp",
-      "linkedin": "https://www.linkedin.com/in/aiswaryarosejacob/",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/sreehari.webp",
+      "linkedin": "https://www.linkedin.com/in/sreehari-a-nair01/",
       "github": "https://github.com"
     },
     {
@@ -70,6 +60,16 @@
       "team": "Executive Committee",
       "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/sarin.webp",
       "linkedin": "https://www.linkedin.com/in/sarin-ms/",
+      "github": "https://github.com"
+    },
+    {
+      "id": "ex-10",
+      "name": "Adhi Narayan",
+      "role": "Tech Lead",
+      "dept": "CL '28",
+      "team": "Executive Committee",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/adhi.webp",
+      "linkedin": "https://www.linkedin.com/in/adhinarayan2006/",
       "github": "https://github.com"
     },
     {
@@ -103,16 +103,6 @@
       "github": "https://github.com"
     },
     {
-      "id": "ex-10",
-      "name": "Adhi Narayan",
-      "role": "Tech Lead",
-      "dept": "CL '28",
-      "team": "Executive Committee",
-      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/adhi.webp",
-      "linkedin": "https://www.linkedin.com/in/adhinarayan2006/",
-      "github": "https://github.com"
-    },
-    {
       "id": "ex-11",
       "name": "Muhammed Sinan P A",
       "role": "Media Lead",
@@ -120,6 +110,16 @@
       "team": "Executive Committee",
       "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/sinan.webp",
       "linkedin": "https://www.linkedin.com/in/muhammed-sinan-p-a-392291331/",
+      "github": "https://github.com"
+    },
+    {
+      "id": "ex-5",
+      "name": "Aiswarya Rose Jacob",
+      "role": "Project Coordinator",
+      "dept": "CL '28",
+      "team": "Executive Committee",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/execom/aiswarya.webp",
+      "linkedin": "https://www.linkedin.com/in/aiswaryarosejacob/",
       "github": "https://github.com"
     }
   ],
