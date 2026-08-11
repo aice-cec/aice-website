@@ -257,53 +257,73 @@ export default function TaskSubmissionPage() {
     let finalOpsPdf = opsPdf;
     let finalCoordPdf = coordPdf;
 
-    // Directly upload files from browser to Drive via Apps Script Web App to keep Vercel payload under 5KB
+    // Directly upload files from browser to Drive in parallel via Apps Script Web App
+    const uploadTasks: Promise<void>[] = [];
+
     if (isDesignSelected && designImage.startsWith("data:")) {
-      const url = await uploadFileFromClientToDrive({
-        folderName: "Design Team",
-        fileName: formatTaskFilename(fullName, "png", "Design Task Image"),
-        base64Data: designImage,
-        mimeType: "image/png",
-        applicantName: fullName.trim(),
-        applicantEmail: email.trim(),
-      });
-      if (url) finalDesignImg = url;
+      uploadTasks.push(
+        uploadFileFromClientToDrive({
+          folderName: "Design Team",
+          fileName: formatTaskFilename(fullName, "png", "Design Task Image"),
+          base64Data: designImage,
+          mimeType: "image/png",
+          applicantName: fullName.trim(),
+          applicantEmail: email.trim(),
+        }).then((url) => {
+          if (url) finalDesignImg = url;
+        })
+      );
     }
 
     if (isContentSelected && contentPdf.startsWith("data:")) {
-      const url = await uploadFileFromClientToDrive({
-        folderName: "Content Team",
-        fileName: formatTaskFilename(fullName, "pdf", "Content Team Task PDF"),
-        base64Data: contentPdf,
-        mimeType: "application/pdf",
-        applicantName: fullName.trim(),
-        applicantEmail: email.trim(),
-      });
-      if (url) finalContentPdf = url;
+      uploadTasks.push(
+        uploadFileFromClientToDrive({
+          folderName: "Content Team",
+          fileName: formatTaskFilename(fullName, "pdf", "Content Team Task PDF"),
+          base64Data: contentPdf,
+          mimeType: "application/pdf",
+          applicantName: fullName.trim(),
+          applicantEmail: email.trim(),
+        }).then((url) => {
+          if (url) finalContentPdf = url;
+        })
+      );
     }
 
     if (isOpsSelected && opsPdf.startsWith("data:")) {
-      const url = await uploadFileFromClientToDrive({
-        folderName: "Operations Team",
-        fileName: formatTaskFilename(fullName, "pdf", "Operations Team Task PDF"),
-        base64Data: opsPdf,
-        mimeType: "application/pdf",
-        applicantName: fullName.trim(),
-        applicantEmail: email.trim(),
-      });
-      if (url) finalOpsPdf = url;
+      uploadTasks.push(
+        uploadFileFromClientToDrive({
+          folderName: "Operations Team",
+          fileName: formatTaskFilename(fullName, "pdf", "Operations Team Task PDF"),
+          base64Data: opsPdf,
+          mimeType: "application/pdf",
+          applicantName: fullName.trim(),
+          applicantEmail: email.trim(),
+        }).then((url) => {
+          if (url) finalOpsPdf = url;
+        })
+      );
     }
 
     if (isCoordSelected && coordPdf.startsWith("data:")) {
-      const url = await uploadFileFromClientToDrive({
-        folderName: "Project Coordinator",
-        fileName: formatTaskFilename(fullName, "pdf", "Project Coordinator Task PDF"),
-        base64Data: coordPdf,
-        mimeType: "application/pdf",
-        applicantName: fullName.trim(),
-        applicantEmail: email.trim(),
-      });
-      if (url) finalCoordPdf = url;
+      uploadTasks.push(
+        uploadFileFromClientToDrive({
+          folderName: "Project Coordinator",
+          fileName: formatTaskFilename(fullName, "pdf", "Project Coordinator Task PDF"),
+          base64Data: coordPdf,
+          mimeType: "application/pdf",
+          applicantName: fullName.trim(),
+          applicantEmail: email.trim(),
+        }).then((url) => {
+          if (url) finalCoordPdf = url;
+        })
+      );
+    }
+
+    try {
+      await Promise.all(uploadTasks);
+    } catch (err) {
+      console.warn("One or more Drive uploads failed:", err);
     }
 
     const responsesPayload: Record<string, any> = {
@@ -324,6 +344,15 @@ export default function TaskSubmissionPage() {
       field_pdf: finalContentPdf || finalOpsPdf || finalCoordPdf || "",
       ...(notes.trim() && { field_notes: notes.trim() }),
     };
+
+    // Calculate approximate payload size to guard against Vercel 4.5MB payload limit
+    const payloadSize = JSON.stringify(responsesPayload).length;
+    if (payloadSize > 3.5 * 1024 * 1024) {
+      setSubmitting(false);
+      return setErrorMsg(
+        "File upload to Google Drive failed or timed out. Please check your internet connection or try a smaller file."
+      );
+    }
 
     try {
       const res = await fetch("/api/forms/submit", {
