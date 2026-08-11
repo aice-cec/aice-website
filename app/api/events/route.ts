@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { requireAdmin } from "@/lib/admin-auth";
 
-const EVENTS_COLUMNS = "id,title,description,type,label,dateISO,date,month,time,place,stat,featured,isPast,bgImage,registrationLink,registrationDeadline";
+const EVENTS_COLUMNS = "id,title,description,type,label,dateiso,date,month,time,place,stat,featured,ispast,bgimage,registrationlink,registrationdeadline";
 
 export async function GET() {
   try {
@@ -10,31 +10,39 @@ export async function GET() {
       .from("events")
       .select(EVENTS_COLUMNS);
 
-    if (error || !data?.length) {
+    if (error || !data) {
       return NextResponse.json([], {
         headers: { "Cache-Control": "s-maxage=60, stale-while-revalidate=300" },
       });
     }
 
     const normalized = data
-      .map((item: any) => ({
-        id: item.id,
-        title: item.title || "",
-        description: item.description || "",
-        type: item.type || item.label || "",
-        label: item.label || item.type || "",
-        dateISO: item.dateISO || item.dateiso || "",
-        date: item.date || "",
-        month: item.month || "",
-        time: item.time || "",
-        place: item.place || "",
-        stat: item.stat || "",
-        featured: Boolean(item.featured),
-        isPast: item.isPast !== undefined ? Boolean(item.isPast) : Boolean(item.ispast),
-        bgImage: item.bgImage || item.bgimage || "",
-        registrationLink: item.registrationLink || item.registrationlink || "",
-        registrationDeadline: item.registrationDeadline || item.registrationdeadline || "",
-      }))
+      .map((item: any) => {
+        let dateVal = item.date || "";
+        let monthVal = item.month || "";
+        if (dateVal === "SOON" || (dateVal === "SOON" && monthVal === "COMING")) {
+          dateVal = "COMING";
+          monthVal = "SOON";
+        }
+        return {
+          id: item.id,
+          title: item.title || "",
+          description: item.description || "",
+          type: item.type || item.label || "",
+          label: item.label || item.type || "",
+          dateISO: item.dateiso || item.dateISO || "",
+          date: dateVal,
+          month: monthVal,
+          time: item.time || "",
+          place: item.place || "",
+          stat: item.stat || "",
+          featured: Boolean(item.featured),
+          isPast: item.ispast !== undefined ? Boolean(item.ispast) : Boolean(item.isPast),
+          bgImage: item.bgimage || item.bgImage || "",
+          registrationLink: item.registrationlink || item.registrationLink || "",
+          registrationDeadline: item.registrationdeadline || item.registrationDeadline || "",
+        };
+      })
       .sort((a: any, b: any) => {
         if (!a.dateISO) return 1;
         if (!b.dateISO) return -1;
@@ -65,23 +73,31 @@ export async function POST(req: Request) {
       .from("events")
       .select("id");
 
-    const formattedEvents = rawEvents.map((e: any) => ({
-      id: e.id,
-      dateISO: e.dateISO || e.dateiso || "",
-      date: e.date || "",
-      month: e.month || "",
-      title: e.title || "",
-      type: e.type || "",
-      label: e.label || "",
-      time: e.time || "",
-      place: e.place || "",
-      description: e.description || "",
-      stat: e.stat || "",
-      featured: Boolean(e.featured),
-      isPast: Boolean(e.isPast),
-      registrationLink: e.registrationLink || e.registrationlink || "",
-      registrationDeadline: e.registrationDeadline || e.registrationdeadline || "",
-    }));
+    const formattedEvents = rawEvents.map((e: any) => {
+      let dateVal = e.date || "";
+      let monthVal = e.month || "";
+      if (dateVal === "SOON") {
+        dateVal = "COMING";
+        monthVal = "SOON";
+      }
+      return {
+        id: e.id,
+        dateiso: e.dateISO || e.dateiso || "",
+        date: dateVal,
+        month: monthVal,
+        title: e.title || "",
+        type: e.type || "",
+        label: e.label || "",
+        time: e.time || "",
+        place: e.place || "",
+        description: e.description || "",
+        stat: e.stat || "",
+        featured: Boolean(e.featured),
+        ispast: Boolean(e.isPast ?? e.ispast),
+        registrationlink: e.registrationLink || e.registrationlink || "",
+        registrationdeadline: e.registrationDeadline || e.registrationdeadline || "",
+      };
+    });
 
     const { error } = await supabase
       .from("events")

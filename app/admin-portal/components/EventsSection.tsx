@@ -51,6 +51,7 @@ export function EventsSection({
   const deadlineInputRef = useRef<HTMLInputElement>(null);
   const isComingSoon =
     form.date === "SOON" ||
+    form.date === "COMING" ||
     form.date === "TBA" ||
     (!form.dateISO && Boolean(form.date) && form.date !== "");
   return (
@@ -129,7 +130,22 @@ export function EventsSection({
 
       {/* Content Section: Form & Live Preview */}
       <section className="flex flex-col gap-6 min-w-0">
-        <div className="p-5 md:p-6 bg-[#121217] border border-white/10 rounded-xl min-w-0">
+        {!selectedEventId ? (
+          <div className="p-12 text-center bg-[#121217] border border-white/10 rounded-xl">
+            <h3 className="text-lg font-bold text-white mb-2">No Event Selected</h3>
+            <p className="text-sm text-gray-400 mb-6">
+              Select an event from the list on the left or create a new one.
+            </p>
+            <button
+              onClick={handleCreateNewEvent}
+              className="px-4 py-2 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+            >
+              + Create New Event
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="p-5 md:p-6 bg-[#121217] border border-white/10 rounded-xl min-w-0">
           <div className="flex items-center justify-between pb-3 mb-5 border-b border-white/10">
             <span className="text-base font-bold text-white truncate">
               Edit Event: {form.title || ""}
@@ -208,8 +224,8 @@ export function EventsSection({
                     onChange={(e) => {
                       if (e.target.checked) {
                         handleInputChange("dateISO", "");
-                        handleInputChange("date", "SOON");
-                        handleInputChange("month", "COMING");
+                        handleInputChange("date", "COMING");
+                        handleInputChange("month", "SOON");
                       } else {
                         const today = new Date().toISOString().split("T")[0];
                         handleInputChange("dateISO", today);
@@ -434,6 +450,8 @@ export function EventsSection({
             </div>
           </div>
         </div>
+        </>
+        )}
       </section>
     </main>
   );

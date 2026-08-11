@@ -30,18 +30,18 @@ export default function AdminPortalPage() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [currentTab, setCurrentTab] = useState<"upcoming" | "past">("upcoming");
-  const [savedSnapshot, setSavedSnapshot] = useState<string>("");
+  const [savedSnapshot, setSavedSnapshot] = useState<string>("[]");
 
   // Redirects State
   const [redirects, setRedirects] = useState<RedirectItem[]>([]);
   const [selectedRedirectId, setSelectedRedirectId] = useState<string | null>(null);
-  const [savedRedirectsSnapshot, setSavedRedirectsSnapshot] = useState<string>("");
+  const [savedRedirectsSnapshot, setSavedRedirectsSnapshot] = useState<string>("[]");
   const [redirectSearch, setRedirectSearch] = useState<string>("");
 
   // Custom Forms State
   const [customForms, setCustomForms] = useState<CustomFormItem[]>([]);
   const [selectedFormId, setSelectedFormId] = useState<string | null>(null);
-  const [savedFormsSnapshot, setSavedFormsSnapshot] = useState<string>("");
+  const [savedFormsSnapshot, setSavedFormsSnapshot] = useState<string>("[]");
   const [formSubmissions, setFormSubmissions] = useState<FormSubmission[]>([]);
   const [loadingSubmissions, setLoadingSubmissions] = useState<boolean>(false);
 
@@ -115,11 +115,15 @@ export default function AdminPortalPage() {
     try {
       const res = await fetch("/api/events");
       const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         setEvents(data);
         setSavedSnapshot(JSON.stringify(data));
-        setSelectedEventId(data[0].id);
-        setForm(data[0]);
+        if (data.length > 0) {
+          setSelectedEventId(data[0].id);
+          setForm(data[0]);
+        } else {
+          setSelectedEventId(null);
+        }
       }
     } catch (err) {
       console.error("Failed to fetch events:", err);
@@ -131,11 +135,15 @@ export default function AdminPortalPage() {
     try {
       const res = await fetch("/api/redirects");
       const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         setRedirects(data);
         setSavedRedirectsSnapshot(JSON.stringify(data));
-        setSelectedRedirectId(data[0].id);
-        setRedirectForm(data[0]);
+        if (data.length > 0) {
+          setSelectedRedirectId(data[0].id);
+          setRedirectForm(data[0]);
+        } else {
+          setSelectedRedirectId(null);
+        }
       }
     } catch (err) {
       console.error("Failed to fetch redirects:", err);
@@ -147,11 +155,15 @@ export default function AdminPortalPage() {
     try {
       const res = await fetch("/api/forms");
       const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         setCustomForms(data);
         setSavedFormsSnapshot(JSON.stringify(data));
-        setSelectedFormId(data[0].id);
-        setCustomFormBuilder(data[0]);
+        if (data.length > 0) {
+          setSelectedFormId(data[0].id);
+          setCustomFormBuilder(data[0]);
+        } else {
+          setSelectedFormId(null);
+        }
       }
     } catch (err) {
       console.error("Failed to fetch custom forms:", err);
@@ -218,9 +230,13 @@ export default function AdminPortalPage() {
       if (field === "type") {
         updatedForm.label = value;
       }
-      setEvents((prevEvents) =>
-        prevEvents.map((e) => (e.id === updatedForm.id ? updatedForm : e))
-      );
+      setEvents((prevEvents) => {
+        const exists = prevEvents.some((e) => e.id === updatedForm.id);
+        if (exists) {
+          return prevEvents.map((e) => (e.id === updatedForm.id ? updatedForm : e));
+        }
+        return [updatedForm, ...prevEvents];
+      });
       return updatedForm;
     });
   };

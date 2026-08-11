@@ -170,13 +170,13 @@ export function Events() {
                     <div className={styles.cardHeader}>
                       <div className={styles.dateBadge}>
                         <span className={styles.dateNum}>
-                          {event.date === "SOON" || event.date === "TBA" || (!event.dateISO && event.date)
-                            ? "SOON"
-                            : event.date || "SOON"}
+                          {event.date === "SOON" || event.date === "COMING" || event.date === "TBA" || (!event.dateISO && event.date)
+                            ? "COMING"
+                            : event.date || "COMING"}
                         </span>
                         <span className={styles.dateMonth}>
-                          {event.date === "SOON" || event.date === "TBA" || (!event.dateISO && event.date)
-                            ? "COMING"
+                          {event.date === "SOON" || event.date === "COMING" || event.date === "TBA" || (!event.dateISO && event.date)
+                            ? "SOON"
                             : event.month || ""}
                         </span>
                       </div>
