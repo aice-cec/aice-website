@@ -74,6 +74,37 @@ export async function uploadSingleFileToDrive(payload: GoogleDriveUploadPayload)
 }
 
 /**
+ * Uploads a file directly from browser to Google Drive via Apps Script Web App.
+ * Returns the created Google Drive File URL or null if fallback to payload is needed.
+ */
+export async function uploadFileFromClientToDrive(payload: GoogleDriveUploadPayload): Promise<string | null> {
+  const scriptUrl =
+    process.env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL ||
+    process.env.GOOGLE_APPS_SCRIPT_URL;
+  if (!scriptUrl) return null;
+
+  try {
+    const res = await fetch(scriptUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8",
+      },
+      body: JSON.stringify(payload),
+      redirect: "follow",
+    });
+
+    const text = await res.text();
+    const data = JSON.parse(text);
+    if (data?.status === "success" && data?.fileUrl) {
+      return data.fileUrl as string;
+    }
+  } catch (err) {
+    console.warn("Direct browser upload to Drive failed, falling back to base64 payload:", err);
+  }
+  return null;
+}
+
+/**
  * Dispatches all task upload files from a submission to Google Drive in separate folders.
  */
 export async function dispatchTaskUploadsToGoogleDrive(

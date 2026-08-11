@@ -3,6 +3,8 @@
 import { useState, useRef } from "react";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
+import { uploadFileFromClientToDrive } from "@/lib/google-drive";
+import { formatTaskFilename } from "@/lib/filename";
 
 const ROLES = [
   "Design Team",
@@ -250,6 +252,60 @@ export default function TaskSubmissionPage() {
 
     setSubmitting(true);
 
+    let finalDesignImg = designImage;
+    let finalContentPdf = contentPdf;
+    let finalOpsPdf = opsPdf;
+    let finalCoordPdf = coordPdf;
+
+    // Directly upload files from browser to Drive via Apps Script Web App to keep Vercel payload under 5KB
+    if (isDesignSelected && designImage.startsWith("data:")) {
+      const url = await uploadFileFromClientToDrive({
+        folderName: "Design Team",
+        fileName: formatTaskFilename(fullName, "png", "Design Task Image"),
+        base64Data: designImage,
+        mimeType: "image/png",
+        applicantName: fullName.trim(),
+        applicantEmail: email.trim(),
+      });
+      if (url) finalDesignImg = url;
+    }
+
+    if (isContentSelected && contentPdf.startsWith("data:")) {
+      const url = await uploadFileFromClientToDrive({
+        folderName: "Content Team",
+        fileName: formatTaskFilename(fullName, "pdf", "Content Team Task PDF"),
+        base64Data: contentPdf,
+        mimeType: "application/pdf",
+        applicantName: fullName.trim(),
+        applicantEmail: email.trim(),
+      });
+      if (url) finalContentPdf = url;
+    }
+
+    if (isOpsSelected && opsPdf.startsWith("data:")) {
+      const url = await uploadFileFromClientToDrive({
+        folderName: "Operations Team",
+        fileName: formatTaskFilename(fullName, "pdf", "Operations Team Task PDF"),
+        base64Data: opsPdf,
+        mimeType: "application/pdf",
+        applicantName: fullName.trim(),
+        applicantEmail: email.trim(),
+      });
+      if (url) finalOpsPdf = url;
+    }
+
+    if (isCoordSelected && coordPdf.startsWith("data:")) {
+      const url = await uploadFileFromClientToDrive({
+        folderName: "Project Coordinator",
+        fileName: formatTaskFilename(fullName, "pdf", "Project Coordinator Task PDF"),
+        base64Data: coordPdf,
+        mimeType: "application/pdf",
+        applicantName: fullName.trim(),
+        applicantEmail: email.trim(),
+      });
+      if (url) finalCoordPdf = url;
+    }
+
     const responsesPayload: Record<string, any> = {
       field_name: fullName.trim(),
       field_class: classBatch.trim(),
@@ -260,12 +316,12 @@ export default function TaskSubmissionPage() {
         field_github: githubUrl.trim(),
         field_live_website: liveUrl.trim(),
       }),
-      ...(isDesignSelected && { field_image: designImage }),
+      ...(isDesignSelected && { field_image: finalDesignImg }),
       ...(isMediaSelected && { field_drive: driveUrl.trim() }),
-      ...(isContentSelected && { field_pdf_content: contentPdf }),
-      ...(isOpsSelected && { field_pdf_ops: opsPdf }),
-      ...(isCoordSelected && { field_pdf_coord: coordPdf }),
-      field_pdf: contentPdf || opsPdf || coordPdf || "",
+      ...(isContentSelected && { field_pdf_content: finalContentPdf }),
+      ...(isOpsSelected && { field_pdf_ops: finalOpsPdf }),
+      ...(isCoordSelected && { field_pdf_coord: finalCoordPdf }),
+      field_pdf: finalContentPdf || finalOpsPdf || finalCoordPdf || "",
       ...(notes.trim() && { field_notes: notes.trim() }),
     };
 
