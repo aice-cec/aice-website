@@ -97,6 +97,9 @@ export async function uploadSingleFileToDrive(
   }
 }
 
+export const DEFAULT_APPS_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbxrlLjV1zyuiIL-2DB9Q496hvamybXipx80Y2Du-sycnC0b4mjNom4oA_LmFYGWYZeH/exec";
+
 /**
  * Uploads a file directly from browser to Google Drive via Apps Script Web App.
  * Returns the created Google Drive File URL or null if fallback to payload is needed.
@@ -104,10 +107,31 @@ export async function uploadSingleFileToDrive(
 export async function uploadFileFromClientToDrive(
   payload: GoogleDriveUploadPayload,
 ): Promise<string | null> {
+  // First attempt: upload via same-origin API proxy (/api/drive-upload) to comply with strict CSP connect-src 'self'
+  try {
+    const proxyRes = await fetch("/api/drive-upload", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (proxyRes.ok) {
+      const proxyData = await proxyRes.json();
+      if (proxyData?.success && proxyData?.fileUrl) {
+        return proxyData.fileUrl as string;
+      }
+    }
+  } catch (proxyErr) {
+    console.warn("[GoogleDrive] Proxy upload failed, attempting direct fetch:", proxyErr);
+  }
+
+  // Second attempt: direct fetch to Google Apps Script Web App
   const scriptUrl =
     process.env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL ||
-    process.env.GOOGLE_APPS_SCRIPT_URL;
-  if (!scriptUrl) return null;
+    process.env.GOOGLE_APPS_SCRIPT_URL ||
+    DEFAULT_APPS_SCRIPT_URL;
 
   try {
     const res = await fetch(scriptUrl, {
@@ -125,10 +149,7 @@ export async function uploadFileFromClientToDrive(
       return data.fileUrl as string;
     }
   } catch (err) {
-    console.warn(
-      "Direct browser upload to Drive failed, falling back to base64 payload:",
-      err,
-    );
+    console.warn("Direct browser upload to Drive failed, falling back to base64 payload:", err);
   }
   return null;
 }
