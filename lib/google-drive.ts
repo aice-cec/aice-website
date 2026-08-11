@@ -106,6 +106,7 @@ export const DEFAULT_APPS_SCRIPT_URL =
  */
 export async function uploadFileFromClientToDrive(
   payload: GoogleDriveUploadPayload,
+  onProgress?: (processedChunks: number, totalChunks: number) => void,
 ): Promise<string | null> {
   // First attempt: upload via same-origin API proxy (/api/drive-upload) to comply with strict CSP connect-src 'self'
   try {
@@ -114,6 +115,8 @@ export async function uploadFileFromClientToDrive(
       const base64Str = payload.base64Data;
       const totalChunks = Math.ceil(base64Str.length / CHUNK_SIZE);
       const uploadId = `up_${Math.random().toString(36).substring(2, 9)}_${Date.now()}`;
+
+      if (onProgress) onProgress(0, totalChunks);
 
       for (let i = 0; i < totalChunks; i++) {
         const chunkData = base64Str.substring(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
@@ -140,11 +143,14 @@ export async function uploadFileFromClientToDrive(
         }
 
         const proxyData = await proxyRes.json();
+        if (onProgress) onProgress(i + 1, totalChunks);
+
         if (proxyData?.success && proxyData?.fileUrl) {
           return proxyData.fileUrl as string;
         }
       }
     } else {
+      if (onProgress) onProgress(0, 1);
       const proxyRes = await fetch("/api/drive-upload", {
         method: "POST",
         headers: {
@@ -155,6 +161,7 @@ export async function uploadFileFromClientToDrive(
 
       if (proxyRes.ok) {
         const proxyData = await proxyRes.json();
+        if (onProgress) onProgress(1, 1);
         if (proxyData?.success && proxyData?.fileUrl) {
           return proxyData.fileUrl as string;
         }
