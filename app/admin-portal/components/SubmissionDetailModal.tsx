@@ -54,17 +54,8 @@ export function extractSubmitterName(
   return "user";
 }
 
-export function formatTaskFilename(username: string, ext: string): string {
-  const cleanName = username
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
-
-  const nameSlug = cleanName || "user";
-  return `${nameSlug}-task.${ext}`;
-}
+import { formatTaskFilename } from "@/lib/filename";
+export { formatTaskFilename };
 
 export function SubmissionDetailModal({
   submission,
@@ -276,7 +267,7 @@ export function SubmissionDetailModal({
                             </div>
                             <button
                               type="button"
-                              onClick={() => onPreviewMedia && onPreviewMedia(val, formatTaskFilename(submitterName, "pdf"))}
+                              onClick={() => onPreviewMedia && onPreviewMedia(val, formatTaskFilename(submitterName, "pdf", f.label))}
                               className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow active:scale-95"
                             >
                               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -292,7 +283,7 @@ export function SubmissionDetailModal({
                               type="button"
                               onClick={() => {
                                 if (onPreviewMedia) {
-                                  onPreviewMedia(val, formatTaskFilename(submitterName, "png"));
+                                  onPreviewMedia(val, formatTaskFilename(submitterName, "png", f.label));
                                 }
                               }}
                               className="px-3 py-1.5 bg-red-600/15 border border-red-500/30 text-red-400 hover:bg-red-600 hover:text-white rounded-lg text-xs font-semibold inline-flex items-center gap-2 transition-colors cursor-pointer"
@@ -307,7 +298,7 @@ export function SubmissionDetailModal({
                               <img
                                 src={val}
                                 alt="Uploaded file"
-                                onClick={() => onPreviewMedia && onPreviewMedia(val, formatTaskFilename(submitterName, "png"))}
+                                onClick={() => onPreviewMedia && onPreviewMedia(val, formatTaskFilename(submitterName, "png", f.label))}
                                 className="max-h-52 rounded-lg border border-white/10 object-contain cursor-pointer hover:opacity-90 transition-opacity bg-black/60 p-1"
                               />
                             </div>

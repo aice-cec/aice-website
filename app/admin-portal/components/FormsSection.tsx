@@ -734,6 +734,7 @@ export function FormsSection({
                                      const fn = formatTaskFilename(
                                        submitterName,
                                        getFileExtension(val),
+                                       f.label,
                                      );
                                      setPreviewMediaUrl(val);
                                      setPreviewFileName(fn);

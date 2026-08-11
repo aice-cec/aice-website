@@ -50,9 +50,30 @@
         "required": true
       },
       {
+        "id": "field_pdf_content",
+        "type": "file",
+        "label": "Content Team Task PDF",
+        "required": false,
+        "placeholder": "Upload Content Team PDF"
+      },
+      {
+        "id": "field_pdf_ops",
+        "type": "file",
+        "label": "Operations Team Task PDF",
+        "required": false,
+        "placeholder": "Upload Operations Team PDF"
+      },
+      {
+        "id": "field_pdf_coord",
+        "type": "file",
+        "label": "Project Coordinator Task PDF",
+        "required": false,
+        "placeholder": "Upload Project Coordinator PDF"
+      },
+      {
         "id": "field_pdf",
         "type": "file",
-        "label": "Task PDF Document",
+        "label": "Task PDF Document (Legacy)",
         "required": false,
         "placeholder": "Upload PDF document"
       },

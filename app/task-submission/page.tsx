@@ -116,8 +116,15 @@ export default function TaskSubmissionPage() {
   const [driveUrl, setDriveUrl] = useState("");
   const [designImage, setDesignImage] = useState<string>("");
   const [designFileName, setDesignFileName] = useState<string>("");
-  const [pdfFile, setPdfFile] = useState<string>("");
-  const [pdfFileName, setPdfFileName] = useState<string>("");
+  
+  // Dedicated PDF states for Content, Operations, and Project Coordinator
+  const [contentPdf, setContentPdf] = useState<string>("");
+  const [contentPdfName, setContentPdfName] = useState<string>("");
+  const [opsPdf, setOpsPdf] = useState<string>("");
+  const [opsPdfName, setOpsPdfName] = useState<string>("");
+  const [coordPdf, setCoordPdf] = useState<string>("");
+  const [coordPdfName, setCoordPdfName] = useState<string>("");
+
   const [notes, setNotes] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
@@ -129,9 +136,9 @@ export default function TaskSubmissionPage() {
   const isWebSelected = selectedRoles.includes("Web Team");
   const isDesignSelected = selectedRoles.includes("Design Team");
   const isMediaSelected = selectedRoles.includes("Media Team");
-  const isOtherSelected = selectedRoles.some((r) =>
-    ["Content Team", "Operations Team", "Project Coordinator"].includes(r),
-  );
+  const isContentSelected = selectedRoles.includes("Content Team");
+  const isOpsSelected = selectedRoles.includes("Operations Team");
+  const isCoordSelected = selectedRoles.includes("Project Coordinator");
 
   const toggleRole = (role: RoleName) => {
     setSelectedRoles((prev) =>
@@ -139,26 +146,31 @@ export default function TaskSubmissionPage() {
     );
   };
 
-  const handlePdfUpload = (file: File | null) => {
+  const handlePdfFileProcessing = (
+    file: File | null,
+    setFile: (data: string) => void,
+    setFileName: (name: string) => void,
+    roleLabel: string,
+  ) => {
     if (!file) {
-      setPdfFile("");
-      setPdfFileName("");
+      setFile("");
+      setFileName("");
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
-      setErrorMsg("PDF file size must be under 10MB");
+      setErrorMsg(`${roleLabel} PDF file size must be under 10MB`);
       return;
     }
     if (file.type !== "application/pdf" && !file.name.endsWith(".pdf")) {
-      setErrorMsg("Please upload a valid PDF document (.pdf)");
+      setErrorMsg(`Please upload a valid PDF document (.pdf) for ${roleLabel}`);
       return;
     }
     setErrorMsg("");
-    setPdfFileName(file.name);
+    setFileName(file.name);
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      setPdfFile(e.target?.result as string);
+      setFile(e.target?.result as string);
     };
     reader.readAsDataURL(file);
   };
@@ -226,8 +238,14 @@ export default function TaskSubmissionPage() {
     if (isMediaSelected && !driveUrl.trim()) {
       return setErrorMsg("Media Team applicants must provide a Google Drive / Cloud Link.");
     }
-    if (isOtherSelected && !pdfFile) {
-      return setErrorMsg("Applicants for Content, Operations, or Project Coordinator must upload a Task PDF.");
+    if (isContentSelected && !contentPdf) {
+      return setErrorMsg("Content Team applicants must upload a Content Team Task PDF.");
+    }
+    if (isOpsSelected && !opsPdf) {
+      return setErrorMsg("Operations Team applicants must upload an Operations Team Task PDF.");
+    }
+    if (isCoordSelected && !coordPdf) {
+      return setErrorMsg("Project Coordinator applicants must upload a Project Coordinator Task PDF.");
     }
 
     setSubmitting(true);
@@ -244,7 +262,10 @@ export default function TaskSubmissionPage() {
       }),
       ...(isDesignSelected && { field_image: designImage }),
       ...(isMediaSelected && { field_drive: driveUrl.trim() }),
-      ...(isOtherSelected && { field_pdf: pdfFile }),
+      ...(isContentSelected && { field_pdf_content: contentPdf }),
+      ...(isOpsSelected && { field_pdf_ops: opsPdf }),
+      ...(isCoordSelected && { field_pdf_coord: coordPdf }),
+      field_pdf: contentPdf || opsPdf || coordPdf || "",
       ...(notes.trim() && { field_notes: notes.trim() }),
     };
 
@@ -352,8 +373,12 @@ export default function TaskSubmissionPage() {
                 setDriveUrl("");
                 setDesignImage("");
                 setDesignFileName("");
-                setPdfFile("");
-                setPdfFileName("");
+                setContentPdf("");
+                setContentPdfName("");
+                setOpsPdf("");
+                setOpsPdfName("");
+                setCoordPdf("");
+                setCoordPdfName("");
                 setNotes("");
               }}
               className="inline-block px-6 py-3 bg-red-600 hover:bg-red-500 text-white font-bold text-sm tracking-wider uppercase transition-colors"
@@ -622,40 +647,149 @@ export default function TaskSubmissionPage() {
                   </div>
                 )}
 
-                {/* PDF FIELD FOR CONTENT, OPERATIONS, PROJECT COORDINATOR */}
-                {isOtherSelected && (
+                {/* CONTENT TEAM PDF FIELD */}
+                {isContentSelected && (
                   <div className="bg-[#121217] border border-zinc-800 p-5 sm:p-6 space-y-3">
                     <div className="text-xs font-mono bg-red-950/60 text-red-400 border border-red-800/40 px-2.5 py-1 inline-flex items-center gap-2 uppercase font-bold">
                       <DocumentIcon />
-                      <span>Task PDF Document Requirements</span>
+                      <span>Content Team Task PDF</span>
                     </div>
                     <label className="flex items-center text-sm font-bold text-white uppercase tracking-wider font-heading">
                       <span className="bg-red-600 text-white font-mono px-2 py-0.5 text-xs font-bold mr-3">
-                        09
+                        09A
                       </span>
-                      TASK PDF UPLOAD <span className="text-red-500 ml-1">*</span>
+                      CONTENT TASK PDF UPLOAD <span className="text-red-500 ml-1">*</span>
                     </label>
                     <p className="text-xs text-zinc-400">
-                      Upload your task write-up or document in PDF format (Max 10MB).
+                      Upload your Content Team task document in PDF format (Max 10MB).
                     </p>
                     <input
                       type="file"
                       accept=".pdf,application/pdf"
-                      onChange={(e) => handlePdfUpload(e.target.files?.[0] || null)}
+                      onChange={(e) =>
+                        handlePdfFileProcessing(
+                          e.target.files?.[0] || null,
+                          setContentPdf,
+                          setContentPdfName,
+                          "Content Team",
+                        )
+                      }
                       className="w-full text-xs text-zinc-400 file:mr-4 file:py-2.5 file:px-4 file:border-0 file:text-xs file:font-bold file:uppercase file:bg-red-600 file:text-white hover:file:bg-red-500 cursor-pointer bg-zinc-950 p-2 border border-zinc-800"
-                      required={isOtherSelected && !pdfFile}
+                      required={isContentSelected && !contentPdf}
                     />
-                    {pdfFileName && (
+                    {contentPdfName && (
                       <div className="flex items-center justify-between p-3 bg-zinc-900 border border-zinc-800 text-xs text-zinc-200 mt-2">
                         <span className="truncate max-w-[80%] font-mono flex items-center gap-2">
                           <DocumentIcon />
-                          <span>{pdfFileName}</span>
+                          <span>{contentPdfName}</span>
                         </span>
                         <button
                           type="button"
                           onClick={() => {
-                            setPdfFile("");
-                            setPdfFileName("");
+                            setContentPdf("");
+                            setContentPdfName("");
+                          }}
+                          className="text-red-500 hover:text-red-400 text-xs font-bold uppercase"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* OPERATIONS TEAM PDF FIELD */}
+                {isOpsSelected && (
+                  <div className="bg-[#121217] border border-zinc-800 p-5 sm:p-6 space-y-3">
+                    <div className="text-xs font-mono bg-red-950/60 text-red-400 border border-red-800/40 px-2.5 py-1 inline-flex items-center gap-2 uppercase font-bold">
+                      <DocumentIcon />
+                      <span>Operations Team Task PDF</span>
+                    </div>
+                    <label className="flex items-center text-sm font-bold text-white uppercase tracking-wider font-heading">
+                      <span className="bg-red-600 text-white font-mono px-2 py-0.5 text-xs font-bold mr-3">
+                        09B
+                      </span>
+                      OPERATIONS TASK PDF UPLOAD <span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <p className="text-xs text-zinc-400">
+                      Upload your Operations Team task document in PDF format (Max 10MB).
+                    </p>
+                    <input
+                      type="file"
+                      accept=".pdf,application/pdf"
+                      onChange={(e) =>
+                        handlePdfFileProcessing(
+                          e.target.files?.[0] || null,
+                          setOpsPdf,
+                          setOpsPdfName,
+                          "Operations Team",
+                        )
+                      }
+                      className="w-full text-xs text-zinc-400 file:mr-4 file:py-2.5 file:px-4 file:border-0 file:text-xs file:font-bold file:uppercase file:bg-red-600 file:text-white hover:file:bg-red-500 cursor-pointer bg-zinc-950 p-2 border border-zinc-800"
+                      required={isOpsSelected && !opsPdf}
+                    />
+                    {opsPdfName && (
+                      <div className="flex items-center justify-between p-3 bg-zinc-900 border border-zinc-800 text-xs text-zinc-200 mt-2">
+                        <span className="truncate max-w-[80%] font-mono flex items-center gap-2">
+                          <DocumentIcon />
+                          <span>{opsPdfName}</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOpsPdf("");
+                            setOpsPdfName("");
+                          }}
+                          className="text-red-500 hover:text-red-400 text-xs font-bold uppercase"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* PROJECT COORDINATOR PDF FIELD */}
+                {isCoordSelected && (
+                  <div className="bg-[#121217] border border-zinc-800 p-5 sm:p-6 space-y-3">
+                    <div className="text-xs font-mono bg-red-950/60 text-red-400 border border-red-800/40 px-2.5 py-1 inline-flex items-center gap-2 uppercase font-bold">
+                      <DocumentIcon />
+                      <span>Project Coordinator Task PDF</span>
+                    </div>
+                    <label className="flex items-center text-sm font-bold text-white uppercase tracking-wider font-heading">
+                      <span className="bg-red-600 text-white font-mono px-2 py-0.5 text-xs font-bold mr-3">
+                        09C
+                      </span>
+                      PROJECT COORDINATOR TASK PDF UPLOAD <span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <p className="text-xs text-zinc-400">
+                      Upload your Project Coordinator task document in PDF format (Max 10MB).
+                    </p>
+                    <input
+                      type="file"
+                      accept=".pdf,application/pdf"
+                      onChange={(e) =>
+                        handlePdfFileProcessing(
+                          e.target.files?.[0] || null,
+                          setCoordPdf,
+                          setCoordPdfName,
+                          "Project Coordinator",
+                        )
+                      }
+                      className="w-full text-xs text-zinc-400 file:mr-4 file:py-2.5 file:px-4 file:border-0 file:text-xs file:font-bold file:uppercase file:bg-red-600 file:text-white hover:file:bg-red-500 cursor-pointer bg-zinc-950 p-2 border border-zinc-800"
+                      required={isCoordSelected && !coordPdf}
+                    />
+                    {coordPdfName && (
+                      <div className="flex items-center justify-between p-3 bg-zinc-900 border border-zinc-800 text-xs text-zinc-200 mt-2">
+                        <span className="truncate max-w-[80%] font-mono flex items-center gap-2">
+                          <DocumentIcon />
+                          <span>{coordPdfName}</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCoordPdf("");
+                            setCoordPdfName("");
                           }}
                           className="text-red-500 hover:text-red-400 text-xs font-bold uppercase"
                         >

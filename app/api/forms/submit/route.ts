@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { sendTicketEmail } from "@/lib/email";
 import { getLocalForms } from "@/lib/forms";
 import { validateResponses } from "@/lib/form-validation";
+import { dispatchTaskUploadsToGoogleDrive } from "@/lib/google-drive";
 
 const FORM_COLUMNS =
   "id,slug,title,fields,is_active,issue_ticket,whatsapp_link,event_id";
@@ -122,6 +123,19 @@ export async function POST(req: Request) {
         if (toEmail && attendeeName) break;
       }
     }
+
+    // Dispatch Google Drive uploads in the background if Google Apps Script is configured
+    after(async () => {
+      try {
+        await dispatchTaskUploadsToGoogleDrive(
+          attendeeName || "Applicant",
+          toEmail || "n/a",
+          validation.responses,
+        );
+      } catch (err) {
+        console.error("Background Drive upload failed:", err);
+      }
+    });
 
     // Send ticket email after response is returned
     if (ticketCode && ticketImageUrl && toEmail) {
