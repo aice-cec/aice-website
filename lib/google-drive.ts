@@ -109,18 +109,55 @@ export async function uploadFileFromClientToDrive(
 ): Promise<string | null> {
   // First attempt: upload via same-origin API proxy (/api/drive-upload) to comply with strict CSP connect-src 'self'
   try {
-    const proxyRes = await fetch("/api/drive-upload", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    const CHUNK_SIZE = 1.8 * 1024 * 1024; // 1.8 MB chunks to safely stay under Vercel 4.5MB limit
+    if (payload.base64Data && payload.base64Data.length > CHUNK_SIZE) {
+      const base64Str = payload.base64Data;
+      const totalChunks = Math.ceil(base64Str.length / CHUNK_SIZE);
+      const uploadId = `up_${Math.random().toString(36).substring(2, 9)}_${Date.now()}`;
 
-    if (proxyRes.ok) {
-      const proxyData = await proxyRes.json();
-      if (proxyData?.success && proxyData?.fileUrl) {
-        return proxyData.fileUrl as string;
+      for (let i = 0; i < totalChunks; i++) {
+        const chunkData = base64Str.substring(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
+        const chunkPayload = {
+          ...payload,
+          base64Data: "",
+          isChunked: true,
+          uploadId,
+          chunkIndex: i,
+          totalChunks,
+          chunkData,
+        };
+
+        const proxyRes = await fetch("/api/drive-upload", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(chunkPayload),
+        });
+
+        if (!proxyRes.ok) {
+          throw new Error(`Chunk ${i + 1}/${totalChunks} failed with status ${proxyRes.status}`);
+        }
+
+        const proxyData = await proxyRes.json();
+        if (proxyData?.success && proxyData?.fileUrl) {
+          return proxyData.fileUrl as string;
+        }
+      }
+    } else {
+      const proxyRes = await fetch("/api/drive-upload", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (proxyRes.ok) {
+        const proxyData = await proxyRes.json();
+        if (proxyData?.success && proxyData?.fileUrl) {
+          return proxyData.fileUrl as string;
+        }
       }
     }
   } catch (proxyErr) {
