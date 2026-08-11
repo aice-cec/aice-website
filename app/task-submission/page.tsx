@@ -190,6 +190,7 @@ export default function TaskSubmissionPage() {
   const [driveUrl, setDriveUrl] = useState("");
   const [designImage, setDesignImage] = useState<string>("");
   const [designFileName, setDesignFileName] = useState<string>("");
+  const [designLink, setDesignLink] = useState("");
 
   // Dedicated PDF states for Content, Operations, and Project Coordinator
   const [contentPdf, setContentPdf] = useState<string>("");
@@ -340,10 +341,17 @@ export default function TaskSubmissionPage() {
           "Web Team applicants must provide a Live Website Link.",
         );
     }
-    if (isDesignSelected && !designImage) {
-      return setErrorMsg(
-        "Design Team applicants must upload a Design Task Image.",
-      );
+    if (isDesignSelected) {
+      if (!designImage) {
+        return setErrorMsg(
+          "Design Team applicants must upload a Design Task Image.",
+        );
+      }
+      if (!designLink.trim()) {
+        return setErrorMsg(
+          "Design Team applicants must provide an Editable Figma / Canva Link.",
+        );
+      }
     }
     if (isMediaSelected && !driveUrl.trim()) {
       return setErrorMsg(
@@ -548,7 +556,10 @@ export default function TaskSubmissionPage() {
         field_github: githubUrl.trim(),
         field_live_website: liveUrl.trim(),
       }),
-      ...(isDesignSelected && { field_image: finalDesignImg }),
+      ...(isDesignSelected && {
+        field_image: finalDesignImg,
+        field_design_link: designLink.trim(),
+      }),
       ...(isMediaSelected && { field_drive: driveUrl.trim() }),
       ...(isContentSelected && { field_pdf_content: finalContentPdf }),
       ...(isOpsSelected && { field_pdf_ops: finalOpsPdf }),
@@ -675,6 +686,7 @@ export default function TaskSubmissionPage() {
                 setDriveUrl("");
                 setDesignImage("");
                 setDesignFileName("");
+                setDesignLink("");
                 setContentPdf("");
                 setContentPdfName("");
                 setOpsPdf("");
@@ -886,49 +898,77 @@ export default function TaskSubmissionPage() {
 
                 {/* DESIGN TEAM FIELDS */}
                 {isDesignSelected && (
-                  <div className="bg-[#121217] border border-zinc-800 p-5 sm:p-6 space-y-3">
-                    <div className="text-xs font-mono bg-red-950/60 text-red-400 border border-red-800/40 px-2.5 py-1 inline-flex items-center gap-2 uppercase font-bold">
-                      <PaletteIcon />
-                      <span>Design Team Task Requirements</span>
-                    </div>
-                    <label className="flex items-center text-sm font-bold text-white uppercase tracking-wider font-heading">
-                      <span className="bg-red-600 text-white font-mono px-2 py-0.5 text-xs font-bold mr-3">
-                        07
-                      </span>
-                      DESIGN TASK IMAGE / PORTFOLIO{" "}
-                      <span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <p className="text-xs text-zinc-400">
-                      Upload an image file of your design task (PNG, JPG, WebP -
-                      Max 10MB).
-                    </p>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) =>
-                        handleImageUpload(e.target.files?.[0] || null, e.target)
-                      }
-                      className="w-full text-xs text-zinc-400 file:mr-4 file:py-2.5 file:px-4 file:border-0 file:text-xs file:font-bold file:uppercase file:bg-red-600 file:text-white hover:file:bg-red-500 cursor-pointer bg-zinc-950 p-2 border border-zinc-800"
-                      required={isDesignSelected && !designImage}
-                    />
-                    {designFileName && (
-                      <div className="flex items-center justify-between p-3 bg-zinc-900 border border-zinc-800 text-xs text-zinc-200 mt-2">
-                        <span className="truncate max-w-[80%] font-mono flex items-center gap-2">
-                          <ImageIcon />
-                          <span>{designFileName}</span>
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setDesignImage("");
-                            setDesignFileName("");
-                          }}
-                          className="text-red-500 hover:text-red-400 text-xs font-bold uppercase"
-                        >
-                          Remove
-                        </button>
+                  <div className="space-y-6">
+                    <div className="bg-[#121217] border border-zinc-800 p-5 sm:p-6 space-y-3">
+                      <div className="text-xs font-mono bg-red-950/60 text-red-400 border border-red-800/40 px-2.5 py-1 inline-flex items-center gap-2 uppercase font-bold">
+                        <PaletteIcon />
+                        <span>Design Team Task Requirements</span>
                       </div>
-                    )}
+                      <label className="flex items-center text-sm font-bold text-white uppercase tracking-wider font-heading">
+                        <span className="bg-red-600 text-white font-mono px-2 py-0.5 text-xs font-bold mr-3">
+                          07A
+                        </span>
+                        DESIGN TASK IMAGE{" "}
+                        <span className="text-red-500 ml-1">*</span>
+                      </label>
+                      <p className="text-xs text-zinc-400">
+                        Upload an image file of your design task (PNG, JPG - Max
+                        10MB).
+                      </p>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) =>
+                          handleImageUpload(
+                            e.target.files?.[0] || null,
+                            e.target,
+                          )
+                        }
+                        className="w-full text-xs text-zinc-400 file:mr-4 file:py-2.5 file:px-4 file:border-0 file:text-xs file:font-bold file:uppercase file:bg-red-600 file:text-white hover:file:bg-red-500 cursor-pointer bg-zinc-950 p-2 border border-zinc-800"
+                        required={isDesignSelected && !designImage}
+                      />
+                      {designFileName && (
+                        <div className="flex items-center justify-between p-3 bg-zinc-900 border border-zinc-800 text-xs text-zinc-200 mt-2">
+                          <span className="truncate max-w-[80%] font-mono flex items-center gap-2">
+                            <ImageIcon />
+                            <span>{designFileName}</span>
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setDesignImage("");
+                              setDesignFileName("");
+                            }}
+                            className="text-red-500 hover:text-red-400 text-xs font-bold uppercase"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="bg-[#121217] border border-zinc-800 p-5 sm:p-6 space-y-3">
+                      <label className="flex items-center text-sm font-bold text-white uppercase tracking-wider font-heading">
+                        <span className="bg-red-600 text-white font-mono px-2 py-0.5 text-xs font-bold mr-3">
+                          07B
+                        </span>
+                        EDITABLE FIGMA LINK{" "}
+                        <span className="text-red-500 ml-1">*</span>
+                      </label>
+                      <p className="text-xs text-zinc-400">
+                        Provide the link to your editable Figma file or Canva
+                        design project (Ensure access permission is set to
+                        "Anyone with the link can view/edit").
+                      </p>
+                      <input
+                        type="url"
+                        value={designLink}
+                        onChange={(e) => setDesignLink(e.target.value)}
+                        placeholder="https://www.figma.com/file/... or https://www.canva.com/design/..."
+                        className="w-full bg-zinc-950 border border-zinc-800 text-white px-4 py-3 text-sm focus:outline-none focus:border-red-600 transition-colors"
+                        required={isDesignSelected}
+                      />
+                    </div>
                   </div>
                 )}
 

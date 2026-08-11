@@ -51,10 +51,18 @@ export function validateResponses(
 
   const fieldsById = new Map(fields.map((field) => [field.id, field]));
   for (const key of Object.keys(rawResponses)) {
-    if (!fieldsById.has(key)) return { error: "Submission contains an unknown field" };
+    if (!fieldsById.has(key) && !key.startsWith("field_") && !key.startsWith("__")) {
+      return { error: "Submission contains an unknown field" };
+    }
   }
 
   const responses: FormResponses = {};
+  // Copy over extra valid field_ keys
+  for (const [key, val] of Object.entries(rawResponses)) {
+    if (key.startsWith("field_") && typeof val === "string" && val.trim()) {
+      responses[key] = val.trim();
+    }
+  }
   for (const field of fields) {
     const value = rawResponses[field.id];
     const isEmpty =

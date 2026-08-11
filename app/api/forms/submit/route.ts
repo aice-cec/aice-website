@@ -31,12 +31,21 @@ export async function POST(req: Request) {
       .or(`id.eq.${formId},slug.eq.${formId}`)
       .single();
 
-    formObj =
-      dbForm ||
-      getLocalForms().find((f) => f.id === formId || f.slug === formId);
+    const localForm = getLocalForms().find((f) => f.id === formId || f.slug === formId);
+    formObj = dbForm || localForm;
 
     if (!formObj) {
       return NextResponse.json({ error: "Form not found" }, { status: 404 });
+    }
+
+    // Merge any newly added local fields (e.g. field_design_link) into formObj.fields if loading from DB snapshot
+    if (formObj && localForm?.fields && Array.isArray(formObj.fields)) {
+      const existingIds = new Set(formObj.fields.map((f: any) => f.id));
+      for (const lf of localForm.fields) {
+        if (!existingIds.has(lf.id)) {
+          formObj.fields.push(lf);
+        }
+      }
     }
 
     if (formObj?.is_active === false) {

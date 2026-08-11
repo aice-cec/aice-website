@@ -80,9 +80,16 @@
       {
         "id": "field_image",
         "type": "file",
-        "label": "Design Task Image / Portfolio",
+        "label": "Design Task Image",
         "required": false,
-        "placeholder": "Upload Design Image (PNG/JPG/WebP)"
+        "placeholder": "Upload Design Image (PNG/JPEG)"
+      },
+      {
+        "id": "field_design_link",
+        "type": "text",
+        "label": "Figma Link",
+        "required": false,
+        "placeholder": "https://www.figma.com/... or https://www.canva.com/..."
       },
       {
         "id": "field_drive",

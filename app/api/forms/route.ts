@@ -54,6 +54,20 @@ export async function GET(req: Request) {
           mergedForms.push(lf);
         }
       }
+
+      // Merge newly added local fields into DB form field arrays
+      for (const form of mergedForms) {
+        const lf = localForms.find((l) => l.id === form.id || l.slug === form.slug);
+        if (lf && Array.isArray(form.fields) && Array.isArray(lf.fields)) {
+          const existingFieldIds = new Set(form.fields.map((f: any) => f.id));
+          for (const localField of lf.fields) {
+            if (!existingFieldIds.has(localField.id)) {
+              form.fields.push(localField);
+            }
+          }
+        }
+      }
+
       return NextResponse.json(mergedForms, {
         headers: { "Cache-Control": "s-maxage=10, stale-while-revalidate=30" },
       });

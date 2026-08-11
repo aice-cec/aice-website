@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { CustomFormItem, FormSubmission } from "../types";
+import { formatTaskFilename } from "@/lib/filename";
+
+export { formatTaskFilename };
 
 interface SubmissionDetailModalProps {
   submission: FormSubmission | null;
@@ -53,9 +56,6 @@ export function extractSubmitterName(
 
   return "user";
 }
-
-import { formatTaskFilename } from "@/lib/filename";
-export { formatTaskFilename };
 
 export function SubmissionDetailModal({
   submission,
@@ -119,13 +119,10 @@ export function SubmissionDetailModal({
     }
 
     setSaving(true);
-
     try {
       const res = await fetch("/api/forms/responses", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: submission.id,
           responses: editResponses,
@@ -133,37 +130,30 @@ export function SubmissionDetailModal({
       });
 
       const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to update submission");
-      }
+      if (!res.ok) throw new Error(data.error || "Failed to update submission");
 
-      const updatedSub: FormSubmission = {
-        ...submission,
-        responses: editResponses,
-      };
-
-      onUpdateSubmission(updatedSub);
-      setIsEditing(false);
+      onUpdateSubmission(data);
       showToast("Submission updated successfully!");
+      setIsEditing(false);
     } catch (err: any) {
-      setErrorMsg(err.message || "Failed to save changes");
+      setErrorMsg(err.message || "Failed to save submission changes");
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this submission permanently?")) {
+    if (!confirm("Are you sure you want to delete this submission? This action cannot be undone.")) {
       return;
     }
 
     try {
-      const res = await fetch(`/api/forms/responses?id=${submission.id}`, {
+      const res = await fetch(`/api/forms/responses?id=${encodeURIComponent(submission.id)}`, {
         method: "DELETE",
       });
 
-      const data = await res.json();
       if (!res.ok) {
+        const data = await res.json();
         throw new Error(data.error || "Failed to delete submission");
       }
 
@@ -176,6 +166,38 @@ export function SubmissionDetailModal({
   };
 
   const currentResponses = submission.responses || {};
+  const definedFieldIds = new Set((form.fields || []).map((f) => f.id));
+  const extraFields: typeof form.fields = [];
+  const activeResponses = isEditing ? editResponses : currentResponses;
+
+  if (activeResponses) {
+    for (const [key, val] of Object.entries(activeResponses)) {
+      if (
+        !definedFieldIds.has(key) &&
+        !key.startsWith("__") &&
+        val !== undefined &&
+        val !== null &&
+        val !== ""
+      ) {
+        let label = key;
+        if (key === "field_design_link") label = "Editable Figma / Canva Link";
+        else if (key.startsWith("field_")) {
+          label = key
+            .replace(/^field_/, "")
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (c) => c.toUpperCase());
+        }
+        extraFields.push({
+          id: key,
+          label,
+          type: "text",
+          required: false,
+        });
+      }
+    }
+  }
+
+  const allDisplayFields = [...(form.fields || []), ...extraFields];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#070709]/85 backdrop-blur-sm overflow-y-auto">
@@ -234,7 +256,7 @@ export function SubmissionDetailModal({
             </div>
           )}
 
-          {form.fields.map((f, idx) => {
+          {allDisplayFields.map((f, idx) => {
             const val = isEditing ? editResponses[f.id] : currentResponses[f.id];
             return (
               <div key={f.id} className={idx === 0 ? "" : "pt-4"}>
@@ -307,6 +329,20 @@ export function SubmissionDetailModal({
                       </div>
                     ) : Array.isArray(val) ? (
                       val.join(", ")
+                    ) : typeof val === "string" && val.startsWith("http") ? (
+                      <a
+                        href={val}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-red-400 hover:text-red-300 underline inline-flex items-center gap-1.5 font-mono text-xs break-all"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                          <polyline points="15 3 21 3 21 9" />
+                          <line x1="10" y1="14" x2="21" y2="3" />
+                        </svg>
+                        <span>{val}</span>
+                      </a>
                     ) : (
                       val || "-"
                     )}
