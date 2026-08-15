@@ -204,6 +204,7 @@ export default function TaskSubmissionPage() {
 
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isFormActive, setIsFormActive] = useState<boolean | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [ticketCode, setTicketCode] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -211,6 +212,19 @@ export default function TaskSubmissionPage() {
   const [uploadStatusText, setUploadStatusText] =
     useState("SUBMITTING TASK...");
   const errorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetch("/api/forms?id=execom-task-submission")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && typeof data.is_active === "boolean") {
+          setIsFormActive(data.is_active);
+        } else {
+          setIsFormActive(true);
+        }
+      })
+      .catch(() => setIsFormActive(true));
+  }, []);
 
   useEffect(() => {
     if (errorMsg && errorRef.current) {
@@ -635,7 +649,25 @@ export default function TaskSubmissionPage() {
           </p>
         </div>
 
-        {submitted ? (
+        {isFormActive === false ? (
+          /* CLOSED STATE */
+          <div className="bg-[#121217] border-2 border-red-600/50 p-6 sm:p-10 shadow-[8px_8px_0px_#000000] text-center space-y-6">
+            <div className="w-16 h-16 bg-red-600/20 border-2 border-red-500 text-red-500 flex items-center justify-center mx-auto text-2xl font-bold">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mx-auto">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold font-heading text-white uppercase mb-2">
+                TASK SUBMISSIONS ARE CLOSED
+              </h2>
+              <p className="text-zinc-400 text-sm sm:text-base max-w-md mx-auto">
+                Task submissions for AICE Execom Call 2026 are currently closed. New task submissions are no longer being accepted.
+              </p>
+            </div>
+          </div>
+        ) : submitted ? (
           /* SUCCESS STATE */
           <div className="bg-[#121217] border-2 border-red-600/50 p-6 sm:p-10 shadow-[8px_8px_0px_#000000] text-center space-y-6">
             <div className="w-16 h-16 bg-red-600/20 border-2 border-red-500 text-red-500 flex items-center justify-center mx-auto text-2xl font-bold">

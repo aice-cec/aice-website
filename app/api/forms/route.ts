@@ -28,12 +28,12 @@ export async function GET(req: Request) {
       const { data } = await supabase
         .from("forms")
         .select("*")
-        .eq("id", id)
+        .or(`id.eq.${id},slug.eq.${id}`)
         .single();
 
       if (data) return NextResponse.json(data);
 
-      const fallback = getLocalForms().find((f) => f.id === id);
+      const fallback = getLocalForms().find((f) => f.id === id || f.slug === id);
       if (fallback) return NextResponse.json(fallback);
 
       return NextResponse.json({ error: "Form not found" }, { status: 404 });

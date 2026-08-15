@@ -317,6 +317,52 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
     );
   }
 
+  if (!form.is_active) {
+    return (
+      <div className="min-h-screen bg-[#070709] text-gray-100 font-sans flex flex-col justify-between py-8 px-4 sm:px-6 relative">
+        <div
+          className="fixed inset-0 pointer-events-none opacity-20 z-0"
+          style={{
+            backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px)`,
+            backgroundSize: "24px 24px",
+          }}
+        />
+
+        <header className="w-full max-w-3xl mx-auto flex items-center justify-between py-4 mb-6 border-b-2 border-white/15 z-10">
+          <div className="flex items-center gap-3">
+            <div className="relative w-9 h-9 flex-shrink-0">
+              <Image
+                src="/logos/aice_logo.png"
+                alt="AICE logo"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <div>
+              <div className="text-[40px] font-black uppercase tracking-widest text-red-500 font-mono">
+                FORMS
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main className="w-full max-w-3xl mx-auto bg-[#121217] border-2 border-white/15 shadow-[8px_8px_0px_#000000] p-6 sm:p-10 z-10 text-center space-y-6 my-auto">
+          <div className="w-16 h-16 bg-red-600/20 border-2 border-red-500 text-red-500 flex items-center justify-center mx-auto">
+            <BanIcon />
+          </div>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black uppercase text-white mb-2 font-mono">
+              REGISTRATIONS CLOSED
+            </h1>
+            <p className="text-gray-400 text-sm max-w-md mx-auto">
+              Registrations for <span className="text-white font-semibold">{form.title}</span> are currently closed. New submissions are not being accepted at this time.
+            </p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   // Render Submitted Confirmation Screen
   if (submitted) {
     return (
@@ -393,12 +439,6 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
             >
               Submit Another Response
             </button>
-            <a
-              href="/"
-              className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-black text-xs uppercase tracking-widest border-2 border-black shadow-[3px_3px_0px_#000000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              Done <ArrowRightIcon />
-            </a>
           </div>
         </div>
       </div>
