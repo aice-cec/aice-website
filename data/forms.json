@@ -120,7 +120,7 @@
         "placeholder": "Any additional information..."
       }
     ],
-    "is_active": true,
+    "is_active": false,
     "issue_ticket": false
   }
 ]
