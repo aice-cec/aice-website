@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Bebas_Neue, Kanit } from "next/font/google";
 import "./globals.css";
+import ToastContainer from "@/app/components/Toast";
+import { Analytics } from "@vercel/analytics/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +30,10 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://aice-cec.vercel.app"),
-  title: "AICE",
+  title: {
+    default: "AICE | AI Innovation Community for Excellence",
+    template: "%s | AICE CEC",
+  },
   description:
     "Official AI community of College of Engineering Chengannur (CEC). A platform where curious minds meet, ideas evolve, and innovation becomes impact.",
   keywords: [
@@ -39,20 +44,47 @@ export const metadata: Metadata = {
     "CEC Chengannur",
     "Artificial Intelligence",
     "Machine Learning",
+    "CEC AI",
+    "Robotics",
+    "Kerala Tech Community",
   ],
   authors: [{ name: "AICE CEC Team" }],
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   openGraph: {
     title: "AICE | AI Innovation Community for Excellence",
     description:
       "Official AI community of College of Engineering Chengannur. Join us to learn, build, and innovate.",
+    url: "https://aice-cec.vercel.app",
     siteName: "AICE CEC",
     type: "website",
+    images: [
+      {
+        url: "/logos/aice_logo.png",
+        width: 800,
+        height: 800,
+        alt: "AICE CEC Logo",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "AICE | AI Innovation Community for Excellence",
     description:
       "Official AI community of College of Engineering Chengannur. Join us to learn, build, and innovate.",
+    images: ["/logos/aice_logo.png"],
   },
   applicationName: "AICE",
   appleWebApp: {
@@ -83,8 +115,35 @@ export const metadata: Metadata = {
   },
 };
 
-import ToastContainer from "@/app/components/Toast";
-import { Analytics } from "@vercel/analytics/react";
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "EducationalOrganization",
+      "@id": "https://aice-cec.vercel.app/#organization",
+      name: "AICE - Artificial Intelligence Community for Excellence",
+      url: "https://aice-cec.vercel.app",
+      logo: "https://aice-cec.vercel.app/logos/aice_logo.png",
+      parentOrganization: {
+        "@type": "CollegeOrUniversity",
+        name: "College of Engineering Chengannur",
+      },
+      sameAs: [
+        "https://instagram.com/aice_cec",
+        "https://linkedin.com/company/aice-cec",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://aice-cec.vercel.app/#website",
+      url: "https://aice-cec.vercel.app",
+      name: "AICE CEC",
+      publisher: {
+        "@id": "https://aice-cec.vercel.app/#organization",
+      },
+    },
+  ],
+};
 
 export default function RootLayout({
   children,
@@ -96,6 +155,12 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${bebasNeue.variable} ${kanit.variable} h-full antialiased dark`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100 selection:bg-white selection:text-black">
         {children}
         <ToastContainer />

@@ -7,9 +7,12 @@ export default function manifest(): MetadataRoute.Manifest {
     description:
       "Official AI community of College of Engineering Chengannur (CEC). A platform where curious minds meet, ideas evolve, and innovation becomes impact.",
     start_url: "/",
+    scope: "/",
     display: "standalone",
+    orientation: "portrait",
     background_color: "#09090b",
     theme_color: "#000000",
+    categories: ["education", "technology", "community"],
     icons: [
       {
         src: "/logos/favicon-16x16.png",
@@ -32,6 +35,12 @@ export default function manifest(): MetadataRoute.Manifest {
         sizes: "512x512",
         type: "image/png",
         purpose: "any",
+      },
+      {
+        src: "/logos/android-chrome-512x512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
       },
     ],
   };
