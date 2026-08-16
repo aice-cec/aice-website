@@ -358,20 +358,6 @@ export function Execom() {
           toggleActions: "play none none none",
         },
       });
-
-      // Faculty card slide-up
-      gsap.from(`.${styles.facultyCard}`, {
-        opacity: 0,
-        y: 40,
-        duration: 0.7,
-        ease: "power3.out",
-        clearProps: "all",
-        scrollTrigger: {
-          trigger: `.${styles.facultyCard}`,
-          start: "top 88%",
-          toggleActions: "play none none none",
-        },
-      });
     }, sectionRef);
 
     return () => ctx.revert();
