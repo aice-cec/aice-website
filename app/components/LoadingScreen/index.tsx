@@ -64,7 +64,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
       >
         <video
           ref={videoRef}
-          src="/assets/loading.mp4"
+          src="/assets/loading.webm"
           className={styles.video}
           autoPlay
           muted
