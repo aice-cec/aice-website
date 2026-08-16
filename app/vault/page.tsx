@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, Suspense } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import styles from "./Vault.module.css";
 
-const DEFAULT_PIN = process.env.NEXT_PUBLIC_EVENT_PIN || "20265";
+const DEFAULT_PIN = process.env.NEXT_PUBLIC_EVENT_PIN || "7268";
 
 // Clean SVG Icons
 function VolumeMuteIcon() {
@@ -207,7 +208,7 @@ function VaultContent() {
   // Phase State: "LOCKED" | "DECRYPTING" | "UNLOCKED"
   const [phase, setPhase] = useState<"LOCKED" | "DECRYPTING" | "UNLOCKED">("LOCKED");
   const [fullName, setFullName] = useState("");
-  const [digits, setDigits] = useState<string[]>(["", "", "", "", ""]);
+  const [digits, setDigits] = useState<string[]>(["", "", "", ""]);
   const [isShaking, setIsShaking] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -248,8 +249,8 @@ function VaultContent() {
     }
 
     const fullPin = overridePin !== undefined ? overridePin : digits.join("");
-    if (fullPin.length < 5) {
-      setErrorMessage("Please enter all 5 digits of the PIN.");
+    if (fullPin.length < 4) {
+      setErrorMessage("Please enter all 4 digits of the PIN.");
       const firstEmpty = digits.findIndex((d) => d === "");
       if (firstEmpty !== -1) inputRefs.current[firstEmpty]?.focus();
       playSynthBuzz(audioCtx, isMuted);
@@ -259,10 +260,10 @@ function VaultContent() {
     if (fullPin !== targetPin) {
       playSynthBuzz(audioCtx, isMuted);
       setIsShaking(true);
-      setErrorMessage("Invalid 5-digit passcode. Try again.");
+      setErrorMessage("Invalid 4-digit passcode. Try again.");
       setTimeout(() => {
         setIsShaking(false);
-        setDigits(["", "", "", "", ""]);
+        setDigits(["", "", "", ""]);
         inputRefs.current[0]?.focus();
       }, 500);
       return;
@@ -316,13 +317,13 @@ function VaultContent() {
     setDigits(newDigits);
     setErrorMessage("");
 
-    if (char && index < 4) {
+    if (char && index < 3) {
       inputRefs.current[index + 1]?.focus();
     }
 
-    // When all 5 digits are filled, automatically submit
+    // When all 4 digits are filled, automatically submit
     const fullPin = newDigits.join("");
-    if (fullPin.length === 5 && !newDigits.includes("")) {
+    if (fullPin.length === 4 && !newDigits.includes("")) {
       if (fullName.trim()) {
         handleUnlockSubmit(undefined, fullPin, fullName);
       } else {
@@ -350,7 +351,7 @@ function VaultContent() {
       playSynthClick(audioCtx, isMuted);
     } else if (e.key === "ArrowLeft" && index > 0) {
       inputRefs.current[index - 1]?.focus();
-    } else if (e.key === "ArrowRight" && index < 4) {
+    } else if (e.key === "ArrowRight" && index < 3) {
       inputRefs.current[index + 1]?.focus();
     } else if (e.key === "Enter") {
       handleUnlockSubmit();
@@ -361,17 +362,17 @@ function VaultContent() {
   const handlePaste = (e: React.ClipboardEvent) => {
     initAudio();
     e.preventDefault();
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 5);
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 4);
     if (pasted.length === 0) return;
 
-    const newDigits = ["", "", "", "", ""];
+    const newDigits = ["", "", "", ""];
     for (let i = 0; i < pasted.length; i++) {
       newDigits[i] = pasted[i];
     }
     setDigits(newDigits);
     playSynthClick(audioCtx, isMuted);
 
-    if (pasted.length === 5) {
+    if (pasted.length === 4) {
       if (fullName.trim()) {
         handleUnlockSubmit(undefined, pasted, fullName);
       } else {
@@ -390,7 +391,7 @@ function VaultContent() {
       await fetch("/api/vault/claim?action=reset", { method: "POST" });
       setConfirmedClaim(null);
       setPhase("LOCKED");
-      setDigits(["", "", "", "", ""]);
+      setDigits(["", "", "", ""]);
       setFullName("");
       alert("Claims reset.");
     } catch {}
@@ -451,7 +452,7 @@ function VaultContent() {
             </h1>
 
             <p className={styles.vaultSubtitle}>
-              Enter your name and the 5-digit event PIN to crack the vault and claim your reward.
+              Enter your name and the 4-digit event PIN to crack the vault and claim your reward.
             </p>
 
             <form className={styles.passcodeForm} onSubmit={(e) => handleUnlockSubmit(e)}>
@@ -473,9 +474,9 @@ function VaultContent() {
                 />
               </div>
 
-              {/* 5-Digit PIN Input */}
+              {/* 4-Digit PIN Input */}
               <div className={styles.inputGroup}>
-                <label className={styles.inputLabel}>5-Digit Passcode</label>
+                <label className={styles.inputLabel}>4-Digit Passcode</label>
                 <div className={styles.pinContainer} onPaste={handlePaste}>
                   {digits.map((digit, idx) => (
                     <input

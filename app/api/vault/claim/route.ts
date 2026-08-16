@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { inMemoryClaims, getTierInfo, VaultClaimRecord } from "../status/route";
 
 const DEFAULT_PIN =
-  process.env.EVENT_PIN || process.env.NEXT_PUBLIC_EVENT_PIN || "20265";
+  process.env.EVENT_PIN || process.env.NEXT_PUBLIC_EVENT_PIN || "7268";
 
 // Process-level Mutex lock for atomic sequential execution during concurrent bursts
 let claimLockQueue: Promise<any> = Promise.resolve();
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { pin, fullName } = body;
 
-    // 1. PIN verification
+    // 1. PIN verification (4-digit passcode)
     const normalizedInputPin = String(pin || "").trim();
     const expectedPin = String(DEFAULT_PIN).trim();
 
@@ -57,7 +57,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           success: false,
-          error: "Access Denied: Invalid 5-digit PIN passcode.",
+          error: "Access Denied: Invalid 4-digit PIN passcode.",
         },
         { status: 401 },
       );
