@@ -228,67 +228,77 @@ export async function sendMembershipApprovedEmail({
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Official AICE Membership Card</title>
       <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #070709; color: #f3f4f6; margin: 0; padding: 20px; }
-        .wrapper { max-width: 600px; margin: 0 auto; }
-        .card { background-color: #000000; border: 2px solid #333333; border-radius: 12px; padding: 28px 24px 22px 24px; color: #ffffff; box-shadow: 0 12px 35px rgba(0,0,0,0.85); }
-        .btn-verify { display: block; text-align: center; background-color: #ef4444; color: #ffffff !important; font-weight: 800; font-size: 13px; text-decoration: none; padding: 14px 20px; border-radius: 8px; text-transform: uppercase; letter-spacing: 1px; margin-top: 22px; }
-        .footer { font-size: 11px; color: #6b7280; text-align: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #070709; color: #f3f4f6; margin: 0; padding: 12px; }
+        .wrapper { max-width: 520px; margin: 0 auto; width: 100%; }
+        .card { background-color: #000000; border: 1px solid rgba(255,255,255,0.3); border-radius: 12px; padding: 22px 18px 16px 18px; color: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.85); box-sizing: border-box; }
+        .btn-verify { display: block; text-align: center; background-color: #ef4444; color: #ffffff !important; font-weight: 800; font-size: 13px; text-decoration: none; padding: 14px 20px; border-radius: 8px; text-transform: uppercase; letter-spacing: 1px; margin-top: 20px; }
+        .footer { font-size: 11px; color: #6b7280; text-align: center; margin-top: 22px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.1); }
+        @media only screen and (max-width: 480px) {
+          .card { padding: 16px 12px 14px 12px !important; }
+          .mem-name { font-size: 14px !important; }
+          .mem-id { font-size: 11.5px !important; }
+          .qr-img { width: 95px !important; height: 95px !important; }
+          .divider-line { height: 95px !important; }
+          .brand-ice { font-size: 20px !important; }
+          .brand-full { font-size: 9.5px !important; }
+          .tagline-text { font-size: 11px !important; }
+        }
       </style>
     </head>
     <body>
       <div class="wrapper">
-        <div style="text-align: center; margin-bottom: 22px;">
-          <div style="font-size: 12px; font-weight: 900; color: #10b981; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px;">MEMBERSHIP ACTIVATED</div>
-          <h1 style="font-size: 24px; font-weight: 900; color: #ffffff; margin: 0 0 6px 0; text-transform: uppercase;">WELCOME TO AICE</h1>
-          <p style="font-size: 14px; color: #9ca3af; margin: 0;">Your annual membership pass is confirmed and active.</p>
+        <div style="text-align: center; margin-bottom: 18px; padding-top: 6px;">
+          <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px;">MEMBERSHIP ACTIVATED</div>
+          <h1 style="font-size: 20px; font-weight: 900; color: #ffffff; margin: 0 0 4px 0; text-transform: uppercase;">WELCOME TO AICE</h1>
+          <p style="font-size: 13px; color: #9ca3af; margin: 0;">Your annual membership pass is confirmed and active.</p>
         </div>
 
         <!-- EXACT BLACK MEMBERSHIP CARD -->
         <div class="card">
-          <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" style="table-layout: fixed;">
             <!-- TOP ROW -->
             <tr>
-              <td align="left" style="vertical-align: top; width: 55%;">
-                <div style="font-size: 13px; font-weight: 800; color: #ffffff; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;">MEMBER NAME:</div>
-                <div style="font-size: 20px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2;">${safeMemberName}</div>
-                <div style="font-size: 15px; font-weight: 700; color: #e5e7eb; margin-top: 4px;">${safeYear}-${safeBranch}</div>
+              <td align="left" style="vertical-align: top; width: 50%; padding-right: 4px;">
+                <div style="font-size: 10px; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">MEMBER NAME:</div>
+                <div class="mem-name" style="font-size: 15px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1.2; word-break: break-word;">${safeMemberName}</div>
+                <div style="font-size: 12px; font-weight: 600; color: #e5e7eb; margin-top: 2px;">${safeYear}-${safeBranch}</div>
               </td>
-              <td align="right" style="vertical-align: top; width: 45%;">
-                <div style="font-size: 13px; font-weight: 800; color: #ffffff; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;">MEMBERSHIP ID:</div>
-                <div style="font-size: 18px; font-weight: 900; color: #ffffff; font-family: 'Courier New', Courier, monospace; letter-spacing: 1px;">${safeMembershipId}</div>
+              <td align="right" style="vertical-align: top; width: 50%; padding-left: 4px;">
+                <div style="font-size: 10px; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">MEMBERSHIP ID:</div>
+                <div class="mem-id" style="font-size: 13px; font-weight: 900; color: #ffffff; font-family: 'Courier New', Courier, monospace; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${safeMembershipId}</div>
               </td>
             </tr>
 
             <!-- CENTER SECTION -->
             <tr>
-              <td colspan="2" style="padding: 24px 0 20px 0;">
+              <td colspan="2" style="padding: 16px 0 14px 0;">
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <!-- QR Code -->
-                    <td align="center" style="width: 40%; vertical-align: middle;">
-                      <div style="background-color: #ffffff; padding: 6px; border: 2px solid #ffffff; border-radius: 6px; display: inline-block;">
-                        <img src="${qrImageUrl}" alt="Pass QR" width="135" height="135" style="display: block; width: 135px; height: 135px; border: 0;" />
+                    <td align="center" style="width: 42%; vertical-align: middle;">
+                      <div style="background-color: #ffffff; padding: 5px; border: 1px solid #ffffff; border-radius: 4px; display: inline-block;">
+                        <img src="${qrImageUrl}" alt="Pass QR" width="105" height="105" class="qr-img" style="display: block; width: 105px; height: 105px; border: 0;" />
                       </div>
                     </td>
 
                     <!-- Divider -->
                     <td align="center" style="width: 6%; vertical-align: middle;">
-                      <div style="width: 2px; height: 135px; background-color: #ffffff; margin: 0 auto;"></div>
+                      <div class="divider-line" style="width: 2px; height: 105px; background-color: #ffffff; margin: 0 auto;"></div>
                     </td>
 
                     <!-- AICE Brand -->
-                    <td align="left" style="width: 54%; vertical-align: middle; padding-left: 16px;">
+                    <td align="left" style="width: 52%; vertical-align: middle; padding-left: 10px;">
                       <table border="0" cellspacing="0" cellpadding="0">
                         <tr>
                           <td style="vertical-align: middle;">
-                            <img src="https://aice.ceconline.edu/logos/aice_logo.png" alt="AICE" width="38" height="38" style="display: block; width: 38px; height: 38px;" />
+                            <img src="https://aice.ceconline.edu/logos/aice_logo.png" alt="AICE" width="28" height="28" style="display: block; width: 28px; height: 28px;" />
                           </td>
-                          <td style="vertical-align: middle; padding-left: 10px;">
-                            <div style="font-size: 32px; font-weight: 900; color: #ffffff; letter-spacing: 4px; line-height: 1;">ICE</div>
+                          <td style="vertical-align: middle; padding-left: 6px;">
+                            <div class="brand-ice" style="font-size: 24px; font-weight: 900; color: #ffffff; letter-spacing: 3px; line-height: 1;">ICE</div>
                           </td>
                         </tr>
                       </table>
-                      <div style="font-size: 14px; font-weight: 900; color: #ffffff; letter-spacing: 1.5px; line-height: 1.35; text-transform: uppercase; margin-top: 10px;">
+                      <div class="brand-full" style="font-size: 11px; font-weight: 800; color: #ffffff; letter-spacing: 0.8px; line-height: 1.35; text-transform: uppercase; margin-top: 8px;">
                         AI INNOVATION<br/>
                         COMMUNITY FOR<br/>
                         EXCELLENCE
@@ -301,8 +311,8 @@ export async function sendMembershipApprovedEmail({
 
             <!-- BOTTOM TAGLINE -->
             <tr>
-              <td colspan="2" align="center" style="padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.2);">
-                <div style="font-size: 14px; font-weight: 700; color: #ffffff; text-align: center;">
+              <td colspan="2" align="center" style="padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.2);">
+                <div class="tagline-text" style="font-size: 12px; font-weight: 600; color: #ffffff; text-align: center; line-height: 1.3;">
                   You are officially an <strong>AICE</strong> member. Let's grow together!!
                 </div>
               </td>
@@ -310,8 +320,8 @@ export async function sendMembershipApprovedEmail({
 
             <!-- VALID TILL -->
             <tr>
-              <td colspan="2" align="right" style="padding-top: 8px;">
-                <div style="font-size: 12px; font-weight: 700; color: #9ca3af; font-family: monospace;">
+              <td colspan="2" align="right" style="padding-top: 6px;">
+                <div style="font-size: 10px; font-weight: 600; color: #9ca3af; font-family: monospace;">
                   Valid Till: ${validTillDate}
                 </div>
               </td>
