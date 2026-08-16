@@ -11,29 +11,34 @@ import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const bebasNeue = Bebas_Neue({
   weight: "400",
   variable: "--font-bebas-neue",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 const kanit = Kanit({
   variable: "--font-kanit",
   subsets: ["latin"],
   weight: ["700", "800", "900"],
+  display: "swap",
 });
 
 export const viewport: Viewport = {

@@ -104,15 +104,12 @@
   background: rgba(255, 255, 255, 0.25);
   border: 1px solid rgba(0, 0, 0, 0.5);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    border-color 0.2s ease;
   z-index: 1;
 }
-
-.dot:nth-child(3) { top: 0%; }
-.dot:nth-child(4) { top: 25%; }
-.dot:nth-child(5) { top: 50%; }
-.dot:nth-child(6) { top: 75%; }
-.dot:nth-child(7) { top: 100%; }
 
 .dot:hover {
   background: #ef4444;

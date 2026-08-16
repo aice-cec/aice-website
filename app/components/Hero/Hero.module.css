@@ -149,12 +149,10 @@
   0% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(1.15);
-    filter: blur(14px);
   }
   100% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
-    filter: blur(0px);
   }
 }
 
@@ -303,12 +301,10 @@
   0% {
     opacity: 0;
     transform: translate(-50%, calc(-50% + 28px));
-    filter: blur(8px);
   }
   100% {
     opacity: 1;
     transform: translate(-50%, -50%);
-    filter: blur(0px);
   }
 }
 

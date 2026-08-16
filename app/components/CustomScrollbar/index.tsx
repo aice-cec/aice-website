@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import styles from "./CustomScrollbar.module.css";
 
 const SECTIONS = [
@@ -16,10 +16,54 @@ export default function CustomScrollbar() {
   const [isJoinSection, setIsJoinSection] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [sectionPositions, setSectionPositions] = useState<
+    Record<string, number>
+  >({
+    home: 0,
+    about: 25,
+    join: 50,
+    events: 75,
+    execom: 100,
+  });
 
   const trackRef = useRef<HTMLDivElement>(null);
   const dragStartY = useRef(0);
   const dragStartScrollTop = useRef(0);
+
+  const updatePositions = useCallback(() => {
+    const docHeight =
+      document.documentElement.scrollHeight - window.innerHeight;
+
+    if (docHeight <= 0) return;
+
+    const newPositions: Record<string, number> = {};
+
+    SECTIONS.forEach((sec) => {
+      if (sec.id === "home") {
+        newPositions[sec.id] = 0;
+      } else if (sec.id === "about") {
+        const heroEl = document.getElementById("home");
+        const aboutTop = heroEl
+          ? heroEl.offsetTop + window.innerHeight * 1.4
+          : document.getElementById("about")?.offsetTop || 0;
+        newPositions[sec.id] = Math.min(
+          Math.max((aboutTop / docHeight) * 100, 0),
+          100,
+        );
+      } else {
+        const el = document.getElementById(sec.id);
+        if (el) {
+          const top = el.getBoundingClientRect().top + window.scrollY;
+          newPositions[sec.id] = Math.min(
+            Math.max((top / docHeight) * 100, 0),
+            100,
+          );
+        }
+      }
+    });
+
+    setSectionPositions(newPositions);
+  }, []);
 
   useEffect(() => {
     let rafId: number;
@@ -48,13 +92,41 @@ export default function CustomScrollbar() {
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", updatePositions, { passive: true });
     handleScroll();
+    updatePositions();
+
+    const timer1 = setTimeout(updatePositions, 500);
+    const timer2 = setTimeout(updatePositions, 1500);
+    const timer3 = setTimeout(updatePositions, 3000);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", updatePositions);
       cancelAnimationFrame(rafId);
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
     };
-  }, []);
+  }, [updatePositions]);
+
+  const scrollToSection = (id: string) => {
+    if (id === "home") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (id === "about") {
+      const heroEl = document.getElementById("home");
+      const targetY = heroEl
+        ? heroEl.offsetTop + window.innerHeight * 1.4
+        : document.getElementById("about")?.offsetTop || 0;
+      window.scrollTo({ top: targetY, behavior: "smooth" });
+    } else {
+      const el = document.getElementById(id);
+      if (el) {
+        const targetY = el.getBoundingClientRect().top + window.scrollY - 70;
+        window.scrollTo({ top: targetY, behavior: "smooth" });
+      }
+    }
+  };
 
   const scrollToPercentage = (percentage: number) => {
     const docHeight =
@@ -125,13 +197,11 @@ export default function CustomScrollbar() {
         onClick={handleTrackClick}
         aria-hidden="true"
       >
-        {/* Filled progress line */}
         <div
           className={styles.progressLine}
           style={{ height: `${scrollProgress * 100}%` }}
         />
 
-        {/* Floating Thumb */}
         <div
           className={`${styles.thumb} ${isDragging ? styles.thumbDragging : ""}`}
           style={{ top: `${scrollProgress * 100}%` }}
@@ -140,17 +210,17 @@ export default function CustomScrollbar() {
           <div className={styles.thumbPulse} />
         </div>
 
-        {/* Section Waypoint Dots */}
         {SECTIONS.map((sec) => (
           <button
             key={sec.id}
             type="button"
             className={styles.dot}
+            style={{
+              top: `${sectionPositions[sec.id] ?? 0}%`,
+            }}
             onClick={(e) => {
               e.stopPropagation();
-              document
-                .getElementById(sec.id)
-                ?.scrollIntoView({ behavior: "smooth" });
+              scrollToSection(sec.id);
             }}
             title={sec.label}
           />

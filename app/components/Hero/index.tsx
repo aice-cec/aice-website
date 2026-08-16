@@ -539,11 +539,14 @@ const Hero = () => {
 
         <div className={styles.robotWrap} ref={robotWrapRef}>
           <div className={styles.robotContainer}>
-            <img
+            <Image
               src="/robot/robot.webp"
-              alt="robot"
+              alt="AICE mascot robot"
+              width={580}
+              height={580}
+              priority
               className={styles.robotImg}
-              draggable="false"
+              draggable={false}
             />
             <div
               className={styles.eyeGlow}
