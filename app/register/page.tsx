@@ -519,7 +519,7 @@ export default function RegisterPage() {
                   disabled={loading}
                   className={styles.submitBtn}
                 >
-                  PROCEED TO PAYMENT (₹100) &rarr;
+                  PROCEED TO PAYMENT (₹120) &rarr;
                 </button>
               </form>
 
