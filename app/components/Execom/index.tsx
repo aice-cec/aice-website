@@ -1,12 +1,8 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./Execom.module.css";
 import teamData from "@/data/team-26/members.json";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export interface FacultyMember {
   id: string;
@@ -81,23 +77,7 @@ function LinkedInIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-function MailIcon({ size = 14 }: { size?: number }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      style={{ width: size, height: size }}
-    >
-      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-      <polyline points="22,6 12,13 2,6" />
-    </svg>
-  );
-}
+
 
 function TeamSection({
   title,
@@ -178,26 +158,24 @@ function TeamSection({
     return () => clearInterval(interval);
   }, [members.length, reverse]);
 
+  const [isVisible, setIsVisible] = useState(false);
+
   useEffect(() => {
     if (!sectionRef.current) return;
 
-    const ctx = gsap.context(() => {
-      gsap.from(sectionRef.current, {
-        opacity: 0,
-        y: 30,
-        duration: 0.7,
-        ease: "power3.out",
-        clearProps: "all",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-      });
-    }, sectionRef);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "0px 0px -15% 0px" },
+    );
 
-    return () => ctx.revert();
-  }, [members]);
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   const scrollContainer = (direction: "left" | "right") => {
     lastInteraction.current = Date.now();
@@ -221,7 +199,12 @@ function TeamSection({
   if (!members || members.length === 0) return null;
 
   return (
-    <div className={styles.categoryGroup} ref={sectionRef}>
+    <div
+      className={`${styles.categoryGroup} ${
+        isVisible ? styles.categoryGroupVisible : styles.categoryGroupHidden
+      }`}
+      ref={sectionRef}
+    >
       <div className={styles.categoryHeader}>
         <h3 className={styles.categoryTitle}>{title}</h3>
         {members.length > 3 && (
@@ -325,42 +308,23 @@ export function Execom() {
     return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
   });
 
-  // GSAP scroll animation for heading + faculty card
+  const [headerVisible, setHeaderVisible] = useState(false);
+
   useEffect(() => {
     if (!sectionRef.current) return;
 
-    const ctx = gsap.context(() => {
-      // Heading animation
-      gsap.from(`.${styles.heading}`, {
-        opacity: 0,
-        y: 30,
-        duration: 0.7,
-        ease: "power3.out",
-        clearProps: "all",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-      });
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setHeaderVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "0px 0px -15% 0px" },
+    );
 
-      // Subtext animation
-      gsap.from(`.${styles.subtext}`, {
-        opacity: 0,
-        y: 20,
-        duration: 0.6,
-        delay: 0.15,
-        ease: "power3.out",
-        clearProps: "all",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -369,7 +333,11 @@ export function Execom() {
       <div className={styles.glowRight} />
 
       <div className={styles.container}>
-        <div className={styles.header}>
+        <div
+          className={`${styles.header} ${
+            headerVisible ? styles.headerVisible : styles.headerHidden
+          }`}
+        >
           <div>
             <h2 className={styles.heading}>
               MEET THE <span className={styles.headingAccent}>TEAM.</span>

@@ -12,9 +12,11 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
   const [isFading, setIsFading] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const isFinishedRef = useRef(false);
 
   const finishLoading = () => {
-    if (isFading || !isLoading) return;
+    if (isFinishedRef.current) return;
+    isFinishedRef.current = true;
     setIsFading(true);
     onComplete?.();
     if (typeof window !== "undefined") {
@@ -31,7 +33,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
     if (videoRef.current) {
       videoRef.current.playbackRate = 1.0;
       videoRef.current.play().catch(() => {
-        setTimeout(finishLoading, 1500);
+        setTimeout(finishLoading, 1000);
       });
     }
   };
@@ -43,12 +45,13 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
       handleVideoReady();
     }
 
-    const fallbackTimer = setTimeout(finishLoading, 4000);
+    const fallbackTimer = setTimeout(finishLoading, 2500);
 
     return () => {
       clearTimeout(fallbackTimer);
       document.body.style.overflow = "";
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!isLoading) return null;

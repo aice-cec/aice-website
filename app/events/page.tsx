@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import Link from "next/link";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { renderTextWithLinks } from "@/lib/formatText";
@@ -118,7 +119,6 @@ export default function EventsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Extract unique categories
   const categories = useMemo(() => {
     const set = new Set<string>();
     events.forEach((e) => {
@@ -128,7 +128,6 @@ export default function EventsPage() {
     return ["All", ...Array.from(set)];
   }, [events]);
 
-  // Filtered & sorted events
   const filteredEvents = useMemo(() => {
     return events
       .filter((e) => {
@@ -142,7 +141,6 @@ export default function EventsPage() {
           if (cat.toLowerCase() !== category.toLowerCase()) return false;
         }
 
-        // Search query
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase();
           const title = e.title.toLowerCase();
@@ -156,7 +154,6 @@ export default function EventsPage() {
         return true;
       })
       .sort((a, b) => {
-        // In "all" tab, show upcoming events first, then past events
         if (tab === "all" && Boolean(a.isPast) !== Boolean(b.isPast)) {
           return a.isPast ? 1 : -1;
         }
@@ -172,9 +169,9 @@ export default function EventsPage() {
         if (!validB) return -1;
 
         if (tab === "past" || (tab === "all" && a.isPast && b.isPast)) {
-          return timeB - timeA; // Most recent past events first
+          return timeB - timeA;
         }
-        return timeA - timeB; // Earliest upcoming events first
+        return timeA - timeB;
       });
   }, [events, tab, category, searchQuery]);
 
@@ -182,16 +179,12 @@ export default function EventsPage() {
 
   return (
     <div className={styles.wrapper}>
-      {/* Background Ambient Glow Effects */}
       <div className={styles.glowRight} />
       <div className={styles.glowLeft} />
 
-      {/* Site Navbar */}
       <Navbar />
 
-      {/* Main Content */}
       <main className={styles.container}>
-        {/* Hero Section */}
         <div className={styles.heroHeader}>
           <h1 className={styles.heroTitle}>
             AICE <span className={styles.titleAccent}>EVENTS</span>
@@ -204,9 +197,7 @@ export default function EventsPage() {
           </p>
         </div>
 
-        {/* Filter Controls Bar */}
         <div className={styles.filterBar}>
-          {/* Main Status Tabs */}
           <div className={styles.tabGroup}>
             {(["all", "upcoming", "past"] as const).map((t) => (
               <button
@@ -221,7 +212,6 @@ export default function EventsPage() {
             ))}
           </div>
 
-          {/* Search Box */}
           <div className={styles.searchWrapper}>
             <input
               type="text"
@@ -236,7 +226,6 @@ export default function EventsPage() {
           </div>
         </div>
 
-        {/* Category Pills */}
         {categories.length > 1 && (
           <div className={styles.categoryScroll}>
             {categories.map((cat) => (
@@ -253,7 +242,6 @@ export default function EventsPage() {
           </div>
         )}
 
-        {/* Grid of Events */}
         {loading ? (
           <div className={styles.eventsGrid}>
             {[1, 2, 3].map((i) => (
@@ -290,7 +278,9 @@ export default function EventsPage() {
             <div className={styles.emptyIcon}>
               <CalendarIcon />
             </div>
-            <h3 className={styles.emptyTitle}>Stay Tuned for Upcoming Events</h3>
+            <h3 className={styles.emptyTitle}>
+              Stay Tuned for Upcoming Events
+            </h3>
             <p className={styles.emptyText}>
               We are preparing exciting workshops and hackathons.
             </p>
@@ -323,19 +313,23 @@ export default function EventsPage() {
                     event.featured ? styles.eventCardFeatured : ""
                   }`}
                 >
-                  {/* Card Content Container */}
                   <div className={styles.cardContent}>
                     <div>
-                      {/* Date Badge & Category Header */}
                       <div className={styles.cardHeader}>
                         <div className={styles.dateBadge}>
                           <span className={styles.dateNum}>
-                            {event.date === "SOON" || event.date === "COMING" || event.date === "TBA" || (!event.dateISO && event.date)
+                            {event.date === "SOON" ||
+                            event.date === "COMING" ||
+                            event.date === "TBA" ||
+                            (!event.dateISO && event.date)
                               ? "COMING"
                               : event.date || "COMING"}
                           </span>
                           <span className={styles.dateMonth}>
-                            {event.date === "SOON" || event.date === "COMING" || event.date === "TBA" || (!event.dateISO && event.date)
+                            {event.date === "SOON" ||
+                            event.date === "COMING" ||
+                            event.date === "TBA" ||
+                            (!event.dateISO && event.date)
                               ? "SOON"
                               : event.month || ""}
                           </span>
@@ -346,7 +340,6 @@ export default function EventsPage() {
                         )}
                       </div>
 
-                      {/* Event Type & Title */}
                       <span className={styles.cardType}>
                         {event.type || event.label || "EVENT"}
                       </span>
@@ -358,7 +351,6 @@ export default function EventsPage() {
                       </p>
                     </div>
 
-                    {/* Metadata Footer */}
                     <div className={styles.cardMeta}>
                       {event.time && (
                         <div className={styles.metaItem}>
@@ -380,7 +372,6 @@ export default function EventsPage() {
                     </div>
                   </div>
 
-                  {/* Card Action Button */}
                   <div className={styles.cardFooter}>
                     {event.isPast ? (
                       <div className={styles.concludedBtn}>EVENT CONCLUDED</div>
@@ -400,9 +391,9 @@ export default function EventsPage() {
                         </a>
                       )
                     ) : (
-                      <a href="/#join" className={styles.detailsBtn}>
+                      <Link href="/#join" className={styles.detailsBtn}>
                         VIEW DETAILS <ArrowRightIcon />
-                      </a>
+                      </Link>
                     )}
                   </div>
                 </article>
@@ -412,7 +403,6 @@ export default function EventsPage() {
         )}
       </main>
 
-      {/* Site Footer */}
       <Footer />
     </div>
   );

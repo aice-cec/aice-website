@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { renderTextWithLinks } from "@/lib/formatText";
 import styles from "./Event.module.css";
 
@@ -126,12 +127,12 @@ export function Events() {
           <p className={styles.subheading}>
             Join our interactive workshops, hackathons, and open build sessions.
           </p>
-          <a href="/events" className={styles.viewAllLink}>
+          <Link href="/events" className={styles.viewAllLink}>
             VIEW ALL EVENTS
             <span className={styles.arrowTranslate}>
               <ArrowIcon />
             </span>
-          </a>
+          </Link>
         </div>
 
         {/* 3-Column Events Grid */}
@@ -146,9 +147,9 @@ export function Events() {
               <div className={styles.emptyDesc}>
                 No upcoming events at the moment. We are preparing exciting workshops and hackathons.
               </div>
-              <a href="/events" className={styles.archiveBtn}>
+              <Link href="/events" className={styles.archiveBtn}>
                 EXPLORE ARCHIVE <ArrowIcon />
-              </a>
+              </Link>
             </div>
           ) : (
             displayEvents.map((event) => {
@@ -215,9 +216,9 @@ export function Events() {
                     </div>
 
                     {event.isPast ? (
-                      <a href="/events" className={styles.detailsBtn}>
+                      <Link href="/events" className={styles.detailsBtn}>
                         ARCHIVE <ArrowIcon />
-                      </a>
+                      </Link>
                     ) : hasRegLink ? (
                       isExpired ? (
                         <span className={styles.closedBtn}>CLOSED</span>
@@ -232,9 +233,9 @@ export function Events() {
                         </a>
                       )
                     ) : (
-                      <a href="/events" className={styles.detailsBtn}>
+                      <Link href="/events" className={styles.detailsBtn}>
                         DETAILS <ArrowIcon />
-                      </a>
+                      </Link>
                     )}
                   </div>
                 </article>

@@ -18,7 +18,7 @@ export default function RegisterPage() {
     skipPayment: false,
   });
 
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [error, setError] = useState("");
 
   const handleChange = (

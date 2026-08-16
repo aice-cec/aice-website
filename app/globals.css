@@ -24,6 +24,7 @@ body::-webkit-scrollbar {
   --font-primary: var(--font-sans), system-ui, sans-serif;
   --font-secondary: var(--font-sans), system-ui, sans-serif;
   --font-heading: var(--font-kanit), "Kanit", sans-serif;
+  --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 @theme inline {

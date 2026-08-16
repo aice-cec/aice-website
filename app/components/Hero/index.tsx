@@ -544,6 +544,7 @@ const Hero = () => {
               alt="AICE mascot robot"
               width={580}
               height={580}
+              sizes="(max-width: 620px) 260px, (max-width: 1380px) 42vw, 580px"
               priority
               className={styles.robotImg}
               draggable={false}

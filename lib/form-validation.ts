@@ -37,7 +37,6 @@ export type FormResponses = Record<string, string | string[]>;
 const EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PHONE_PATTERN = /^\d{10}$/;
 const MAX_VALUE_LENGTH = 250;
-const MAX_FILE_DATA_URL_LENGTH = 1_000_000;
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);

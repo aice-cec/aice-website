@@ -93,8 +93,11 @@ export default function CustomScrollbar() {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", updatePositions, { passive: true });
-    handleScroll();
-    updatePositions();
+
+    const rafInit = requestAnimationFrame(() => {
+      handleScroll();
+      updatePositions();
+    });
 
     const timer1 = setTimeout(updatePositions, 500);
     const timer2 = setTimeout(updatePositions, 1500);
@@ -104,6 +107,7 @@ export default function CustomScrollbar() {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", updatePositions);
       cancelAnimationFrame(rafId);
+      cancelAnimationFrame(rafInit);
       clearTimeout(timer1);
       clearTimeout(timer2);
       clearTimeout(timer3);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
 import { renderTextWithLinks } from "@/lib/formatText";
@@ -306,12 +307,12 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
           <p className="text-sm font-medium text-gray-400 mb-8">
             Registrations for this event have been officially closed.
           </p>
-          <a
+          <Link
             href="/"
             className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-black text-xs uppercase tracking-widest border-2 border-black shadow-[4px_4px_0px_#000000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
           >
             Return to AICE Homepage <ArrowRightIcon />
-          </a>
+          </Link>
         </div>
       </div>
     );

@@ -90,19 +90,23 @@ export default async function RedirectOrFormPage({
       redirect(target);
     }
 
+    let validDestinationUrl: string | null = null;
     try {
       const destination = new URL(
         target.includes("://") ? target : `https://${target}`,
       );
       if (
-        destination.protocol !== "http:" &&
-        destination.protocol !== "https:"
+        destination.protocol === "http:" ||
+        destination.protocol === "https:"
       ) {
-        return <NotFound />;
+        validDestinationUrl = destination.toString();
       }
-      redirect(destination.toString());
     } catch {
-      return <NotFound />;
+      validDestinationUrl = null;
+    }
+
+    if (validDestinationUrl) {
+      redirect(validDestinationUrl);
     }
   }
 
