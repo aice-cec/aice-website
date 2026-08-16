@@ -7,6 +7,8 @@ import {
   CustomFormItem,
   FormField,
   FormSubmission,
+  MembershipItem,
+  FinanceStats,
 } from "./types";
 
 import { LoginModal } from "./components/LoginModal";
@@ -14,6 +16,7 @@ import { AdminHeader } from "./components/AdminHeader";
 import { EventsSection } from "./components/EventsSection";
 import { RedirectsSection } from "./components/RedirectsSection";
 import { FormsSection } from "./components/FormsSection";
+import { FinanceSection } from "./components/FinanceSection";
 import { UnsavedChangesBar } from "./components/UnsavedChangesBar";
 import { ConfirmModal } from "./components/ConfirmModal";
 import { Toast } from "./components/Toast";
@@ -23,8 +26,9 @@ const MONTHS = [
   "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
 ];
 export default function AdminPortalPage() {
-  const [activeSection, setActiveSection] = useState<"events" | "redirects" | "forms">("events");
+  const [activeSection, setActiveSection] = useState<"events" | "redirects" | "forms" | "finance">("events");
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [userRole, setUserRole] = useState<"admin" | "finance">("admin");
 
   // Events State
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -44,6 +48,17 @@ export default function AdminPortalPage() {
   const [savedFormsSnapshot, setSavedFormsSnapshot] = useState<string>("[]");
   const [formSubmissions, setFormSubmissions] = useState<FormSubmission[]>([]);
   const [loadingSubmissions, setLoadingSubmissions] = useState<boolean>(false);
+
+  // Finance State
+  const [memberships, setMemberships] = useState<MembershipItem[]>([]);
+  const [financeStats, setFinanceStats] = useState<FinanceStats>({
+    totalCount: 0,
+    pendingCount: 0,
+    approvedCount: 0,
+    rejectedCount: 0,
+    totalRevenue: 0,
+  });
+  const [loadingMemberships, setLoadingMemberships] = useState<boolean>(false);
 
   // Auth State
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -103,12 +118,46 @@ export default function AdminPortalPage() {
     }, 3500);
   };
 
+  const fetchMemberships = useCallback(async () => {
+    setLoadingMemberships(true);
+    try {
+      const res = await fetch("/api/admin/memberships");
+      const data = await res.json();
+      if (res.ok && data.memberships) {
+        setMemberships(data.memberships);
+        if (data.stats) setFinanceStats(data.stats);
+      }
+    } catch (err) {
+      console.error("Failed to fetch memberships:", err);
+    } finally {
+      setLoadingMemberships(false);
+    }
+  }, []);
+
+  const checkAuth = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/login");
+      if (res.ok) {
+        const data = await res.json();
+        setIsAuthenticated(true);
+        const role = data.role || "admin";
+        setUserRole(role);
+        if (role === "finance") {
+          setActiveSection("finance");
+        }
+        fetchMemberships();
+      } else {
+        setIsAuthenticated(false);
+      }
+    } catch {
+      setIsAuthenticated(false);
+    }
+  }, [fetchMemberships]);
+
   // Check auth on mount
   useEffect(() => {
-    fetch("/api/admin/login")
-      .then((res) => setIsAuthenticated(res.ok))
-      .catch(() => setIsAuthenticated(false));
-  }, []);
+    checkAuth();
+  }, [checkAuth]);
 
   // Fetch initial events
   const fetchEvents = useCallback(async () => {
@@ -673,12 +722,48 @@ export default function AdminPortalPage() {
         r.description.toLowerCase().includes(redirectSearch.toLowerCase()))
   );
 
+  const handleApproveMembership = async (id: string) => {
+    try {
+      const res = await fetch(`/api/admin/memberships/${id}/approve`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showToast(data.error || "Failed to approve membership", true);
+        return;
+      }
+      showToast(data.message || "Membership approved! Pass sent to student.");
+      await fetchMemberships();
+    } catch (err: any) {
+      showToast(err?.message || "Approval request failed", true);
+    }
+  };
+
+  const handleRejectMembership = async (id: string, reason: string) => {
+    try {
+      const res = await fetch(`/api/admin/memberships/${id}/reject`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showToast(data.error || "Failed to reject submission", true);
+        return;
+      }
+      showToast("Submission rejected.");
+      await fetchMemberships();
+    } catch (err: any) {
+      showToast(err?.message || "Rejection request failed", true);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#070709] text-gray-100 font-sans flex flex-col">
       {/* Login Modal */}
       {!isAuthenticated && (
         <LoginModal
-          onLoginSuccess={() => setIsAuthenticated(true)}
+          onLoginSuccess={() => checkAuth()}
           showToast={showToast}
         />
       )}
@@ -687,6 +772,8 @@ export default function AdminPortalPage() {
       <AdminHeader
         activeSection={activeSection}
         setActiveSection={setActiveSection}
+        userRole={userRole}
+        pendingFinanceCount={financeStats.pendingCount}
         mobileMenuOpen={mobileMenuOpen}
         setMobileMenuOpen={setMobileMenuOpen}
         handleExportJSON={handleExportJSON}
@@ -753,8 +840,23 @@ export default function AdminPortalPage() {
         />
       )}
 
+      {/* SECTION 4: FINANCE MANAGEMENT */}
+      {activeSection === "finance" && (
+        <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+          <FinanceSection
+            memberships={memberships}
+            stats={financeStats}
+            loading={loadingMemberships}
+            onRefresh={fetchMemberships}
+            onApprove={handleApproveMembership}
+            onReject={handleRejectMembership}
+            showToast={showToast}
+          />
+        </main>
+      )}
+
       {/* Floating Unsaved Changes Bar */}
-      {isDirty && (
+      {isDirty && activeSection !== "finance" && (
         <UnsavedChangesBar
           isEventsDirty={isEventsDirty}
           isRedirectsDirty={isRedirectsDirty}

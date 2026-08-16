@@ -54,3 +54,31 @@ export interface FormSubmission {
   ticket_code?: string;
   created_at?: string;
 }
+
+export interface MembershipItem {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  college: string;
+  branch: string;
+  year: string;
+  amount: number;
+  transaction_id: string;
+  screenshot_url?: string | null;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  rejection_reason?: string | null;
+  membership_id?: string | null;
+  created_at: string;
+  reviewed_at?: string | null;
+  reviewed_by?: string | null;
+}
+
+export interface FinanceStats {
+  totalCount: number;
+  pendingCount: number;
+  approvedCount: number;
+  rejectedCount: number;
+  totalRevenue: number;
+}
+

@@ -11,20 +11,26 @@ interface SendTicketEmailParams {
 }
 
 function escapeHtml(value: string): string {
-  return value.replace(/[&<>'"]/g, (character) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "'": "&#39;",
-    '"': "&quot;",
-  })[character] ?? character);
+  return value.replace(
+    /[&<>'"]/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "'": "&#39;",
+        '"': "&quot;",
+      })[character] ?? character,
+  );
 }
 
 function getSafeExternalUrl(value?: string): string | null {
   if (!value) return null;
   try {
     const url = new URL(value.includes("://") ? value : `https://${value}`);
-    return url.protocol === "https:" || url.protocol === "http:" ? url.toString() : null;
+    return url.protocol === "https:" || url.protocol === "http:"
+      ? url.toString()
+      : null;
   } catch {
     return null;
   }
@@ -49,8 +55,11 @@ export async function sendTicketEmail({
   const safeAttendeeName = escapeHtml(attendeeName || "Participant");
   const safeTicketId = escapeHtml(ticketId);
   const safeWhatsappLink = getSafeExternalUrl(whatsappLink);
-  const safeTicketImageUrl = getSafeExternalUrl(ticketImageUrl) || ticketImageUrl;
-  const issuedAt = escapeHtml(new Date(submittedAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }));
+  const safeTicketImageUrl =
+    getSafeExternalUrl(ticketImageUrl) || ticketImageUrl;
+  const issuedAt = escapeHtml(
+    new Date(submittedAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+  );
 
   const htmlContent = `
     <!DOCTYPE html>
@@ -159,4 +168,293 @@ export async function sendTicketEmail({
   }
 
   return false;
+}
+
+export interface SendMembershipApprovedParams {
+  toEmail: string;
+  memberName: string;
+  membershipId: string;
+  branch: string;
+  year: string;
+  college?: string;
+  verificationUrl?: string;
+}
+
+export async function sendMembershipApprovedEmail({
+  toEmail,
+  memberName,
+  membershipId,
+  branch,
+  year,
+  college = "College of Engineering Chengannur",
+  verificationUrl,
+}: SendMembershipApprovedParams) {
+  const brevoApiKey = (process.env.BREVO_API_KEY || "").trim();
+  const senderEmail = process.env.BREVO_SENDER_EMAIL || "aice@ceconline.edu";
+  const senderName = process.env.BREVO_SENDER_NAME || "AICE CEC";
+
+  if (!brevoApiKey) return false;
+
+  const safeMemberName = escapeHtml(memberName || "AICE Member");
+  const safeMembershipId = escapeHtml(membershipId);
+  const safeBranch = escapeHtml(branch);
+  const safeYear = escapeHtml(year);
+  const safeCollege = escapeHtml(college);
+  const verifyLink =
+    verificationUrl ||
+    `https://aice.ceconline.edu/membership/status?id=${encodeURIComponent(membershipId)}`;
+  const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(verifyLink)}`;
+  const issuedDate = new Date().toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+
+  const validTillDate = (() => {
+    const nextYear = new Date();
+    nextYear.setFullYear(nextYear.getFullYear() + 1);
+    return nextYear.toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  })();
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Official AICE Membership Card</title>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #070709; color: #f3f4f6; margin: 0; padding: 20px; }
+        .wrapper { max-width: 600px; margin: 0 auto; }
+        .card { background-color: #000000; border: 2px solid #333333; border-radius: 12px; padding: 28px 24px 22px 24px; color: #ffffff; box-shadow: 0 12px 35px rgba(0,0,0,0.85); }
+        .btn-verify { display: block; text-align: center; background-color: #ef4444; color: #ffffff !important; font-weight: 800; font-size: 13px; text-decoration: none; padding: 14px 20px; border-radius: 8px; text-transform: uppercase; letter-spacing: 1px; margin-top: 22px; }
+        .footer { font-size: 11px; color: #6b7280; text-align: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+      </style>
+    </head>
+    <body>
+      <div class="wrapper">
+        <div style="text-align: center; margin-bottom: 22px;">
+          <div style="font-size: 12px; font-weight: 900; color: #10b981; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px;">MEMBERSHIP ACTIVATED</div>
+          <h1 style="font-size: 24px; font-weight: 900; color: #ffffff; margin: 0 0 6px 0; text-transform: uppercase;">WELCOME TO AICE</h1>
+          <p style="font-size: 14px; color: #9ca3af; margin: 0;">Your annual membership pass is confirmed and active.</p>
+        </div>
+
+        <!-- EXACT BLACK MEMBERSHIP CARD -->
+        <div class="card">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <!-- TOP ROW -->
+            <tr>
+              <td align="left" style="vertical-align: top; width: 55%;">
+                <div style="font-size: 13px; font-weight: 800; color: #ffffff; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;">MEMBER NAME:</div>
+                <div style="font-size: 20px; font-weight: 900; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2;">${safeMemberName}</div>
+                <div style="font-size: 15px; font-weight: 700; color: #e5e7eb; margin-top: 4px;">${safeYear}-${safeBranch}</div>
+              </td>
+              <td align="right" style="vertical-align: top; width: 45%;">
+                <div style="font-size: 13px; font-weight: 800; color: #ffffff; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;">MEMBERSHIP ID:</div>
+                <div style="font-size: 18px; font-weight: 900; color: #ffffff; font-family: 'Courier New', Courier, monospace; letter-spacing: 1px;">${safeMembershipId}</div>
+              </td>
+            </tr>
+
+            <!-- CENTER SECTION -->
+            <tr>
+              <td colspan="2" style="padding: 24px 0 20px 0;">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <!-- QR Code -->
+                    <td align="center" style="width: 40%; vertical-align: middle;">
+                      <div style="background-color: #ffffff; padding: 6px; border: 2px solid #ffffff; border-radius: 6px; display: inline-block;">
+                        <img src="${qrImageUrl}" alt="Pass QR" width="135" height="135" style="display: block; width: 135px; height: 135px; border: 0;" />
+                      </div>
+                    </td>
+
+                    <!-- Divider -->
+                    <td align="center" style="width: 6%; vertical-align: middle;">
+                      <div style="width: 2px; height: 135px; background-color: #ffffff; margin: 0 auto;"></div>
+                    </td>
+
+                    <!-- AICE Brand -->
+                    <td align="left" style="width: 54%; vertical-align: middle; padding-left: 16px;">
+                      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td style="vertical-align: middle;">
+                            <img src="https://aice.ceconline.edu/logos/aice_logo.png" alt="AICE" width="38" height="38" style="display: block; width: 38px; height: 38px;" />
+                          </td>
+                          <td style="vertical-align: middle; padding-left: 10px;">
+                            <div style="font-size: 32px; font-weight: 900; color: #ffffff; letter-spacing: 4px; line-height: 1;">ICE</div>
+                          </td>
+                        </tr>
+                      </table>
+                      <div style="font-size: 14px; font-weight: 900; color: #ffffff; letter-spacing: 1.5px; line-height: 1.35; text-transform: uppercase; margin-top: 10px;">
+                        AI INNOVATION<br/>
+                        COMMUNITY FOR<br/>
+                        EXCELLENCE
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- BOTTOM TAGLINE -->
+            <tr>
+              <td colspan="2" align="center" style="padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.2);">
+                <div style="font-size: 14px; font-weight: 700; color: #ffffff; text-align: center;">
+                  You are officially an <strong>AICE</strong> member. Let's grow together!!
+                </div>
+              </td>
+            </tr>
+
+            <!-- VALID TILL -->
+            <tr>
+              <td colspan="2" align="right" style="padding-top: 8px;">
+                <div style="font-size: 12px; font-weight: 700; color: #9ca3af; font-family: monospace;">
+                  Valid Till: ${validTillDate}
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <a href="${escapeHtml(verifyLink)}" class="btn-verify" target="_blank" rel="noopener noreferrer">VIEW & DOWNLOAD DIGITAL PASS ONLINE &rarr;</a>
+
+        <div class="footer">
+          Please keep this email for your records and present your digital pass at AICE events.<br/>
+          © ${new Date().getFullYear()} AICE CEC. ALL RIGHTS RESERVED.
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const payload = JSON.stringify({
+    sender: { name: senderName, email: senderEmail },
+    to: [{ email: toEmail, name: memberName || "Member" }],
+    subject: `OFFICIAL AICE MEMBERSHIP CARD [${membershipId}]`,
+    htmlContent,
+  });
+
+  const maxRetries = 3;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+      const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "api-key": brevoApiKey,
+          "content-type": "application/json",
+        },
+        body: payload,
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (res.ok) return true;
+      if (res.status === 401 || res.status === 403) break;
+    } catch {}
+
+    if (attempt < maxRetries) {
+      await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, attempt - 1)));
+    }
+  }
+
+  return false;
+}
+
+export interface SendMembershipRejectedParams {
+  toEmail: string;
+  memberName: string;
+  reason?: string;
+  transactionId?: string;
+}
+
+export async function sendMembershipRejectedEmail({
+  toEmail,
+  memberName,
+  reason,
+  transactionId,
+}: SendMembershipRejectedParams) {
+  const brevoApiKey = (process.env.BREVO_API_KEY || "").trim();
+  const senderEmail = process.env.BREVO_SENDER_EMAIL || "aice@ceconline.edu";
+  const senderName = process.env.BREVO_SENDER_NAME || "AICE CEC";
+
+  if (!brevoApiKey) return false;
+
+  const safeMemberName = escapeHtml(memberName || "Applicant");
+  const safeReason = escapeHtml(
+    reason ||
+      "Payment could not be verified with the provided transaction reference.",
+  );
+  const safeTx = escapeHtml(transactionId || "N/A");
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>AICE Membership Status Update</title>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #070709; color: #f3f4f6; margin: 0; padding: 20px; }
+        .card { max-width: 520px; margin: 0 auto; background-color: #121217; border: 2px solid rgba(239,68,68,0.4); padding: 32px; box-shadow: 4px 4px 0px #000000; border-radius: 8px; }
+        .brand-title { font-size: 16px; font-weight: 900; color: #ffffff; letter-spacing: 1px; font-family: monospace; }
+        .badge { display: inline-block; padding: 4px 12px; background-color: #ef4444; color: #ffffff; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; font-family: monospace; }
+        .title { font-size: 22px; font-weight: 900; color: #ffffff; margin: 0 0 10px 0; }
+        .desc { font-size: 13px; color: #d1d5db; line-height: 1.6; margin-bottom: 20px; }
+        .info-box { background-color: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); padding: 16px; border-radius: 6px; margin-bottom: 20px; font-family: monospace; font-size: 12px; }
+        .footer { font-size: 11px; color: #6b7280; text-align: center; margin-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px; font-family: monospace; }
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <div class="brand-title" style="margin-bottom: 16px;">AICE CEC</div>
+        <div class="badge">REGISTRATION UPDATE</div>
+        <h1 class="title">Payment Verification Unsuccessful</h1>
+        <p class="desc">Dear <strong>${safeMemberName}</strong>, your membership submission could not be verified by our finance team.</p>
+
+        <div class="info-box">
+          <div style="color: #ef4444; font-weight: 700; margin-bottom: 6px;">REASON:</div>
+          <div style="color: #ffffff; margin-bottom: 12px;">${safeReason}</div>
+          <div style="color: #9ca3af;">Transaction Reference: <span style="color: #ffffff;">${safeTx}</span></div>
+        </div>
+
+        <p class="desc" style="font-size: 12px; color: #9ca3af;">
+          If you believe this is an error or have valid payment proof, please re-submit your registration on our website or reach out to the AICE Execom.
+        </p>
+
+        <div class="footer">
+          © ${new Date().getFullYear()} AICE CEC. ALL RIGHTS RESERVED.
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const payload = JSON.stringify({
+    sender: { name: senderName, email: senderEmail },
+    to: [{ email: toEmail, name: memberName || "Applicant" }],
+    subject: `⚠️ AICE Membership Registration Update [${safeTx}]`,
+    htmlContent,
+  });
+
+  try {
+    await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "api-key": brevoApiKey,
+        "content-type": "application/json",
+      },
+      body: payload,
+    });
+    return true;
+  } catch {
+    return false;
+  }
 }

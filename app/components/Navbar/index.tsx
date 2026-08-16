@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import styles from "./Navbar.module.css";
 import { showToast } from "@/app/components/Toast";
 
@@ -168,15 +169,12 @@ const Navbar = () => {
           ))}
         </nav>
 
-        <button
-          type="button"
+        <Link
+          href="/register"
           id="cta-join-now"
           className={styles.ctaBtn}
           aria-label="Join AICE now"
-          onClick={() => {
-            setMobileOpen(false);
-            showToast("Membership registration is coming soon! Stay tuned.");
-          }}
+          onClick={() => setMobileOpen(false)}
         >
           JOIN NOW
           <svg
@@ -192,7 +190,7 @@ const Navbar = () => {
           >
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
-        </button>
+        </Link>
 
         <button
           className={`${styles.hamburger} ${mobileOpen ? styles.hamburgerOpen : ""}`}

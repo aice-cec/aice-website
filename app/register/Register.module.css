@@ -7,8 +7,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 1.25rem 3rem 1.25rem;
-  overflow: hidden;
+  padding: clamp(1.5rem, 4vw, 4rem) clamp(0.5rem, 2.5vw, 1.25rem);
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .glowLeft {
@@ -40,6 +41,7 @@
   z-index: 5;
   width: 100%;
   max-width: 44rem;
+  box-sizing: border-box;
 }
 
 .backBtn {
@@ -61,18 +63,14 @@
 }
 
 .card {
-  border-radius: 1.5rem;
+  border-radius: clamp(1rem, 2.5vw, 1.5rem);
   border: 1px solid rgba(255, 255, 255, 0.12);
   background-color: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
-  padding: 2rem 1.5rem;
+  padding: clamp(1.15rem, 3.5vw, 2.5rem) clamp(0.75rem, 2.5vw, 2rem);
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
-}
-
-@media (min-width: 640px) {
-  .card {
-    padding: 2.75rem 2.5rem;
-  }
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .header {
@@ -86,16 +84,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  margin-bottom: 0.75rem;
+  gap: 0.65rem;
+  margin-bottom: 0.85rem;
 }
 
 .logoText {
   font-family: var(--font-primary, var(--font-geist-sans), sans-serif);
-  font-size: 1.5rem;
+  font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 900;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.16em;
   color: #ffffff;
+  line-height: 1;
 }
 
 .title {
@@ -123,7 +122,11 @@
   gap: 0.75rem;
   border-radius: 1rem;
   border: 1px solid rgba(239, 68, 68, 0.4);
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(239, 68, 68, 0.15) 0%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
   padding: 0.55rem 1.15rem;
   box-shadow: 0 4px 20px rgba(239, 68, 68, 0.15);
 }
@@ -231,28 +234,603 @@
   margin-top: 0.5rem;
   display: flex;
   width: 100%;
+  min-height: 3rem;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 9999px;
+  border-radius: 0.75rem;
   border: none;
   background-color: #ef4444;
-  padding: 1rem 1.5rem;
+  padding: 0.85rem 1.5rem;
   font-family: var(--font-primary, var(--font-geist-sans), sans-serif);
   font-size: 0.825rem;
   font-weight: 800;
-  letter-spacing: 0.14em;
-  color: #000000;
+  letter-spacing: 0.08em;
+  color: #ffffff;
   cursor: pointer;
+  text-align: center;
+  line-height: 1.3;
   transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
 
   &:hover {
-    background-color: #ffffff;
-    box-shadow: 0 4px 25px rgba(239, 68, 68, 0.45);
+    background-color: #dc2626;
+    box-shadow: 0 6px 25px rgba(239, 68, 68, 0.5);
+    transform: translateY(-1px);
   }
 
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.btnSecondary {
+  display: flex;
+  width: 100%;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.04);
+  padding: 0.85rem 1.25rem;
+  font-family: var(--font-primary, var(--font-geist-sans), sans-serif);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.3;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+  }
+}
+
+.buttonRow {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 0.85rem;
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .buttonRow {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+.stepIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.stepDot {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: var(--font-primary, var(--font-geist-sans), sans-serif);
+}
+
+.stepDotActive {
+  color: #ef4444;
+}
+
+.stepDotCompleted {
+  color: #10b981;
+}
+
+.stepCircle {
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.05);
+  font-size: 0.75rem;
+}
+
+.stepCircleActive {
+  border-color: #ef4444;
+  background-color: #ef4444;
+  color: #ffffff;
+  font-weight: 900;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+}
+
+.stepCircleCompleted {
+  border-color: #10b981;
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.stepLine {
+  width: 2rem;
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease;
+}
+
+.stepLineActive {
+  background-color: #ef4444;
+}
+
+.stepLineCompleted {
+  background-color: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.paymentBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.qrContainer {
+  background-color: #ffffff;
+  padding: 0.85rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(239, 68, 68, 0.4);
+}
+
+.upiDetailsRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 26rem;
+}
+
+.upiPill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.65rem 1rem;
+  border-radius: 0.75rem;
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: #ffffff;
+}
+
+.copyBtn {
+  background-color: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #ef4444;
+    color: #ffffff;
+  }
+}
+
+.upiIntentBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 3.2rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  padding: 0.9rem 1.25rem;
+  font-family: var(--font-primary, var(--font-geist-sans), sans-serif);
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);
+  transition: all 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(16, 185, 129, 0.5);
+  }
+}
+
+.uploadDropzone {
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 0.85rem;
+  padding: 1.75rem 1.25rem;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+
+  &:hover {
+    border-color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.03);
+  }
+}
+
+.previewContainer {
+  margin-top: 1rem;
+  position: relative;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 16rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.removeFileBtn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #ef4444;
+  }
+}
+
+.guidePill {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.5;
+  margin-top: 0.25rem;
+}
+
+.trackStatusBox {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.trackStatusLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.65rem 1rem;
+  border-radius: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: clamp(0.75rem, 2.8vw, 0.85rem);
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  text-decoration: none;
+  width: 100%;
+  max-width: 32rem;
+  line-height: 1.4;
+  transition: all 0.2s ease;
+}
+
+.trackStatusLink:hover {
+  background-color: rgba(239, 68, 68, 0.06);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #ffffff;
+}
+
+.trackStatusAccent {
+  color: #ef4444;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* =========================================================
+   OFFICIAL AICE DIGITAL MEMBERSHIP CARD (RESPONSIVE PASS)
+   ========================================================= */
+
+.officialPassCard {
+  background-color: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: clamp(0.75rem, 2vw, 1rem);
+  padding: clamp(1rem, 3.5vw, 2.25rem) clamp(0.85rem, 3vw, 2rem) clamp(0.5rem, 1.5vw, 0.85rem) clamp(0.85rem, 3vw, 2rem);
+  color: #ffffff;
+  width: 100%;
+  max-width: 660px;
+  margin: 0 auto;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  font-family: var(--font-primary, var(--font-geist-sans), sans-serif);
+}
+
+.passTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.passMemberCol {
+  text-align: left;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.passSectionLabel {
+  font-size: clamp(0.72rem, 2.2vw, 0.95rem);
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.passMemberNameText {
+  font-size: clamp(0.95rem, 3.2vw, 1.55rem);
+  font-weight: 900;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.passYearBranchText {
+  font-size: clamp(0.75rem, 2.4vw, 1.05rem);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  margin-top: 0.2rem;
+  word-break: break-word;
+}
+
+.passIdCol {
+  text-align: right;
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.passIdValText {
+  font-size: clamp(0.82rem, 2.7vw, 1.4rem);
+  font-weight: 900;
+  color: #ffffff;
+  font-family: monospace;
+  letter-spacing: 0.06em;
+  margin-top: 0.2rem;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+
+.passCenterSection {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.6rem, 2.8vw, 2.25rem);
+  margin: clamp(1rem, 3.2vw, 2.25rem) 0 clamp(0.85rem, 2.5vw, 1.75rem) 0;
+  width: 100%;
+}
+
+.passQrBox {
+  background-color: #ffffff;
+  border: clamp(1.5px, 0.35vw, 2px) solid rgba(255, 255, 255, 0.9);
+  padding: clamp(0.3rem, 1vw, 0.6rem);
+  border-radius: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+  flex-shrink: 0;
+}
+
+.passQrBox canvas {
+  width: clamp(85px, 23vw, 150px) !important;
+  height: clamp(85px, 23vw, 150px) !important;
+  display: block;
+}
+
+.passCenterDivider {
+  display: block;
+  width: clamp(1.5px, 0.35vw, 2px);
+  height: clamp(85px, 22vw, 150px);
+  background-color: #ffffff;
+  flex-shrink: 0;
+}
+
+.passBrandingCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: clamp(0.35rem, 1.2vw, 0.85rem);
+  min-width: 0;
+}
+
+.passLogoHeader {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.35rem, 1vw, 0.75rem);
+}
+
+.passLogoImg {
+  width: clamp(24px, 6vw, 42px);
+  height: auto;
+}
+
+.passAiceWord {
+  font-size: clamp(1.35rem, 4.5vw, 2.5rem);
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: clamp(0.12em, 0.5vw, 0.22em);
+  line-height: 1;
+}
+
+.passFullForm {
+  font-size: clamp(0.58rem, 1.9vw, 1.05rem);
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: clamp(0.05em, 0.2vw, 0.09em);
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.passBottomTagline {
+  text-align: center;
+  font-size: clamp(0.72rem, 2.2vw, 1.05rem);
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: clamp(0.75rem, 2.2vw, 1.35rem);
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  line-height: 1.4;
+}
+
+.passValidTillRow {
+  text-align: right;
+  font-size: clamp(0.62rem, 1.8vw, 0.85rem);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: monospace;
+  margin-top: clamp(0.65rem, 2vw, 1.15rem);
+  margin-bottom: 0;
+  word-break: break-word;
+}
+
+/* Card Utility Action Buttons */
+.passActionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  width: 100%;
+  max-width: 660px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.passActionBtn {
+  flex: 1 1 calc(33.333% - 0.5rem);
+  min-width: 110px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.65rem 0.85rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.65rem;
+  color: #ffffff;
+  font-size: clamp(0.7rem, 2.2vw, 0.78rem);
+  font-weight: 700;
+  font-family: var(--font-primary, var(--font-geist-sans), sans-serif);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+  }
+}
+
+@media (max-width: 420px) {
+  .passActionBtn {
+    flex: 1 1 100%;
+  }
+}
+
+.statusSearchRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+@media (min-width: 520px) {
+  .statusSearchRow {
+    flex-direction: row;
+  }
+}
+
+@media print {
+  .passActionRow,
+  .statusSearchRow,
+  .buttonRow,
+  .header,
+  .backBtn {
+    display: none !important;
+  }
+
+  .page {
+    padding: 0 !important;
+    background: #000000 !important;
+  }
+
+  .card {
+    background: #000000 !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .officialPassCard {
+    background: #000000 !important;
+    color: #ffffff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    border: 1px solid #333333 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
   }
 }

@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import {
   ADMIN_USER,
+  FINANCE_USER,
   ADMIN_PASSWORD,
   clearAdminSession,
   generateToken,
   safeCompare,
   setAdminSession,
-  requireAdmin,
+  getAdminSession,
+  AdminRole,
 } from "@/lib/admin-auth";
 
 const loginAttempts = new Map<
@@ -55,13 +57,14 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json().catch(() => ({}));
-    const username = body.username;
-    const password = body.password;
+    const username = (body.username || "").trim();
+    const password = body.password || "";
 
-    const isUserValid = safeCompare(username, ADMIN_USER);
+    const isAdminUser = safeCompare(username, ADMIN_USER);
+    const isFinanceUser = safeCompare(username, FINANCE_USER);
     const isPassValid = safeCompare(password, ADMIN_PASSWORD);
 
-    if (!isUserValid || !isPassValid) {
+    if ((!isAdminUser && !isFinanceUser) || !isPassValid) {
       // Record failed attempt
       const attempts = (attemptRecord ? attemptRecord.attempts : 0) + 1;
       const lockUntil = attempts >= MAX_ATTEMPTS ? now + LOCK_TIME_MS : 0;
@@ -79,19 +82,38 @@ export async function POST(req: Request) {
     // Reset failed attempts on success
     loginAttempts.delete(ip);
 
-    // Generate secure signed session token
-    const token = generateToken();
+    const role: AdminRole = isFinanceUser && !isAdminUser ? "finance" : "admin";
+    const sessionUser = isAdminUser ? ADMIN_USER : FINANCE_USER;
 
-    return setAdminSession(NextResponse.json({ success: true }), token);
+    // Generate secure signed session token with role
+    const token = generateToken(sessionUser, role);
+
+    return setAdminSession(
+      NextResponse.json({
+        success: true,
+        role,
+        username: sessionUser,
+      }),
+      token,
+    );
   } catch {
     return NextResponse.json({ error: "Unable to sign in" }, { status: 500 });
   }
 }
 
 export async function GET(req: Request) {
-  const authError = requireAdmin(req);
-  if (authError) return authError;
-  return NextResponse.json({ authenticated: true });
+  const session = getAdminSession(req);
+  if (!session.authenticated || !session.role) {
+    return NextResponse.json(
+      { error: "Unauthorized or Session Expired" },
+      { status: 401 },
+    );
+  }
+  return NextResponse.json({
+    authenticated: true,
+    role: session.role,
+    username: session.username,
+  });
 }
 
 export async function DELETE() {

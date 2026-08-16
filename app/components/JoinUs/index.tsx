@@ -1,7 +1,7 @@
 "use client";
 
+import Link from "next/link";
 import styles from "./JoinUs.module.css";
-import { showToast } from "@/app/components/Toast";
 
 const reasons = [
   [
@@ -63,17 +63,12 @@ export function Join() {
                 Join our community to learn, connect, collaborate, and discover
                 opportunities that turn curiosity into meaningful experiences.
               </p>
-              <button
-                type="button"
+              <Link
+                href="/register"
                 className={styles.ctaButton}
-                onClick={() =>
-                  showToast(
-                    "Membership registration is coming soon! Stay tuned.",
-                  )
-                }
               >
                 START YOUR AICE JOURNEY <ArrowIcon />
-              </button>
+              </Link>
             </div>
           </div>
 
