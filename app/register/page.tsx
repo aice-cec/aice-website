@@ -111,7 +111,7 @@ export default function RegisterPage() {
     phone: "",
     college: "College of Engineering Chengannur",
     branch: "CL",
-    year: "",
+    year: "1st Year",
   });
 
   // Proof details
