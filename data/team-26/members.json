@@ -162,6 +162,15 @@
     },
     {
       "id": "sub-5",
+      "name": "Arya Suresh",
+      "role": "Content Team",
+      "dept": "CL '29",
+      "team": "Content Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@73e6e3199e1e0ddf49f905ed487cf33be075e933/team-26/sub-execom/arya%20_suresh.webp",
+      "linkedin": "https://www.linkedin.com/in/arya-suresh-91b906337/"
+    },
+    {
+      "id": "sub-6",
       "name": "Elsa V Perayil",
       "role": "PR & Outreach Team",
       "dept": "CL '28",
@@ -170,7 +179,16 @@
       "linkedin": "https://www.linkedin.com/in/elsa-v-perayil-3a1088340/"
     },
     {
-      "id": "sub-6",
+      "id": "sub-7",
+      "name": "Aman Muhammed",
+      "role": "PR & Outreach Team",
+      "dept": "CL '29",
+      "team": "PR & Outreach Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@73e6e3199e1e0ddf49f905ed487cf33be075e933/team-26/sub-execom/aman_muhammed.webp",
+      "linkedin": "https://www.linkedin.com/in/aman-muhammed-bb13a837b/"
+    },
+    {
+      "id": "sub-8",
       "name": "Sachin S Nair",
       "role": "Tech Team",
       "dept": "CL '28",
@@ -179,7 +197,16 @@
       "linkedin": "https://www.linkedin.com/in/sachin-s-nair/"
     },
     {
-      "id": "sub-7",
+      "id": "sub-9",
+      "name": "Midhun Manesh",
+      "role": "Tech Team",
+      "dept": "CL '29",
+      "team": "Tech Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/sub-execom/midhun_manesh.webp",
+      "linkedin": "https://www.linkedin.com/in/midhun-manesh-60549b383/"
+    },
+    {
+      "id": "sub-10",
       "name": "Krishna B",
       "role": "Creative Team",
       "dept": "CL '28",
@@ -188,7 +215,7 @@
       "linkedin": "https://www.linkedin.com/in/krishnaaab/"
     },
     {
-      "id": "sub-8",
+      "id": "sub-11",
       "name": "Roshna Jayan",
       "role": "Creative Team",
       "dept": "CL '28",
@@ -197,13 +224,77 @@
       "linkedin": "https://www.linkedin.com/in/roshna-jayan-25966b332/"
     },
     {
-      "id": "sub-9",
+      "id": "sub-12",
+      "name": "Mohammed Nihan",
+      "role": "Project Team",
+      "dept": "CL '29",
+      "team": "Project Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@73e6e3199e1e0ddf49f905ed487cf33be075e933/team-26/sub-execom/nihan.webp",
+      "linkedin": "https://www.linkedin.com/in/mohammed-nihan-v-s-32930b380/"
+    },
+    {
+      "id": "sub-13",
       "name": "Devanandha P",
       "role": "Media Team",
       "dept": "CL '28",
       "team": "Media Team",
       "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/sub-execom/devanandha.webp",
       "linkedin": "https://www.linkedin.com/in/devanandha-p-4a7b4b331/"
+    },
+    {
+      "id": "sub-14",
+      "name": "Fahad M B",
+      "role": "Media Team",
+      "dept": "CL '29",
+      "team": "Media Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/sub-execom/fahad_m_b.webp",
+      "linkedin": "https://www.linkedin.com/in/fahad-m-b-b69931381/"
+    },
+    {
+      "id": "sub-15",
+      "name": "Sreehari Unni",
+      "role": "Media Team",
+      "dept": "CL '29",
+      "team": "Media Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@73e6e3199e1e0ddf49f905ed487cf33be075e933/team-26/sub-execom/sreehari_unni.webp",
+      "linkedin": "https://www.linkedin.com/in/sreehariunni/"
+    },
+    {
+      "id": "sub-16",
+      "name": "Ashlin Sam",
+      "role": "Design Team",
+      "dept": "CL '29",
+      "team": "Design Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@main/team-26/sub-execom/ashlin_sam.webp",
+      "linkedin": "https://www.linkedin.com/in/ashlin-sam-cec/"
+    },
+    {
+      "id": "sub-17",
+      "name": "Abdul Fahad",
+      "role": "Design Team",
+      "dept": "CL '29",
+      "team": "Design Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@73e6e3199e1e0ddf49f905ed487cf33be075e933/team-26/sub-execom/abdul_fahad.webp",
+      "linkedin": "https://www.linkedin.com/in/abdul-fahad-a29679371/"
+    },
+    {
+      "id": "sub-18",
+      "name": "Nandanadevi Nair",
+      "role": "Operation Team",
+      "dept": "CL '29",
+      "team": "Operation Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@73e6e3199e1e0ddf49f905ed487cf33be075e933/team-26/sub-execom/nandanadevi.webp",
+      "linkedin": "https://www.linkedin.com/in/nandanadevi-a-nair-b643b6385/"
+    },
+    {
+      "id": "sub-19",
+      "name": "Nikhitha Rajeev",
+      "role": "Operation Team",
+      "dept": "CL '29",
+      "team": "Operation Team",
+      "image": "https://cdn.jsdelivr.net/gh/aice-cec/aice-web-assets@73e6e3199e1e0ddf49f905ed487cf33be075e933/team-26/sub-execom/nikitha_rajeev.webp",
+      "linkedin": "https://www.linkedin.com/in/nikhitha-rajeev-17022237b/"
     }
   ]
 }
+
