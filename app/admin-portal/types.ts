@@ -44,6 +44,11 @@ export interface CustomFormItem {
   is_active: boolean;
   issue_ticket?: boolean;
   created_at?: string;
+  // Payment settings
+  free_for_members?: boolean;
+  require_payment?: boolean;
+  amount_members?: number;
+  amount_non_members?: number;
 }
 
 export interface FormSubmission {
@@ -53,6 +58,34 @@ export interface FormSubmission {
   responses: Record<string, any>;
   ticket_code?: string;
   created_at?: string;
+  // Payment tracking
+  payment_status?: "PENDING" | "APPROVED" | "REJECTED" | null;
+  payment_amount?: number | null;
+  payment_transaction_id?: string | null;
+  payment_screenshot_url?: string | null;
+  is_member?: boolean;
+  membership_id_used?: string | null;
+  payment_reviewed_at?: string | null;
+  payment_reviewed_by?: string | null;
+  payment_rejection_reason?: string | null;
+}
+
+export interface FormPaymentItem {
+  id: string;
+  form_id: string;
+  form_title: string;
+  submitter_name: string;
+  submitter_email: string;
+  amount: number;
+  transaction_id: string;
+  screenshot_url?: string | null;
+  is_member: boolean;
+  membership_id_used?: string | null;
+  payment_status: "PENDING" | "APPROVED" | "REJECTED";
+  payment_rejection_reason?: string | null;
+  payment_reviewed_at?: string | null;
+  payment_reviewed_by?: string | null;
+  created_at: string;
 }
 
 export interface MembershipItem {

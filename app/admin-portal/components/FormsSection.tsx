@@ -468,6 +468,122 @@ export function FormsSection({
             </div>
           </div>
 
+          {/* Payment Settings Section */}
+          <div className="pt-4 border-t border-white/10 space-y-4">
+            <h4 className="text-sm font-bold text-white flex items-center gap-2">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                <line x1="1" y1="10" x2="23" y2="10" />
+              </svg>
+              Payment Settings
+            </h4>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-black/30 border border-white/10 rounded-xl">
+              {/* Free for Members Toggle */}
+              <div className="md:col-span-2">
+                <label className="flex items-center gap-3 text-xs font-semibold text-gray-200 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(customFormBuilder.free_for_members)}
+                    onChange={(e) => {
+                      handleCustomFormInputChange("free_for_members", e.target.checked);
+                      if (e.target.checked) {
+                        handleCustomFormInputChange("amount_members", 0);
+                      }
+                    }}
+                    className="w-4 h-4 accent-emerald-500 rounded cursor-pointer"
+                  />
+                  Free for Members
+                  {customFormBuilder.free_for_members && (
+                    <span className="px-1.5 py-0.5 text-[9px] font-extrabold uppercase bg-emerald-500/20 text-emerald-400 rounded">
+                      ENABLED
+                    </span>
+                  )}
+                </label>
+                <p className="ml-7 mt-1 text-[11px] text-gray-500">
+                  When enabled, verified AICE members can register without paying.
+                  They will need to verify their Name and Membership ID on the form.
+                </p>
+              </div>
+
+              {/* Require Payment Toggle */}
+              <div className="md:col-span-2">
+                <label className="flex items-center gap-3 text-xs font-semibold text-gray-200 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(customFormBuilder.require_payment)}
+                    onChange={(e) =>
+                      handleCustomFormInputChange("require_payment", e.target.checked)
+                    }
+                    className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
+                  />
+                  Required Payment
+                  {customFormBuilder.require_payment && (
+                    <span className="px-1.5 py-0.5 text-[9px] font-extrabold uppercase bg-amber-500/20 text-amber-400 rounded">
+                      ENABLED
+                    </span>
+                  )}
+                </label>
+                <p className="ml-7 mt-1 text-[11px] text-gray-500">
+                  When enabled, registrants must pay and submit payment proof.
+                  Payments will appear in the Finance Portal for verification.
+                </p>
+              </div>
+
+              {/* Amount Fields (shown only when payment is required) */}
+              {customFormBuilder.require_payment && (
+                <>
+                  <div className={`flex flex-col gap-1.5 ${customFormBuilder.free_for_members ? "md:col-span-2" : ""}`}>
+                    <label className="text-xs font-semibold text-gray-400">
+                      Amount for Non-Members (₹) *
+                    </label>
+                    <input
+                      type="number"
+                      value={customFormBuilder.amount_non_members ?? ""}
+                      onChange={(e) =>
+                        handleCustomFormInputChange(
+                          "amount_non_members",
+                          e.target.value ? Number(e.target.value) : undefined,
+                        )
+                      }
+                      placeholder="e.g. 150"
+                      min={0}
+                      max={50000}
+                      className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm text-white font-mono focus:outline-none focus:border-red-500"
+                    />
+                    {customFormBuilder.free_for_members && (
+                      <p className="text-[11px] text-emerald-400 font-medium">
+                        ✓ Free for Members is enabled — verified AICE members register without paying.
+                      </p>
+                    )}
+                  </div>
+
+                  {!customFormBuilder.free_for_members && (
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs font-semibold text-gray-400">
+                        Amount for Members (₹)
+                      </label>
+                      <input
+                        type="number"
+                        value={customFormBuilder.amount_members ?? ""}
+                        onChange={(e) =>
+                          handleCustomFormInputChange(
+                            "amount_members",
+                            e.target.value ? Number(e.target.value) : undefined,
+                          )
+                        }
+                        placeholder="e.g. 100"
+                        min={0}
+                        max={50000}
+                        className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm font-mono focus:outline-none focus:border-red-500 text-white"
+                      />
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+
           {/* Questions Field List Manager */}
           <div className="pt-4 border-t border-white/10">
             <div className="flex items-center justify-between mb-4">

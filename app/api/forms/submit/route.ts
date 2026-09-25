@@ -5,9 +5,10 @@ import { sendTicketEmail } from "@/lib/email";
 import { getLocalForms } from "@/lib/forms";
 import { validateResponses } from "@/lib/form-validation";
 import { dispatchTaskUploadsToGoogleDrive } from "@/lib/google-drive";
+import { verifyMemberName } from "@/lib/member-verify";
 
 const FORM_COLUMNS =
-  "id,slug,title,fields,is_active,issue_ticket,whatsapp_link,event_id";
+  "id,slug,title,fields,is_active,issue_ticket,whatsapp_link,event_id,free_for_members,require_payment,amount_members,amount_non_members";
 
 function getPublicTicketImageUrl(req: Request, ticketCode: string): string {
   return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(ticketCode)}`;
@@ -15,7 +16,7 @@ function getPublicTicketImageUrl(req: Request, ticketCode: string): string {
 
 export async function POST(req: Request) {
   try {
-    const { formId, eventId, responses } = await req.json();
+    const { formId, eventId, responses, paymentData, memberData } = await req.json();
 
     if (!formId || !responses) {
       return NextResponse.json(
@@ -60,6 +61,93 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
+    // ---- Member Verification ----
+    let isMember = false;
+    let membershipIdUsed: string | null = null;
+
+    if ((formObj.free_for_members || formObj.amount_members !== undefined) && memberData?.isMember) {
+      const memberName = (memberData.memberName || "").trim();
+      const membershipId = (memberData.membershipId || "").trim();
+
+      if (!memberName || !membershipId) {
+        return NextResponse.json(
+          { error: "Please provide both your name and membership ID for member verification." },
+          { status: 400 },
+        );
+      }
+
+      // Verify against the memberships table
+      const { data: memberRecord } = await supabase
+        .from("memberships")
+        .select("id, full_name, membership_id, status")
+        .eq("membership_id", membershipId)
+        .eq("status", "APPROVED")
+        .maybeSingle();
+
+      if (!memberRecord) {
+        return NextResponse.json(
+          { error: "Membership ID not found or not approved. Please check your Membership ID and try again." },
+          { status: 400 },
+        );
+      }
+
+      // Verify member name matches registered name strictly
+      const nameMatch = verifyMemberName(memberName, memberRecord.full_name);
+      if (!nameMatch.matches) {
+        return NextResponse.json(
+          { error: nameMatch.error || "The name you entered does not match the name associated with this Membership ID." },
+          { status: 400 },
+        );
+      }
+
+      // Also verify that any 'Name' question in the form response matches the registered member
+      for (const field of formObj.fields || []) {
+        const lbl = (field.label || "").toLowerCase();
+        if (lbl.includes("full name") || lbl.includes("name")) {
+          const respVal = responses[field.id];
+          if (typeof respVal === "string" && respVal.trim()) {
+            const respMatch = verifyMemberName(respVal, memberRecord.full_name);
+            if (!respMatch.matches) {
+              return NextResponse.json(
+                {
+                  error: `The name in your form response ("${respVal}") does not match the Membership ID credential for "${memberRecord.full_name}".`,
+                },
+                { status: 400 },
+              );
+            }
+          }
+        }
+      }
+
+      isMember = true;
+      membershipIdUsed = membershipId;
+    }
+
+    // ---- Payment Handling ----
+    let paymentStatus: string | null = null;
+    let paymentAmount: number | null = null;
+    let paymentTransactionId: string | null = null;
+    let paymentScreenshotUrl: string | null = null;
+
+    const memberIsFree = Boolean(formObj.free_for_members) || formObj.amount_members === 0;
+    const needsPayment = formObj.require_payment && !(isMember && memberIsFree);
+
+    if (needsPayment) {
+      if (!paymentData?.transactionId || !paymentData?.screenshotUrl) {
+        return NextResponse.json(
+          { error: "Payment proof is required. Please upload a payment screenshot and enter your Transaction ID." },
+          { status: 400 },
+        );
+      }
+
+      paymentAmount = isMember
+        ? (formObj.amount_members || formObj.amount_non_members || 0)
+        : (formObj.amount_non_members || 0);
+      paymentTransactionId = paymentData.transactionId.trim();
+      paymentScreenshotUrl = paymentData.screenshotUrl;
+      paymentStatus = "PENDING";
+    }
+
     const issueTicket = formObj.issue_ticket !== false;
     const ticketCode = issueTicket
       ? `AICE-${crypto.randomBytes(6).toString("hex").toUpperCase()}`
@@ -69,20 +157,32 @@ export async function POST(req: Request) {
       ? getPublicTicketImageUrl(req, ticketCode)
       : null;
 
+    const insertData: any = {
+      form_id: formId,
+      event_id: formObj.event_id || null,
+      responses: ticketCode
+        ? {
+            ...validation.responses,
+            __ticket: { code: ticketCode, issuedAt: createdAt },
+          }
+        : validation.responses,
+    };
+
+    // Add payment fields if applicable
+    if (paymentStatus) {
+      insertData.payment_status = paymentStatus;
+      insertData.payment_amount = paymentAmount;
+      insertData.payment_transaction_id = paymentTransactionId;
+      insertData.payment_screenshot_url = paymentScreenshotUrl;
+    }
+    if (isMember) {
+      insertData.is_member = true;
+      insertData.membership_id_used = membershipIdUsed;
+    }
+
     const { error: insertError } = await supabase
       .from("form_submissions")
-      .insert([
-        {
-          form_id: formId,
-          event_id: formObj.event_id || null,
-          responses: ticketCode
-            ? {
-                ...validation.responses,
-                __ticket: { code: ticketCode, issuedAt: createdAt },
-              }
-            : validation.responses,
-        },
-      ]);
+      .insert([insertData]);
     if (insertError) {
       console.error("Unable to save form submission", insertError);
       return NextResponse.json(

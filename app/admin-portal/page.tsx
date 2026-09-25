@@ -17,6 +17,7 @@ import { EventsSection } from "./components/EventsSection";
 import { RedirectsSection } from "./components/RedirectsSection";
 import { FormsSection } from "./components/FormsSection";
 import { FinanceSection } from "./components/FinanceSection";
+import { FormPaymentsSection } from "./components/FormPaymentsSection";
 import { UnsavedChangesBar } from "./components/UnsavedChangesBar";
 import { ConfirmModal } from "./components/ConfirmModal";
 import { Toast } from "./components/Toast";
@@ -26,7 +27,7 @@ const MONTHS = [
   "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
 ];
 export default function AdminPortalPage() {
-  const [activeSection, setActiveSection] = useState<"events" | "redirects" | "forms" | "finance">("events");
+  const [activeSection, setActiveSection] = useState<"events" | "redirects" | "forms" | "finance" | "form-payments">("events");
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [userRole, setUserRole] = useState<"admin" | "finance">("admin");
 
@@ -100,6 +101,8 @@ export default function AdminPortalPage() {
     fields: [],
     is_active: true,
     issue_ticket: true,
+    free_for_members: false,
+    require_payment: false,
   });
 
   // Modal / Toast state
@@ -855,8 +858,15 @@ export default function AdminPortalPage() {
         </main>
       )}
 
+      {/* SECTION 5: FORM PAYMENT VERIFICATION */}
+      {activeSection === "form-payments" && (
+        <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+          <FormPaymentsSection showToast={showToast} />
+        </main>
+      )}
+
       {/* Floating Unsaved Changes Bar */}
-      {isDirty && activeSection !== "finance" && (
+      {isDirty && activeSection !== "finance" && activeSection !== "form-payments" && (
         <UnsavedChangesBar
           isEventsDirty={isEventsDirty}
           isRedirectsDirty={isRedirectsDirty}

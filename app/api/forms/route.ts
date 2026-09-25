@@ -102,6 +102,10 @@ export async function POST(req: Request) {
       fields: Array.isArray(f.fields) ? f.fields : [],
       is_active: f.is_active !== undefined ? Boolean(f.is_active) : true,
       issue_ticket: f.issue_ticket !== false,
+      free_for_members: Boolean(f.free_for_members),
+      require_payment: Boolean(f.require_payment),
+      amount_members: f.amount_members ? Number(f.amount_members) : null,
+      amount_non_members: f.amount_non_members ? Number(f.amount_non_members) : null,
     }));
 
     // Upsert first: a failed write must never erase existing data.

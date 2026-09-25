@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
 import { renderTextWithLinks } from "@/lib/formatText";
+import { verifyMemberName } from "@/lib/member-verify";
 
 export interface FormField {
   id: string;
@@ -34,6 +35,10 @@ export interface CustomFormItem {
   is_active: boolean;
   issue_ticket?: boolean;
   created_at?: string;
+  free_for_members?: boolean;
+  require_payment?: boolean;
+  amount_members?: number;
+  amount_non_members?: number;
 }
 
 function WhatsAppIcon() {
@@ -117,12 +122,176 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
   const submittingRef = useRef(false);
   const errorRef = useRef<HTMLDivElement>(null);
 
+  // Member verification state
+  const [isMemberToggle, setIsMemberToggle] = useState(false);
+  const [memberName, setMemberName] = useState("");
+  const [membershipId, setMembershipId] = useState("");
+  const [memberVerified, setMemberVerified] = useState(false);
+  const [verifiedMemberName, setVerifiedMemberName] = useState("");
+  const [verifyingMember, setVerifyingMember] = useState(false);
+  const [memberError, setMemberError] = useState("");
+
+  // Payment state
+  const [paymentTransactionId, setPaymentTransactionId] = useState("");
+  const [paymentScreenshot, setPaymentScreenshot] = useState<string | null>(
+    null,
+  );
+  const [paymentScreenshotFile, setPaymentScreenshotFile] =
+    useState<File | null>(null);
+  const paymentFileRef = useRef<HTMLInputElement>(null);
+
+  const UPI_ID = process.env.NEXT_PUBLIC_UPI_ID || "aicecec@upi";
+  const UPI_NAME = process.env.NEXT_PUBLIC_UPI_NAME || "AICE CEC";
+
+  // Determine if payment is needed
+  const showMemberOption = Boolean(
+    form.free_for_members || form.require_payment,
+  );
+  const memberIsFree =
+    Boolean(form.free_for_members) ||
+    (form.amount_members !== undefined && form.amount_members === 0);
+  // When user selects AICE Member option and members are free, payment is not required
+  const isMemberPaymentExempt = isMemberToggle && memberIsFree;
+  const needsPayment = Boolean(form.require_payment) && !isMemberPaymentExempt;
+  const paymentAmount =
+    isMemberToggle && !form.free_for_members
+      ? (form.amount_members ?? form.amount_non_members ?? 0)
+      : form.amount_non_members || 0;
+
   // Auto-scroll to error message when it appears
   useEffect(() => {
     if (errorMsg && errorRef.current) {
       errorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, [errorMsg]);
+
+  // Helper to extract the registrant's name from form response fields
+  const findFormName = () => {
+    for (const f of form.fields) {
+      const lbl = (f.label || "").toLowerCase();
+      const fid = (f.id || "").toLowerCase();
+      if (
+        f.type === "text" &&
+        (lbl.includes("full name") ||
+          lbl.includes("name") ||
+          fid.includes("name"))
+      ) {
+        const val = formData[f.id];
+        if (typeof val === "string" && val.trim()) {
+          return { field: f, value: val.trim() };
+        }
+      }
+    }
+    return null;
+  };
+
+  // Verify membership
+  const handleVerifyMember = async () => {
+    setMemberError("");
+    const cleanName = memberName.trim();
+    const cleanId = membershipId.trim();
+
+    if (!cleanId) {
+      setMemberError(
+        "Please enter your Membership ID (e.g. AICE-2026-CS-ABCDEF).",
+      );
+      return;
+    }
+    if (!cleanName) {
+      setMemberError("Please enter your registered full name.");
+      return;
+    }
+    if (cleanName.length < 3) {
+      setMemberError(
+        "Please enter your full registered name (at least 3 characters). Single letters like 'I' are not accepted.",
+      );
+      return;
+    }
+
+    setVerifyingMember(true);
+    try {
+      // Server-side strict cross-verification against Supabase memberships table
+      const res = await fetch("/api/memberships/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ membershipId: cleanId, name: cleanName }),
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setMemberError(
+          data.error || "Membership ID not found or name does not match.",
+        );
+        setMemberVerified(false);
+        setVerifiedMemberName("");
+        return;
+      }
+
+      // Also check if the form's name question has a value, and ensure it matches the member record
+      const formName = findFormName();
+      if (formName && formName.value) {
+        const formMatchResult = verifyMemberName(
+          formName.value,
+          data.memberName,
+        );
+        if (!formMatchResult.matches) {
+          setMemberError(
+            `The name entered in the form ("${formName.value}") does not match the Membership ID credential for "${data.memberName}". Please ensure you enter your own name.`,
+          );
+          setMemberVerified(false);
+          setVerifiedMemberName("");
+          return;
+        }
+      }
+
+      setMemberVerified(true);
+      setVerifiedMemberName(data.memberName || cleanName);
+      setMemberError("");
+    } catch {
+      setMemberError(
+        "Network error while verifying membership. Please try again.",
+      );
+      setMemberVerified(false);
+      setVerifiedMemberName("");
+    } finally {
+      setVerifyingMember(false);
+    }
+  };
+
+  // Payment screenshot handler
+  const handlePaymentScreenshot = (file: File | null) => {
+    if (!file) {
+      setPaymentScreenshot(null);
+      setPaymentScreenshotFile(null);
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setErrorMsg("Payment screenshot must be under 5MB");
+      return;
+    }
+    setPaymentScreenshotFile(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new window.Image();
+      img.src = e.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const MAX_WIDTH = 800;
+        if (img.width > MAX_WIDTH) {
+          const scale = MAX_WIDTH / img.width;
+          canvas.width = MAX_WIDTH;
+          canvas.height = Math.round(img.height * scale);
+        } else {
+          canvas.width = img.width;
+          canvas.height = img.height;
+        }
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+        setPaymentScreenshot(canvas.toDataURL("image/webp", 0.7));
+      };
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleInputChange = (
     fieldId: string,
@@ -134,6 +303,16 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
       finalVal = value.replace(/\D/g, "").slice(0, 10);
     }
     setFormData((prev) => ({ ...prev, [fieldId]: finalVal }));
+
+    // If registrant modifies their name, reset member verification so it must be verified again
+    const f = form.fields.find((field) => field.id === fieldId);
+    if (f) {
+      const lbl = (f.label || "").toLowerCase();
+      if (lbl.includes("name")) {
+        setMemberVerified(false);
+        setVerifiedMemberName("");
+      }
+    }
   };
 
   const handleCheckboxChange = (
@@ -254,17 +433,76 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
       }
     }
 
+    // Validate member verification if toggled
+    if (showMemberOption && isMemberToggle) {
+      if (!memberVerified) {
+        setErrorMsg("Please verify your membership before submitting.");
+        submittingRef.current = false;
+        return;
+      }
+
+      // Ensure form's name field matches the verified member name if filled
+      const formName = findFormName();
+      if (formName && formName.value) {
+        const formMatchResult = verifyMemberName(formName.value, memberName);
+        if (!formMatchResult.matches) {
+          setErrorMsg(
+            `The name entered in the form ("${formName.value}") does not match your verified membership name ("${memberName}").`,
+          );
+          submittingRef.current = false;
+          return;
+        }
+      }
+    }
+
+    // Validate payment if needed
+    if (needsPayment) {
+      if (
+        !paymentTransactionId.trim() ||
+        paymentTransactionId.trim().length < 6
+      ) {
+        setErrorMsg("Please enter a valid UPI Transaction ID / UTR number.");
+        submittingRef.current = false;
+        return;
+      }
+      if (!paymentScreenshot) {
+        setErrorMsg("Please upload a screenshot of your payment receipt.");
+        submittingRef.current = false;
+        return;
+      }
+    }
+
     setSubmitting(true);
 
     try {
+      const submitBody: any = {
+        formId: form.id,
+        eventId: form.event_id || null,
+        responses: formData,
+      };
+
+      // Add member data if applicable
+      if (showMemberOption && isMemberToggle && memberVerified) {
+        submitBody.memberData = {
+          isMember: true,
+          memberName: memberName.trim(),
+          membershipId: membershipId.trim(),
+        };
+      }
+
+      // Add payment data if applicable
+      if (needsPayment) {
+        submitBody.paymentData = {
+          transactionId: paymentTransactionId.trim(),
+          screenshotUrl: paymentScreenshot,
+          amount: paymentAmount,
+        };
+      }
+
       const res = await fetch("/api/forms/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          formId: form.id,
-          eventId: form.event_id || null,
-          responses: formData,
-        }),
+        body: JSON.stringify(submitBody),
       });
 
       const data = await res.json();
@@ -317,7 +555,6 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
       </div>
     );
   }
-
 
   // Render Submitted Confirmation Screen
   if (submitted) {
@@ -617,6 +854,263 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
               </div>
             );
           })}
+
+          {/* ---- Member Verification Section ---- */}
+          {showMemberOption && (
+            <div className="space-y-4 pt-4 border-t-2 border-white/15">
+              <div className="flex items-center gap-2.5 pb-1 border-b border-white/10 min-w-0">
+                <span className="px-2 py-0.5 bg-emerald-600 text-white font-mono font-black text-xs sm:text-sm shrink-0">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="inline -mt-0.5"
+                  >
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </span>
+                <label className="font-extrabold text-gray-200 font-mono text-sm sm:text-base uppercase tracking-widest break-words min-w-0">
+                  AICE Membership
+                </label>
+              </div>
+
+              <label className="flex items-center gap-3 p-3 bg-[#070709] border-2 border-white/15 text-sm font-bold text-gray-200 cursor-pointer select-none hover:bg-white/5 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={isMemberToggle}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setIsMemberToggle(checked);
+                    if (!checked) {
+                      setMemberVerified(false);
+                      setMemberError("");
+                    } else if (!memberName) {
+                      const formName = findFormName();
+                      if (formName) {
+                        setMemberName(formName.value);
+                      }
+                    }
+                  }}
+                  className="w-4 h-4 accent-emerald-500 cursor-pointer shrink-0"
+                />
+                <span>I am an AICE Member</span>
+                {form.free_for_members && (
+                  <span className="ml-auto text-[10px] font-black text-emerald-400 uppercase tracking-wider">
+                    Free Registration
+                  </span>
+                )}
+              </label>
+
+              {isMemberToggle && (
+                <div className="space-y-3 p-4 bg-[#0a0a0f] border-2 border-emerald-500/20">
+                  <p className="text-xs text-gray-400 font-medium">
+                    Enter your registered name and Membership ID to verify your
+                    membership.
+                  </p>
+
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      value={memberName}
+                      onChange={(e) => {
+                        setMemberName(e.target.value);
+                        setMemberVerified(false);
+                        setMemberError("");
+                      }}
+                      placeholder="Your registered full name"
+                      className="w-full px-4 py-3 bg-[#070709] border-2 border-white/15 text-base text-white placeholder:text-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                    />
+                    <input
+                      type="text"
+                      value={membershipId}
+                      onChange={(e) => {
+                        setMembershipId(e.target.value.toUpperCase());
+                        setMemberVerified(false);
+                        setMemberError("");
+                      }}
+                      placeholder="e.g. AICE-2026-CS-ABCDEF"
+                      className="w-full px-4 py-3 bg-[#070709] border-2 border-white/15 text-base text-white font-mono placeholder:text-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                    />
+                  </div>
+
+                  {memberError && (
+                    <div className="p-2.5 text-xs font-bold text-center text-red-400 bg-red-500/10 border-2 border-red-500/30">
+                      ⚠️ {memberError}
+                    </div>
+                  )}
+
+                  {memberVerified ? (
+                    <div className="p-3 text-xs font-bold text-center text-emerald-400 bg-emerald-500/10 border-2 border-emerald-500/30 flex items-center justify-center gap-2">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                      </svg>
+                      Verified: {verifiedMemberName || memberName} ({membershipId})
+                      {form.free_for_members && (
+                        <span className="text-emerald-300 ml-1">• No payment required</span>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleVerifyMember}
+                      disabled={verifyingMember}
+                      className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-widest border-2 border-black shadow-[4px_4px_0px_#000000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer disabled:opacity-50"
+                    >
+                      {verifyingMember ? "Verifying..." : "Verify Membership"}
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ---- Payment Section ---- */}
+          {needsPayment && (
+            <div className="space-y-4 pt-4 border-t-2 border-white/15">
+              <div className="flex items-center gap-2.5 pb-1 border-b border-white/10 min-w-0">
+                <span className="px-2 py-0.5 bg-amber-600 text-white font-mono font-black text-xs sm:text-sm shrink-0">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="inline -mt-0.5"
+                  >
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                    <line x1="1" y1="10" x2="23" y2="10" />
+                  </svg>
+                </span>
+                <label className="font-extrabold text-gray-200 font-mono text-sm sm:text-base uppercase tracking-widest break-words min-w-0">
+                  Payment Required
+                </label>
+              </div>
+
+              <div className="p-4 sm:p-6 bg-[#0a0a0f] border-2 border-amber-500/20 space-y-5">
+                {/* Amount Display */}
+                <div className="text-center space-y-2">
+                  <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 font-mono">
+                    Amount to Pay
+                  </div>
+                  <div className="text-4xl font-black text-white font-mono">
+                    ₹{paymentAmount}
+                  </div>
+                  {isMemberToggle &&
+                    memberVerified &&
+                    !form.free_for_members &&
+                    form.amount_members !== form.amount_non_members && (
+                      <div className="text-xs text-emerald-400 font-bold">
+                        Member discount applied
+                      </div>
+                    )}
+                </div>
+
+                {/* UPI QR Code */}
+                <div className="flex flex-col items-center gap-3 p-4 bg-white/[0.03] border border-white/10">
+                  <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 font-mono">
+                    Scan QR or Pay via UPI
+                  </div>
+                  <div className="p-3 bg-white border-2 border-black shadow-[4px_4px_0px_#000000]">
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(`upi://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${paymentAmount}&cu=INR&tn=${encodeURIComponent(`${form.title} Registration`)}`)}`}
+                      alt="UPI QR Code"
+                      width={180}
+                      height={180}
+                      className="block"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-300 font-mono">
+                    <span className="font-bold text-white">{UPI_ID}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard?.writeText(UPI_ID);
+                      }}
+                      className="px-2 py-1 bg-white/5 border border-white/10 hover:bg-white/10 rounded text-[10px] font-bold text-gray-300 transition-colors"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
+
+                {/* Transaction ID */}
+                <div className="space-y-2">
+                  <label className="font-extrabold text-gray-200 font-mono text-xs uppercase tracking-widest">
+                    UPI Transaction ID / UTR *
+                  </label>
+                  <input
+                    type="text"
+                    value={paymentTransactionId}
+                    onChange={(e) => setPaymentTransactionId(e.target.value)}
+                    placeholder="e.g. 412345678901"
+                    maxLength={50}
+                    className="w-full px-4 py-3 bg-[#070709] border-2 border-white/15 text-base text-white font-mono placeholder:text-gray-500 focus:outline-none focus:border-amber-500 transition-colors"
+                  />
+                </div>
+
+                {/* Screenshot Upload */}
+                <div className="space-y-2">
+                  <label className="font-extrabold text-gray-200 font-mono text-xs uppercase tracking-widest">
+                    Payment Screenshot *
+                  </label>
+                  <input
+                    ref={paymentFileRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      handlePaymentScreenshot(e.target.files?.[0] || null)
+                    }
+                    className="block w-full text-xs text-gray-300 border-2 border-white/15 bg-[#070709] p-2 file:mr-4 file:py-2 file:px-4 file:border-2 file:border-black file:text-xs file:font-black file:bg-amber-600 file:text-white hover:file:bg-amber-700 cursor-pointer"
+                  />
+                  {paymentScreenshot && (
+                    <div className="relative w-40 h-40 border-2 border-white/15 overflow-hidden bg-black shadow-[4px_4px_0px_#000000]">
+                      <img
+                        src={paymentScreenshot}
+                        alt="Payment screenshot preview"
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPaymentScreenshot(null);
+                          setPaymentScreenshotFile(null);
+                          if (paymentFileRef.current)
+                            paymentFileRef.current.value = "";
+                        }}
+                        className="absolute top-1 right-1 w-6 h-6 bg-red-600 text-white text-xs font-black flex items-center justify-center hover:bg-red-500"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <p className="text-[10px] text-gray-500 text-center font-medium">
+                  Your payment will be verified by the finance team.
+                  Registration is confirmed after payment approval.
+                </p>
+              </div>
+            </div>
+          )}
 
           {errorMsg && (
             <div

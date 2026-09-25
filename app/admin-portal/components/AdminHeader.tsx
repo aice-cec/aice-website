@@ -3,8 +3,8 @@
 import Image from "next/image";
 
 interface AdminHeaderProps {
-  activeSection: "events" | "redirects" | "forms" | "finance";
-  setActiveSection: (sec: "events" | "redirects" | "forms" | "finance") => void;
+  activeSection: "events" | "redirects" | "forms" | "finance" | "form-payments";
+  setActiveSection: (sec: "events" | "redirects" | "forms" | "finance" | "form-payments") => void;
   userRole?: "admin" | "finance";
   pendingFinanceCount?: number;
   mobileMenuOpen: boolean;
@@ -198,11 +198,26 @@ export function AdminHeader({
               </span>
             )}
           </button>
+
+          <button
+            onClick={() => setActiveSection("form-payments")}
+            className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all ${
+              activeSection === "form-payments"
+                ? "bg-red-600 text-white shadow-md"
+                : "text-gray-400 hover:text-white hover:bg-white/5"
+            }`}
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+              <line x1="1" y1="10" x2="23" y2="10" />
+            </svg>
+            Form Payments
+          </button>
         </div>
 
         {/* Desktop Right Action Buttons */}
         <div className="hidden md:flex items-center gap-2.5">
-          {!isFinanceOnly && activeSection !== "finance" && (
+          {!isFinanceOnly && activeSection !== "finance" && activeSection !== "form-payments" && (
             <>
               <button
                 onClick={handleExportJSON}
@@ -309,10 +324,23 @@ export function AdminHeader({
             >
               Finance {pendingFinanceCount > 0 ? `(${pendingFinanceCount})` : ""}
             </button>
+            <button
+              onClick={() => {
+                setActiveSection("form-payments");
+                setMobileMenuOpen(false);
+              }}
+              className={`py-2 text-xs font-bold rounded-lg text-center ${
+                activeSection === "form-payments"
+                  ? "bg-red-600 text-white"
+                  : "text-gray-400"
+              }`}
+            >
+              Form Payments
+            </button>
           </div>
 
           <div className="flex items-center gap-2">
-            {!isFinanceOnly && activeSection !== "finance" && (
+            {!isFinanceOnly && activeSection !== "finance" && activeSection !== "form-payments" && (
               <button
                 onClick={handlePublishChanges}
                 className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-white bg-emerald-600 rounded-lg"

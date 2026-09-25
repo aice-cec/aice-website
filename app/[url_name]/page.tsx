@@ -28,7 +28,7 @@ export default async function RedirectOrFormPage({
     const { data: formData } = await supabase
       .from("forms")
       .select(
-        "id,slug,event_id,title,description,whatsapp_link,fields,is_active,issue_ticket,created_at",
+        "id,slug,event_id,title,description,whatsapp_link,fields,is_active,issue_ticket,created_at,free_for_members,require_payment,amount_members,amount_non_members",
       )
       .eq("slug", targetSlug)
       .single();
