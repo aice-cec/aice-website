@@ -158,6 +158,13 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
       ? (form.amount_members ?? form.amount_non_members ?? 0)
       : form.amount_non_members || 0;
 
+  // Set document title dynamically
+  useEffect(() => {
+    if (form?.title) {
+      document.title = `${form.title} | AICE CEC`;
+    }
+  }, [form?.title]);
+
   // Auto-scroll to error message when it appears
   useEffect(() => {
     if (errorMsg && errorRef.current) {

@@ -28,8 +28,10 @@ export const viewport: Viewport = {
   themeColor: "#000000",
 };
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://aice.ceconline.edu";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://aice-cec.vercel.app"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "AICE | AI Innovation Community for Excellence",
     template: "%s | AICE CEC",
@@ -67,7 +69,7 @@ export const metadata: Metadata = {
     title: "AICE | AI Innovation Community for Excellence",
     description:
       "Official AI community of College of Engineering Chengannur. Join us to learn, build, and innovate.",
-    url: "https://aice-cec.vercel.app",
+    url: SITE_URL,
     siteName: "AICE CEC",
     type: "website",
     images: [
