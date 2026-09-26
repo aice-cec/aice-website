@@ -370,29 +370,57 @@ export default function AttendancePage() {
       const html5QrCode = new Html5Qrcode(scannerContainerId);
       scannerRef.current = html5QrCode;
 
-      await html5QrCode.start(
-        { facingMode: "environment" },
-        {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
-          aspectRatio: 1.0,
-        },
-        (decodedText: string) => {
-          processTicket(decodedText);
-        },
-        () => {
-          // ignore failures
-        },
-      );
+      const scannerConfig = {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+        aspectRatio: 1.0,
+      };
+      const onSuccess = (decodedText: string) => processTicket(decodedText);
+      const onFailure = () => {};
+
+      try {
+        // Try rear camera first
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          scannerConfig,
+          onSuccess,
+          onFailure,
+        );
+      } catch {
+        // Fall back to any available camera
+        await html5QrCode.start(
+          { facingMode: "user" },
+          scannerConfig,
+          onSuccess,
+          onFailure,
+        );
+      }
 
       setScanning(true);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Scanner init error:", err);
-      setScanResult({
-        type: "error",
-        title: "Camera access denied",
-        detail: "Please allow camera access to scan QR codes.",
-      });
+      const errName = err?.name || "";
+      const errMsg = (err?.message || "").toLowerCase();
+
+      if (errName === "NotAllowedError" || errMsg.includes("denied") || errMsg.includes("dismissed") || errMsg.includes("permission")) {
+        setScanResult({
+          type: "error",
+          title: "Camera permission blocked",
+          detail: "Click the lock/site-settings icon in your browser's address bar → allow Camera → then reload the page.",
+        });
+      } else if (errName === "NotFoundError" || errMsg.includes("not found") || errMsg.includes("no video")) {
+        setScanResult({
+          type: "error",
+          title: "No camera found",
+          detail: "This device doesn't seem to have a camera. Use the manual ticket entry below instead.",
+        });
+      } else {
+        setScanResult({
+          type: "error",
+          title: "Camera error",
+          detail: "Could not start the camera. Try refreshing or use manual entry below.",
+        });
+      }
     }
   };
 
@@ -646,11 +674,17 @@ export default function AttendancePage() {
             {/* Scanner card */}
             <div className={styles.scannerCard}>
               <div className={styles.scannerViewport}>
-                {scanning ? (
-                  <div id={scannerContainerId} style={{ width: "100%", height: "100%" }} />
-                ) : (
+                {/* Always keep the scanner container mounted to prevent AbortError */}
+                <div
+                  id={scannerContainerId}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    display: scanning ? "block" : "none",
+                  }}
+                />
+                {!scanning && (
                   <div className={styles.scannerPlaceholder}>
-                    <div id={scannerContainerId} style={{ display: "none" }} />
                     <QrScanIcon />
                     <p className={styles.scannerPlaceholderText}>
                       Start the camera to scan QR tickets
