@@ -1,0 +1,851 @@
+/* ============================================================
+   Attendance Page — Volunteer QR Check-in
+   ============================================================ */
+
+/* ---------- Login Screen ---------- */
+.loginOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(7, 7, 9, 0.96);
+  backdrop-filter: blur(14px);
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 420px;
+  padding: 2.25rem 2rem;
+  background: #121217;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.25rem;
+  box-shadow:
+    0 0 60px rgba(255, 32, 32, 0.06),
+    0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.loginHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-bottom: 1.75rem;
+}
+
+.loginLogo {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+}
+
+.loginTitle {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.025em;
+}
+
+.loginSubtitle {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.fieldLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.fieldInput {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.fieldInput::placeholder {
+  color: #6b7280;
+}
+
+.fieldInput:focus {
+  border-color: #ef4444;
+}
+
+.fieldInputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.fieldInputWrap .fieldInput {
+  padding-right: 2.75rem;
+}
+
+.togglePassBtn {
+  position: absolute;
+  right: 0.625rem;
+  padding: 4px;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  border-radius: 4px;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
+}
+
+.togglePassBtn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.loginError {
+  padding: 0.625rem;
+  font-size: 0.75rem;
+  text-align: center;
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 0.5rem;
+}
+
+.loginBtn {
+  width: 100%;
+  padding: 0.625rem;
+  margin-top: 0.25rem;
+  background: #dc2626;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+}
+
+.loginBtn:hover {
+  background: #b91c1c;
+}
+
+.loginBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- Main Layout ---------- */
+.container {
+  min-height: 100dvh;
+  background: #09090b;
+  color: #f4f4f5;
+  display: flex;
+  flex-direction: column;
+}
+
+.topBar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1.25rem;
+  background: rgba(9, 9, 11, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.topBarLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.topBarLogo {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.topBarTitle {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.topBarBadge {
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.12);
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.volunteerName {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .volunteerName {
+    display: block;
+  }
+}
+
+.logoutBtn {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.logoutBtn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+}
+
+/* ---------- Content Area ---------- */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  gap: 1.5rem;
+}
+
+/* ---------- Event Selector ---------- */
+.selectorSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.selectorLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #71717a;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.selectorDropdown {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  color: #fff;
+  font-size: 0.875rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px;
+  padding-right: 2.5rem;
+}
+
+.selectorDropdown:focus {
+  border-color: #ef4444;
+}
+
+.selectorDropdown option {
+  background: #18181b;
+  color: #fff;
+}
+
+/* ---------- Tab Switcher ---------- */
+.tabs {
+  display: flex;
+  gap: 0;
+  background: #18181b;
+  border-radius: 0.625rem;
+  padding: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tab {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: center;
+  color: #71717a;
+  background: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab:hover {
+  color: #a1a1aa;
+}
+
+.tabActive {
+  color: #fff;
+  background: #27272a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------- Scanner Section ---------- */
+.scannerSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.scannerCard {
+  position: relative;
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.scannerViewport {
+  width: 100%;
+  aspect-ratio: 1;
+  max-height: 400px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scannerViewport video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scannerPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  color: #52525b;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.scannerPlaceholder svg {
+  opacity: 0.4;
+}
+
+.scannerPlaceholderText {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.scannerControls {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.scanBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.scanBtnStart {
+  background: #16a34a;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.3);
+}
+
+.scanBtnStart:hover {
+  background: #15803d;
+}
+
+.scanBtnStop {
+  background: #dc2626;
+  color: #fff;
+}
+
+.scanBtnStop:hover {
+  background: #b91c1c;
+}
+
+.scanBtnDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- Manual Entry ---------- */
+.manualEntry {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.manualInput {
+  flex: 1;
+  padding: 0.625rem 0.875rem;
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  color: #fff;
+  font-size: 0.8125rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.manualInput::placeholder {
+  color: #52525b;
+  text-transform: none;
+  font-family: inherit;
+  letter-spacing: normal;
+}
+
+.manualInput:focus {
+  border-color: #ef4444;
+}
+
+.manualSubmitBtn {
+  padding: 0.625rem 1.25rem;
+  background: #2563eb;
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.manualSubmitBtn:hover {
+  background: #1d4ed8;
+}
+
+.manualSubmitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- Scan Result Toasts ---------- */
+.scanResult {
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scanResultSuccess {
+  background: rgba(22, 163, 74, 0.12);
+  border: 1px solid rgba(22, 163, 74, 0.25);
+}
+
+.scanResultDuplicate {
+  background: rgba(234, 179, 8, 0.12);
+  border: 1px solid rgba(234, 179, 8, 0.25);
+}
+
+.scanResultError {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.scanResultIcon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.scanResultIconSuccess {
+  background: rgba(22, 163, 74, 0.25);
+  color: #4ade80;
+}
+
+.scanResultIconDuplicate {
+  background: rgba(234, 179, 8, 0.25);
+  color: #fbbf24;
+}
+
+.scanResultIconError {
+  background: rgba(239, 68, 68, 0.25);
+  color: #f87171;
+}
+
+.scanResultBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.scanResultTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.scanResultSuccessText {
+  color: #4ade80;
+}
+
+.scanResultDuplicateText {
+  color: #fbbf24;
+}
+
+.scanResultErrorText {
+  color: #f87171;
+}
+
+.scanResultDetail {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+}
+
+/* ---------- Attendance Sheet ---------- */
+.sheetSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sheetHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.sheetTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.sheetCount {
+  font-size: 0.75rem;
+  color: #71717a;
+  font-weight: 500;
+}
+
+.sheetActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.refreshBtn,
+.exportBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.875rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid;
+}
+
+.refreshBtn {
+  color: #a1a1aa;
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.refreshBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.exportBtn {
+  color: #4ade80;
+  background: rgba(22, 163, 74, 0.08);
+  border-color: rgba(22, 163, 74, 0.2);
+}
+
+.exportBtn:hover {
+  background: rgba(22, 163, 74, 0.15);
+}
+
+.sheetTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.sheetTable th {
+  padding: 0.75rem 1rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #71717a;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sheetTable td {
+  padding: 0.625rem 1rem;
+  font-size: 0.8125rem;
+  color: #d4d4d8;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.sheetTable tr:last-child td {
+  border-bottom: none;
+}
+
+.sheetTable tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sheetSlNo {
+  color: #52525b;
+  font-variant-numeric: tabular-nums;
+  width: 40px;
+}
+
+.sheetName {
+  font-weight: 600;
+  color: #fff;
+}
+
+.sheetEmail {
+  color: #a1a1aa;
+  font-size: 0.75rem;
+}
+
+.sheetTicket {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem;
+  color: #71717a;
+  letter-spacing: 0.02em;
+}
+
+.sheetTime {
+  font-size: 0.75rem;
+  color: #71717a;
+  white-space: nowrap;
+}
+
+.sheetVolunteer {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+}
+
+/* ---------- Empty / Loading States ---------- */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  color: #52525b;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.emptyStateIcon {
+  opacity: 0.4;
+  margin-bottom: 0.25rem;
+}
+
+.emptyStateText {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.emptyStateHint {
+  font-size: 0.75rem;
+  color: #3f3f46;
+}
+
+.loadingPulse {
+  text-align: center;
+  padding: 2rem;
+  color: #52525b;
+  font-size: 0.8125rem;
+  animation: pulse-subtle 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-subtle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* ---------- Live Counter ---------- */
+.liveCounter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0.75rem;
+}
+
+.counterItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.counterValue {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.counterLabel {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #52525b;
+}
+
+.counterDivider {
+  width: 1px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- Divider ---------- */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #3f3f46;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ---------- Responsive Table ---------- */
+.tableWrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 640px) {
+  .content {
+    padding: 1rem 0.75rem 2rem;
+  }
+
+  .sheetTable th,
+  .sheetTable td {
+    padding: 0.5rem 0.625rem;
+  }
+
+  .sheetTable th:nth-child(4),
+  .sheetTable td:nth-child(4) {
+    display: none;
+  }
+
+  .sheetTable th:nth-child(5),
+  .sheetTable td:nth-child(5) {
+    display: none;
+  }
+}
