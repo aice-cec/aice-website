@@ -579,6 +579,52 @@ export function FormsSection({
                       />
                     </div>
                   )}
+
+                  {/* Custom UPI ID */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-semibold text-gray-400">
+                      Form UPI ID (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={customFormBuilder.upi_id ?? ""}
+                      onChange={(e) =>
+                        handleCustomFormInputChange(
+                          "upi_id",
+                          e.target.value.trim(),
+                        )
+                      }
+                      placeholder="e.g. username@upi"
+                      maxLength={100}
+                      className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm font-mono focus:outline-none focus:border-red-500 text-white"
+                    />
+                    <p className="text-[11px] text-gray-500">
+                      Leave empty to use default: <span className="text-gray-300 font-mono">{process.env.NEXT_PUBLIC_UPI_ID || "melwinshibumathew159-2@oksbi"}</span>
+                    </p>
+                  </div>
+
+                  {/* Custom Payee Name */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-semibold text-gray-400">
+                      Payee Display Name (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={customFormBuilder.upi_name ?? ""}
+                      onChange={(e) =>
+                        handleCustomFormInputChange(
+                          "upi_name",
+                          e.target.value,
+                        )
+                      }
+                      placeholder="e.g. AICE CEC"
+                      maxLength={100}
+                      className="w-full min-w-0 px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-lg text-sm focus:outline-none focus:border-red-500 text-white"
+                    />
+                    <p className="text-[11px] text-gray-500">
+                      Leave empty to use default: <span className="text-gray-300 font-mono">{process.env.NEXT_PUBLIC_UPI_NAME || "Melwin Shibhu Mathew"}</span>
+                    </p>
+                  </div>
                 </>
               )}
             </div>

@@ -49,6 +49,8 @@ export interface CustomFormItem {
   require_payment?: boolean;
   amount_members?: number;
   amount_non_members?: number;
+  upi_id?: string;
+  upi_name?: string;
 }
 
 export interface FormSubmission {

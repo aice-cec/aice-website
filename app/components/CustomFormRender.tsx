@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { QRCodeSVG } from "qrcode.react";
+import { QRCodeSVG, QRCodeCanvas } from "qrcode.react";
 import { renderTextWithLinks } from "@/lib/formatText";
 import { verifyMemberName } from "@/lib/member-verify";
 
@@ -39,6 +39,8 @@ export interface CustomFormItem {
   require_payment?: boolean;
   amount_members?: number;
   amount_non_members?: number;
+  upi_id?: string;
+  upi_name?: string;
 }
 
 function WhatsAppIcon() {
@@ -140,8 +142,23 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
     useState<File | null>(null);
   const paymentFileRef = useRef<HTMLInputElement>(null);
 
-  const UPI_ID = process.env.NEXT_PUBLIC_UPI_ID || "aicecec@upi";
-  const UPI_NAME = process.env.NEXT_PUBLIC_UPI_NAME || "AICE CEC";
+  const [copiedUpi, setCopiedUpi] = useState(false);
+
+  const configField: any = Array.isArray(form.fields)
+    ? form.fields.find(
+        (f: any) =>
+          f &&
+          (f.id === "__payment_config__" || (f.type as string) === "system_config"),
+      )
+    : null;
+  const UPI_ID =
+    (form.upi_id || configField?.upi_id || "").trim() ||
+    process.env.NEXT_PUBLIC_UPI_ID ||
+    "melwinshibumathew159-2@oksbi";
+  const UPI_NAME =
+    (form.upi_name || configField?.upi_name || "").trim() ||
+    process.env.NEXT_PUBLIC_UPI_NAME ||
+    "Melwin Shibhu Mathew";
 
   // Determine if payment is needed
   const showMemberOption = Boolean(
@@ -157,6 +174,9 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
     isMemberToggle && !form.free_for_members
       ? (form.amount_members ?? form.amount_non_members ?? 0)
       : form.amount_non_members || 0;
+
+  const transactionNote = `${form.title || "Registration"} - AICE`;
+  const upiIntentUrl = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(UPI_NAME)}&am=${paymentAmount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
 
   // Set document title dynamically
   useEffect(() => {
@@ -691,7 +711,14 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
 
         {/* Dynamic Fields Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-          {form.fields.map((field, idx) => {
+          {(form.fields || [])
+            .filter(
+              (f: any) =>
+                f &&
+                f.id !== "__payment_config__" &&
+                (f.type as string) !== "system_config",
+            )
+            .map((field, idx) => {
             const stepNum = String(idx + 1).padStart(2, "0");
             return (
               <div key={field.id} className="space-y-2">
@@ -1032,29 +1059,53 @@ export default function CustomFormRender({ form }: { form: CustomFormItem }) {
                 </div>
 
                 {/* UPI QR Code */}
-                <div className="flex flex-col items-center gap-3 p-4 bg-white/[0.03] border border-white/10">
+                <div className="flex flex-col items-center gap-3 p-4 bg-white/[0.03] border border-white/10 text-center">
                   <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 font-mono">
                     Scan QR or Pay via UPI
                   </div>
-                  <div className="p-3 bg-white border-2 border-black shadow-[4px_4px_0px_#000000]">
-                    <img
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(`upi://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${paymentAmount}&cu=INR&tn=${encodeURIComponent(`${form.title} Registration`)}`)}`}
-                      alt="UPI QR Code"
-                      width={180}
-                      height={180}
-                      className="block"
+                  <div className="p-3 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] inline-block mx-auto">
+                    <QRCodeCanvas
+                      value={upiIntentUrl}
+                      size={170}
+                      level="H"
+                      includeMargin={false}
                     />
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-300 font-mono">
-                    <span className="font-bold text-white">{UPI_ID}</span>
+
+                  {/* Direct Pay Link for Mobile UPI Apps */}
+                  <a
+                    href={upiIntentUrl}
+                    className="w-full sm:w-auto px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-black text-xs uppercase tracking-widest border-2 border-black shadow-[3px_3px_0px_#000000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all text-center inline-flex items-center justify-center gap-2"
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect x="2" y="4" width="20" height="16" rx="2" />
+                      <path d="M7 15h0M2 9.5h20" />
+                    </svg>
+                    Pay via UPI App (GPay / PhonePe / Paytm)
+                  </a>
+
+                  <div className="flex flex-wrap items-center justify-center gap-2 text-sm text-gray-300 font-mono pt-1">
+                    <span className="text-xs text-gray-400">UPI ID:</span>
+                    <span className="font-bold text-white break-all">{UPI_ID}</span>
                     <button
                       type="button"
                       onClick={() => {
                         navigator.clipboard?.writeText(UPI_ID);
+                        setCopiedUpi(true);
+                        setTimeout(() => setCopiedUpi(false), 2000);
                       }}
-                      className="px-2 py-1 bg-white/5 border border-white/10 hover:bg-white/10 rounded text-[10px] font-bold text-gray-300 transition-colors"
+                      className="px-2.5 py-1 bg-white/10 border border-white/20 hover:bg-white/20 rounded text-[10px] font-bold text-gray-200 transition-colors cursor-pointer"
                     >
-                      Copy
+                      {copiedUpi ? "✓ Copied!" : "Copy UPI ID"}
                     </button>
                   </div>
                 </div>

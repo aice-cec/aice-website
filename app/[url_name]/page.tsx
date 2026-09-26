@@ -27,7 +27,25 @@ async function getFormBySlug(rawUrlName: string): Promise<CustomFormItem | null>
       .single();
 
     if (formData) {
-      return formData as CustomFormItem;
+      const form = formData as any;
+      if (Array.isArray(form.fields)) {
+        const configItem = form.fields.find(
+          (f: any) =>
+            f &&
+            (f.id === "__payment_config__" || f.type === "system_config"),
+        );
+        if (configItem) {
+          if (!form.upi_id && configItem.upi_id) form.upi_id = configItem.upi_id;
+          if (!form.upi_name && configItem.upi_name) form.upi_name = configItem.upi_name;
+          form.fields = form.fields.filter(
+            (f: any) =>
+              f &&
+              f.id !== "__payment_config__" &&
+              f.type !== "system_config",
+          );
+        }
+      }
+      return form as CustomFormItem;
     }
   } catch {}
 
