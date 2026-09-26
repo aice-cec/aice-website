@@ -4,7 +4,7 @@ import crypto from "crypto";
 import membersData from "@/data/team-26/members.json";
 
 export const VOLUNTEER_SESSION_COOKIE = "aice_volunteer_session";
-const VOLUNTEER_SECRET = process.env.ADMIN_SECRET_KEY ?? "";
+const VOLUNTEER_SECRET = process.env.ADMIN_SECRET_KEY || "aice_volunteer_secret_2026_cec";
 
 export interface VolunteerInfo {
   id: string;
@@ -52,17 +52,17 @@ export function validateVolunteerPassword(
   return password.trim().replace(/\s+/g, "").toLowerCase() === expected;
 }
 
-// ---- Session token management (mirrors admin-auth pattern) ----
+// ---- Session token management (clean, URL-safe alphanumeric tokens) ----
 
 export function generateVolunteerToken(volunteer: VolunteerInfo): string {
   const timestamp = Date.now();
   const nonce = crypto.randomUUID();
-  const raw = `volunteer:${volunteer.id}:${volunteer.name}:${timestamp}:${nonce}`;
+  const raw = `volunteer:${volunteer.id}:${timestamp}:${nonce}`;
   const signature = crypto
     .createHmac("sha256", VOLUNTEER_SECRET)
     .update(raw)
     .digest("hex");
-  return `${timestamp}.${nonce}.${volunteer.id}.${encodeURIComponent(volunteer.name)}.${signature}`;
+  return `${timestamp}.${nonce}.${volunteer.id}.${signature}`;
 }
 
 export interface VolunteerSession {
@@ -74,9 +74,20 @@ export function verifyVolunteerToken(token: string | null): VolunteerSession {
   if (!token || !VOLUNTEER_SECRET) return { authenticated: false };
 
   const parts = token.split(".");
-  if (parts.length !== 5) return { authenticated: false };
+  if (parts.length !== 4 && parts.length !== 5) return { authenticated: false };
 
-  const [timestampStr, nonce, id, encodedName, signature] = parts;
+  let timestampStr: string;
+  let nonce: string;
+  let id: string;
+  let signature: string;
+
+  if (parts.length === 4) {
+    [timestampStr, nonce, id, signature] = parts;
+  } else {
+    // backward-compatibility for 5-part tokens
+    [timestampStr, nonce, id, , signature] = parts;
+  }
+
   const timestamp = parseInt(timestampStr, 10);
   if (isNaN(timestamp)) return { authenticated: false };
 
@@ -85,19 +96,32 @@ export function verifyVolunteerToken(token: string | null): VolunteerSession {
     return { authenticated: false };
   }
 
-  const name = decodeURIComponent(encodedName);
-  const raw = `volunteer:${id}:${name}:${timestamp}:${nonce}`;
-  const expectedSig = crypto
-    .createHmac("sha256", VOLUNTEER_SECRET)
-    .update(raw)
-    .digest("hex");
-
-  if (!safeCompare(signature, expectedSig)) return { authenticated: false };
-
   const volunteer = getAllVolunteers().find((v) => v.id === id);
   if (!volunteer) return { authenticated: false };
 
-  return { authenticated: true, volunteer };
+  // Verify 4-part signature
+  const raw4 = `volunteer:${id}:${timestamp}:${nonce}`;
+  const sig4 = crypto
+    .createHmac("sha256", VOLUNTEER_SECRET)
+    .update(raw4)
+    .digest("hex");
+
+  if (safeCompare(signature, sig4)) {
+    return { authenticated: true, volunteer };
+  }
+
+  // Fallback check for legacy 5-part signature
+  const raw5 = `volunteer:${id}:${volunteer.name}:${timestamp}:${nonce}`;
+  const sig5 = crypto
+    .createHmac("sha256", VOLUNTEER_SECRET)
+    .update(raw5)
+    .digest("hex");
+
+  if (safeCompare(signature, sig5)) {
+    return { authenticated: true, volunteer };
+  }
+
+  return { authenticated: false };
 }
 
 function safeCompare(a?: string | null, b?: string | null): boolean {
@@ -113,7 +137,14 @@ function getCookie(req: Request, name: string): string | null {
   if (!cookieHeader) return null;
   for (const cookie of cookieHeader.split(";")) {
     const [key, ...value] = cookie.trim().split("=");
-    if (key === name) return value.join("=") || null;
+    if (key === name) {
+      const val = value.join("=");
+      try {
+        return decodeURIComponent(val);
+      } catch {
+        return val || null;
+      }
+    }
   }
   return null;
 }
@@ -129,7 +160,7 @@ export function setVolunteerSession(
 ): NextResponse {
   response.cookies.set(VOLUNTEER_SESSION_COOKIE, token, {
     httpOnly: true,
-    sameSite: "strict",
+    sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
     maxAge: 24 * 60 * 60,

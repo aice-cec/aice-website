@@ -39,11 +39,11 @@ export async function POST(req: Request) {
       );
     }
 
-    // Look up the form submission containing this ticket
-    const { data: submissions, error: fetchError } = await supabase
+    // 1. Look up the form submission containing this ticket code
+    const { data: directMatches, error: fetchError } = await supabase
       .from("form_submissions")
       .select("id, form_id, event_id, responses, created_at")
-      .or(`event_id.eq.${eventId},form_id.eq.${eventId}`);
+      .filter("responses->__ticket->>code", "eq", normalised);
 
     if (fetchError) {
       console.error("Supabase query error:", fetchError);
@@ -53,16 +53,75 @@ export async function POST(req: Request) {
       );
     }
 
-    // Find the submission whose responses.__ticket.code matches
-    const matchingSubmission = (submissions || []).find((s: any) => {
-      const ticket = s.responses?.__ticket;
-      return ticket?.code?.toUpperCase() === normalised;
-    });
+    let matchingSubmission: any = directMatches?.[0];
+
+    // Fallback: If JSON filter returned empty, scan all submissions for matching code
+    if (!matchingSubmission) {
+      const { data: allSubmissions } = await supabase
+        .from("form_submissions")
+        .select("id, form_id, event_id, responses, created_at");
+
+      matchingSubmission = (allSubmissions || []).find((s: any) => {
+        const ticket = s.responses?.__ticket;
+        return ticket?.code?.toUpperCase() === normalised;
+      });
+    }
 
     if (!matchingSubmission) {
       return NextResponse.json(
-        { error: "Ticket not found for the selected event. Please check the ticket code and event." },
+        { error: "Ticket code not found. Please verify the code or check if registration was completed." },
         { status: 404 },
+      );
+    }
+
+    // 2. Validate that the ticket belongs to the selected event
+    let eventMatches = false;
+    let registeredEventTitle = "";
+
+    if (
+      matchingSubmission.event_id === eventId ||
+      matchingSubmission.form_id === eventId
+    ) {
+      eventMatches = true;
+    } else {
+      const { data: targetEvent } = await supabase
+        .from("events")
+        .select("id, title")
+        .eq("id", eventId)
+        .maybeSingle();
+
+      const targetTitle = (targetEvent?.title || "").trim().toLowerCase();
+
+      const { data: submissionForm } = await supabase
+        .from("forms")
+        .select("id, title, event_id, slug")
+        .eq("id", matchingSubmission.form_id)
+        .maybeSingle();
+
+      registeredEventTitle = submissionForm?.title || "";
+
+      if (submissionForm) {
+        if (submissionForm.event_id === eventId) {
+          eventMatches = true;
+        } else if (
+          targetTitle &&
+          submissionForm.title &&
+          (submissionForm.title.trim().toLowerCase() === targetTitle ||
+            submissionForm.slug.trim().toLowerCase() === targetTitle.replace(/\s+/g, "-"))
+        ) {
+          eventMatches = true;
+        }
+      }
+    }
+
+    if (!eventMatches) {
+      return NextResponse.json(
+        {
+          error: registeredEventTitle
+            ? `Ticket is for "${registeredEventTitle}", not the selected event.`
+            : "Ticket was issued for a different event.",
+        },
+        { status: 400 },
       );
     }
 

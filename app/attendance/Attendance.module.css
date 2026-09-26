@@ -353,18 +353,100 @@
 
 .scannerViewport {
   width: 100%;
-  aspect-ratio: 1;
-  max-height: 400px;
+  min-height: 280px;
+  max-height: 480px;
   background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .scannerViewport video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 100% !important;
+  height: auto !important;
+  max-height: 480px !important;
+  object-fit: contain !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+.scanTargetOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.scanTargetBox {
+  width: min(250px, 70vw);
+  height: min(250px, 70vw);
+  position: relative;
+  border-radius: 12px;
+}
+
+.scanCornerTL {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  border-top: 3px solid #3b82f6;
+  border-left: 3px solid #3b82f6;
+  border-top-left-radius: 8px;
+}
+
+.scanCornerTR {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  border-top: 3px solid #3b82f6;
+  border-right: 3px solid #3b82f6;
+  border-top-right-radius: 8px;
+}
+
+.scanCornerBL {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  border-bottom: 3px solid #3b82f6;
+  border-left: 3px solid #3b82f6;
+  border-bottom-left-radius: 8px;
+}
+
+.scanCornerBR {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  border-bottom: 3px solid #3b82f6;
+  border-right: 3px solid #3b82f6;
+  border-bottom-right-radius: 8px;
+}
+
+.scanLaser {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #3b82f6, #60a5fa, #3b82f6, transparent);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+  animation: scanLaserAnim 2s ease-in-out infinite alternate;
+}
+
+@keyframes scanLaserAnim {
+  0% { top: 6%; opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { top: 94%; opacity: 0.4; }
 }
 
 .scannerPlaceholder {

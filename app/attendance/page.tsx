@@ -181,6 +181,9 @@ export default function AttendancePage() {
   const scannerContainerId = "attendance-qr-reader";
   const lastScannedRef = useRef<string>("");
   const scanCooldownRef = useRef<boolean>(false);
+  const processTicketRef = useRef<(code: string) => void>(() => {});
+  const selectedEventRef = useRef(selectedEvent);
+  selectedEventRef.current = selectedEvent;
 
   // Records state
   const [records, setRecords] = useState<AttendanceRecord[]>([]);
@@ -285,12 +288,15 @@ export default function AttendancePage() {
   // ---- Scan a ticket code ----
   const processTicket = useCallback(
     async (code: string) => {
-      if (!selectedEvent || processing) return;
+      const eventId = selectedEventRef.current;
+      if (!eventId || processing) return;
 
-      const normalised = code.trim().toUpperCase();
+      // Extract ticket code (handles raw code or URL with ticket parameter)
+      const match = code.match(/AICE-[A-F0-9]{12}/i);
+      const normalised = match ? match[0].toUpperCase() : code.trim().toUpperCase();
       if (!normalised) return;
 
-      // Avoid rapid duplicate scans
+      // Avoid rapid duplicate scans of the same code
       if (scanCooldownRef.current || lastScannedRef.current === normalised) {
         return;
       }
@@ -298,7 +304,8 @@ export default function AttendancePage() {
       scanCooldownRef.current = true;
       setTimeout(() => {
         scanCooldownRef.current = false;
-      }, 3000);
+        lastScannedRef.current = "";
+      }, 3500);
 
       setProcessing(true);
       setScanResult(null);
@@ -309,7 +316,7 @@ export default function AttendancePage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             ticketCode: normalised,
-            eventId: selectedEvent,
+            eventId: eventId,
           }),
         });
 
@@ -358,67 +365,124 @@ export default function AttendancePage() {
         setProcessing(false);
       }
     },
-    [selectedEvent, processing],
+    [processing],
   );
+
+  useEffect(() => {
+    processTicketRef.current = processTicket;
+  }, [processTicket]);
 
   // ---- QR Scanner ----
   const startScanner = async () => {
     if (scanning || !selectedEvent) return;
 
+    const scannerConfig = {
+      fps: 15,
+      // Full frame scanning without qrbox constraint avoids aspect ratio distortion
+    };
+    const onSuccess = (decodedText: string) => {
+      if (processTicketRef.current) {
+        processTicketRef.current(decodedText);
+      }
+    };
+    const onFailure = () => {};
+
     try {
-      const { Html5Qrcode } = await import("html5-qrcode");
-      const html5QrCode = new Html5Qrcode(scannerContainerId);
-      scannerRef.current = html5QrCode;
-
-      const scannerConfig = {
-        fps: 10,
-        qrbox: { width: 250, height: 250 },
-        aspectRatio: 1.0,
-      };
-      const onSuccess = (decodedText: string) => processTicket(decodedText);
-      const onFailure = () => {};
-
-      try {
-        // Try rear camera first
-        await html5QrCode.start(
-          { facingMode: "environment" },
-          scannerConfig,
-          onSuccess,
-          onFailure,
-        );
-      } catch {
-        // Fall back to any available camera
-        await html5QrCode.start(
-          { facingMode: "user" },
-          scannerConfig,
-          onSuccess,
-          onFailure,
+      if (typeof window !== "undefined" && !window.isSecureContext) {
+        throw new Error(
+          "Camera access requires a secure connection (HTTPS or localhost). If opening from a phone, please use the HTTPS link."
         );
       }
 
-      setScanning(true);
+      const { Html5Qrcode, Html5QrcodeSupportedFormats } = await import("html5-qrcode");
+
+      // Check available cameras first to pick the best device
+      let cameraConfig: string | { facingMode: string } = { facingMode: "environment" };
+      try {
+        const devices = await Html5Qrcode.getCameras();
+        if (devices && devices.length > 0) {
+          const backCam = devices.find((d) =>
+            /back|rear|environment/i.test(d.label)
+          );
+          cameraConfig = backCam ? backCam.id : devices[0].id;
+        }
+      } catch {
+        // If device enumeration fails, proceed with facingMode fallback
+      }
+
+      const qr = new Html5Qrcode(scannerContainerId, {
+        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+        verbose: false,
+        experimentalFeatures: {
+          useBarCodeDetectorIfSupported: true,
+        },
+      });
+      scannerRef.current = qr;
+
+      try {
+        await qr.start(cameraConfig, scannerConfig, onSuccess, onFailure);
+        setScanning(true);
+        return;
+      } catch (primaryErr: any) {
+        // If rear/preferred camera failed, try front or default facingMode
+        const isAlreadyUserFacing =
+          typeof cameraConfig !== "string" && cameraConfig.facingMode === "user";
+        if (!isAlreadyUserFacing) {
+          try {
+            await qr.start({ facingMode: "user" }, scannerConfig, onSuccess, onFailure);
+            setScanning(true);
+            return;
+          } catch {}
+        }
+        throw primaryErr;
+      }
     } catch (err: any) {
       console.error("Scanner init error:", err);
-      const errName = err?.name || "";
-      const errMsg = (err?.message || "").toLowerCase();
+      const rawMsg =
+        typeof err === "string"
+          ? err
+          : err?.message || err?.name || String(err || "");
+      const errMsg = rawMsg.toLowerCase();
 
-      if (errName === "NotAllowedError" || errMsg.includes("denied") || errMsg.includes("dismissed") || errMsg.includes("permission")) {
+      const isInsecure =
+        errMsg.includes("secure") ||
+        errMsg.includes("https") ||
+        errMsg.includes("insecure");
+      const isPermission =
+        errMsg.includes("permission") ||
+        errMsg.includes("notallowederror") ||
+        errMsg.includes("denied") ||
+        errMsg.includes("dismissed") ||
+        errMsg.includes("disallowed");
+      const isNotFound =
+        errMsg.includes("notfound") ||
+        errMsg.includes("not found") ||
+        errMsg.includes("no camera") ||
+        errMsg.includes("devicesnotfound");
+
+      if (isInsecure) {
+        setScanResult({
+          type: "error",
+          title: "HTTPS Required",
+          detail: "Camera access requires HTTPS or localhost. If accessing on a phone, use the deployed HTTPS URL.",
+        });
+      } else if (isPermission) {
         setScanResult({
           type: "error",
           title: "Camera permission blocked",
-          detail: "Click the lock/site-settings icon in your browser's address bar → allow Camera → then reload the page.",
+          detail: "Camera access was denied. Tap the lock/site-settings icon in your browser address bar → allow Camera → then refresh.",
         });
-      } else if (errName === "NotFoundError" || errMsg.includes("not found") || errMsg.includes("no video")) {
+      } else if (isNotFound) {
         setScanResult({
           type: "error",
           title: "No camera found",
-          detail: "This device doesn't seem to have a camera. Use the manual ticket entry below instead.",
+          detail: "No camera detected on this device. You can enter ticket codes manually below.",
         });
       } else {
         setScanResult({
           type: "error",
           title: "Camera error",
-          detail: "Could not start the camera. Try refreshing or use manual entry below.",
+          detail: rawMsg || "Could not start camera. Try refreshing or use manual entry below.",
         });
       }
     }
@@ -673,18 +737,30 @@ export default function AttendancePage() {
           <div className={styles.scannerSection}>
             {/* Scanner card */}
             <div className={styles.scannerCard}>
-              <div className={styles.scannerViewport}>
-                {/* Always keep the scanner container mounted to prevent AbortError */}
+              <div className={styles.scannerViewport} style={{ position: "relative" }}>
+                {/* Scanner container must always be visible for html5-qrcode to work */}
                 <div
                   id={scannerContainerId}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    display: scanning ? "block" : "none",
-                  }}
+                  style={{ width: "100%", height: "100%" }}
                 />
+                {scanning && (
+                  <div className={styles.scanTargetOverlay}>
+                    <div className={styles.scanTargetBox}>
+                      <div className={styles.scanCornerTL} />
+                      <div className={styles.scanCornerTR} />
+                      <div className={styles.scanCornerBL} />
+                      <div className={styles.scanCornerBR} />
+                      <div className={styles.scanLaser} />
+                    </div>
+                  </div>
+                )}
                 {!scanning && (
-                  <div className={styles.scannerPlaceholder}>
+                  <div className={styles.scannerPlaceholder} style={{
+                    position: "absolute",
+                    inset: 0,
+                    zIndex: 2,
+                    background: "#000",
+                  }}>
                     <QrScanIcon />
                     <p className={styles.scannerPlaceholderText}>
                       Start the camera to scan QR tickets
