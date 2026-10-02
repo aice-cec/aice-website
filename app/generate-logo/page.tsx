@@ -18,6 +18,30 @@ export default function LogoGenerator() {
     useState<LogoBackground>("transparent");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const downloadLinkRef = useRef<HTMLAnchorElement>(null);
+  const [fontLoaded, setFontLoaded] = useState(false);
+
+  // Load Montserrat font
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.href =
+      "https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&display=swap";
+    link.rel = "stylesheet";
+    document.head.appendChild(link);
+
+    // Wait for font to load
+    if (document.fonts) {
+      document.fonts.ready.then(() => {
+        setFontLoaded(true);
+      });
+    } else {
+      // Fallback for browsers without Font Loading API
+      setTimeout(() => setFontLoaded(true), 1000);
+    }
+
+    return () => {
+      document.head.removeChild(link);
+    };
+  }, []);
 
   // Update hex input when color picker changes
   useEffect(() => {
@@ -51,6 +75,8 @@ export default function LogoGenerator() {
 
   // Generate logo on canvas
   useEffect(() => {
+    if (!fontLoaded) return; // Wait for Montserrat font to load
+    
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -117,8 +143,9 @@ export default function LogoGenerator() {
         const logoWidth = (tempCanvas.width / tempCanvas.height) * targetHeight;
         
         // Iteratively find the correct font size to match target height
+        // Use Montserrat Medium (500) font for "ICE" text
         let testSize = targetHeight;
-        ctx.font = `bold ${testSize}px Arial, sans-serif`;
+        ctx.font = `500 ${testSize}px Montserrat, Arial, sans-serif`;
         let testMetrics = ctx.measureText("ICE");
         
         // Get actual rendered height of the text
@@ -126,7 +153,7 @@ export default function LogoGenerator() {
         
         // Calculate the correct font size to match targetHeight
         const finalFontSize = (targetHeight / textHeight) * testSize;
-        ctx.font = `bold ${finalFontSize}px Arial, sans-serif`;
+        ctx.font = `500 ${finalFontSize}px Montserrat, Arial, sans-serif`;
         
         ctx.fillStyle = foregroundColor;
         ctx.textAlign = "left";
@@ -136,8 +163,8 @@ export default function LogoGenerator() {
         const textWidth = finalMetrics.width;
         const finalTextHeight = finalMetrics.actualBoundingBoxAscent + finalMetrics.actualBoundingBoxDescent;
         
-        // Spacing
-        const spacing = targetHeight * 0.15;
+        // Spacing - reduced for tighter composition
+        const spacing = targetHeight * 0.05;
         
         // Calculate total width and center everything
         const totalWidth = logoWidth + spacing + textWidth;
@@ -165,7 +192,7 @@ export default function LogoGenerator() {
         ctx.drawImage(tempCanvas, x, y, scaledWidth, scaledHeight);
       }
     };
-  }, [foregroundColor, backgroundColor, logoVariant, logoBackground]);
+  }, [foregroundColor, backgroundColor, logoVariant, logoBackground, fontLoaded]);
 
   const downloadLogo = (format: "png" | "svg") => {
     const canvas = canvasRef.current;
